@@ -3,155 +3,280 @@ package entity;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class User {
 
-    private int id;
-    private int following;
-    private int followers;
+    private String id;
+    private List<User> followingList;
+    private List<User> followerList;
     private List<Post> postList;
+    private List<Post> likedPostList;
     private String name;
     private String password;
     private Date joinDate;
     private int totalLikes;
 
-    private User(Builder builder) {
-        this.id = builder.id;
-        this.following = builder.following;
-        this.followers = builder.followers;
-        this.postList = builder.postList;
-        this.name = builder.name;
-        this.password = builder.password;
-        this.joinDate = builder.joinDate;
-        this.totalLikes = builder.totalLikes;
+    /**
+     * @param userBuilder to initialize User object using builder attributes
+     */
+    private User(UserBuilder userBuilder) {
+        this.id = userBuilder.id;
+        this.name = userBuilder.name;
+        this.password = userBuilder.password;
+        this.joinDate = userBuilder.joinDate;
+        this.totalLikes = userBuilder.totalLikes;
+        this.followingList = Objects.requireNonNullElseGet(userBuilder.followingList, ArrayList::new);
+        this.followerList = Objects.requireNonNullElseGet(userBuilder.followerList, ArrayList::new);
+        this.postList = Objects.requireNonNullElseGet(userBuilder.postList, ArrayList::new);
+        this.likedPostList = Objects.requireNonNullElseGet(userBuilder.likedPostList, ArrayList::new);
     }
 
-    public int getId() {
+    /**
+     * @return id associated with the User
+     */
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    /**
+     * @param id to set id class variable
+     */
+    public void setId(String id) {
         this.id = id;
     }
 
-    public int getFollowing() {
-        return following;
+    /**
+     * @return followingList class variable
+     */
+    public List<User> getFollowingList() {
+        return followingList;
     }
 
-    public void setFollowing(int following) {
-        this.following = following;
+    /**
+     * @param followingList to set followingList class variable
+     */
+    public void setFollowing(List<User> followingList) {
+        this.followingList = followingList;
     }
 
-    public int getFollowers() {
-        return followers;
+    /**
+     * @return followerList class variable
+     */
+    public List<User> getFollowerList() {
+        return followerList;
     }
 
-    public void setFollowers(int followers) {
-        this.followers = followers;
+    /**
+     * @param followerList to set followerList class variable
+     */
+    public void setFollowers(List<User> followerList) {
+        this.followerList = followerList;
     }
 
+    /**
+     * @return likedPostList class variable
+     */
+    public List<Post> getLikedPostList() {
+        return likedPostList;
+    }
+
+    /**
+     * @param likedPostList to set likedPostlist class variable
+     */
+    public void setLikedPostList(List<Post> likedPostList) {
+        this.likedPostList = likedPostList;
+    }
+
+    /**
+     * @return postList class variable
+     */
     public List<Post> getPostList() {
         return postList;
     }
 
+    /**
+     * @param postList to set class variable postList
+     */
     public void setPostList(List<Post> postList) {
         this.postList = postList;
     }
 
+    /**
+     * @return name of class variable
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * @param name to set class variable name
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * @return password class variable
+     */
     public String getPassword() {
         return password;
     }
 
+    /**
+     * @param password to set class variable password
+     */
     public void setPassword(String password) {
         this.password = password;
     }
 
+    /**
+     * @return joinDate class variable
+     */
     public Date getJoinDate() {
         return joinDate;
     }
 
+    /**
+     * @param joinDate to set joinDate class variable
+     */
     public void setJoinDate(Date joinDate) {
         this.joinDate = joinDate;
     }
 
+    /**
+     * @return totalLikes class variable
+     */
     public int getTotalLikes() {
         return totalLikes;
     }
 
+    /**
+     * @param totalLikes to set class variable totalLikes
+     */
     public void setTotalLikes(int totalLikes) {
         this.totalLikes = totalLikes;
     }
 
+    /**
+     * @param post to add Post object to class variable postList
+     */
     public void addPost(Post post) {
-        if(this.postList.isEmpty()) {
-            this.postList = new ArrayList<>();
-            this.postList.add(post);
-        } else {
-            this.postList.add(post);
-        }
+        this.postList.add(post);
     }
 
-    public static class Builder {
+    /**
+     * @param followerUser to add User object to class variable followerList
+     */
+    public void addFollower(User followerUser) {
+        this.followerList.add(followerUser);
+    }
 
-        private int id;
-        private int following;
-        private int followers;
+    /**
+     * @param followingUser to add User object to class variable followingList
+     */
+    public void addFollowing(User followingUser) {
+        this.followingList.add(followingUser);
+    }
+
+    public static class UserBuilder {
+
+        private String id;
+        private List<User> followingList;
+        private List<User> followerList;
         private List<Post> postList;
+        private List<Post> likedPostList;
         private String name;
         private String password;
         private Date joinDate;
         private int totalLikes;
 
-        public Builder() {}
+        public UserBuilder() { }
 
-        public Builder withId(int val) {
+        /**
+         * @param val to set id class variable
+         * @return current object
+         */
+        public UserBuilder withId(String val) {
             this.id = val;
             return this;
         }
 
-        public Builder withFollowing(int val) {
-            this.following = val;
+        /**
+         * @param val to set
+         * @return current object
+         */
+        public UserBuilder withFollowingList(List<User> val) {
+            this.followingList = val;
             return this;
         }
 
-        public Builder withFollowers(int val) {
-            this.followers = val;
+        /**
+         * @param val to set followerList class variable
+         * @return current object
+         */
+        public UserBuilder withFollowerList(List<User> val) {
+            this.followerList = val;
             return this;
         }
 
-        public Builder withPostList(List<Post> val) {
+        /**
+         * @param val to set likedPostList class variable
+         * @return current object
+         */
+        public UserBuilder withLikedPostList(List<Post> val) {
+            this.likedPostList = val;
+            return this;
+        }
+
+        /**
+         * @param val to set postList class variable
+         * @return current object
+         */
+        public UserBuilder withPostList(List<Post> val) {
             this.postList = val;
             return this;
         }
 
-        public Builder withName(String val) {
+        /**
+         * @param val to set name class variable
+         * @return current object
+         */
+        public UserBuilder withName(String val) {
             this.name = val;
             return this;
         }
 
-        public Builder withPassword(String val) {
+        /**
+         * @param val to set password class variable
+         * @return current object
+         */
+        public UserBuilder withPassword(String val) {
             this.password = val;
             return this;
         }
 
-        public Builder withJoinDate(Date val) {
+        /**
+         * @param val to set joinDate class variable
+         * @return current object
+         */
+        public UserBuilder withJoinDate(Date val) {
             this.joinDate = val;
             return this;
         }
 
-        public Builder withTotalLikes(int val) {
+        /**
+         * @param val to set totalLikes class variable
+         * @return current object
+         */
+        public UserBuilder withTotalLikes(int val) {
             this.totalLikes = val;
             return this;
         }
 
+        /**
+         * @return User object using current object attributes
+         */
         public User build() {
             return new User(this);
         }
