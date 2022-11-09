@@ -1,8 +1,13 @@
 package entity;
 
+
+import jakarta.validation.constraints.NotNull;
+
 public class RepetitiveExercise extends Exercise {
 
+    @NotNull
     private int reps;
+    @NotNull
     private int sets;
 
     /**

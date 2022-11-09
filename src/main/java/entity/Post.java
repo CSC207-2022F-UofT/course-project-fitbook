@@ -1,5 +1,10 @@
 package entity;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -7,11 +12,17 @@ import java.util.Objects;
 
 public class Post {
 
+    @NotEmpty
     private String id;
+    @NotNull
     private User author;
+    @NotNull
+    @Min(value = 0, message = "A post should have at least 0 likes")
     private int likes;
+    @NotNull
     private Date postDate;
-    private List<Exercise> exerciseList;
+    @NotEmpty
+    private List<@Valid Exercise> exerciseList;
 
     /**
      * @param postBuilder to initialize Post object using builder attributes
@@ -48,7 +59,7 @@ public class Post {
     /**
      * @param author to set class variable author
      */
-    public void setUser(User author) {
+    public void setUser(@Valid User author) {
         this.author = author;
     }
 
@@ -97,7 +108,7 @@ public class Post {
     /**
      * @param exercise to add Exercise object to class variable exerciseList
      */
-    public void addPost(Exercise exercise) {
+    public void addExercise(@Valid Exercise exercise) {
         this.exerciseList.add(exercise);
     }
 
@@ -123,7 +134,7 @@ public class Post {
          * @param val to set author class variable
          * @return current object
          */
-        public PostBuilder withAuthor(User val) {
+        public PostBuilder withAuthor(@Valid User val) {
             this.author = val;
             return this;
         }

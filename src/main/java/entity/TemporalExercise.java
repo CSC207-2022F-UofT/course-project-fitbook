@@ -1,9 +1,12 @@
 package entity;
 
+import jakarta.validation.constraints.NotNull;
+
 import java.util.Date;
 
 public class TemporalExercise extends Exercise{
 
+    @NotNull
     private Date time;
 
     /**
@@ -12,7 +15,6 @@ public class TemporalExercise extends Exercise{
     public TemporalExercise(TemporalExerciseBuilder temporalExerciseBuilder) {
         super(temporalExerciseBuilder);
         this.time = temporalExerciseBuilder.time;
-
     }
 
     /**

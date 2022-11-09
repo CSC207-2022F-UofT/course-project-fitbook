@@ -1,5 +1,11 @@
 package entity;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -7,14 +13,22 @@ import java.util.Objects;
 
 public class User {
 
+    @NotEmpty
     private String id;
-    private List<User> followingList;
-    private List<User> followerList;
-    private List<Post> postList;
-    private List<Post> likedPostList;
+    private List<@Valid User> followingList;
+    private List<@Valid User> followerList;
+    private List<@Valid Post> postList;
+    private List<@Valid Post> likedPostList;
+    @NotEmpty
+    @Size(max = 40)
     private String name;
+    @NotEmpty
+    @Size(min = 8, max = 40)
     private String password;
+    @NotNull
     private Date joinDate;
+    @NotNull
+    @Min(value = 0, message = "Number of likes should not be lower than 0")
     private int totalLikes;
 
     /**
@@ -161,21 +175,21 @@ public class User {
     /**
      * @param post to add Post object to class variable postList
      */
-    public void addPost(Post post) {
+    public void addPost(@Valid Post post) {
         this.postList.add(post);
     }
 
     /**
      * @param followerUser to add User object to class variable followerList
      */
-    public void addFollower(User followerUser) {
+    public void addFollower(@Valid User followerUser) {
         this.followerList.add(followerUser);
     }
 
     /**
      * @param followingUser to add User object to class variable followingList
      */
-    public void addFollowing(User followingUser) {
+    public void addFollowing(@Valid User followingUser) {
         this.followingList.add(followingUser);
     }
 
