@@ -1,13 +1,18 @@
 package entity;
 
+import jakarta.validation.constraints.NotEmpty;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public abstract class Exercise {
 
+    @NotEmpty
     protected String id;
+    @NotEmpty
     protected List<String> keywords;
+    @NotEmpty
     protected List<String> bodyParts;
 
     /**
