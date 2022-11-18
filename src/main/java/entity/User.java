@@ -1,24 +1,20 @@
 package entity;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class User {
 
     @NotEmpty
     private String id;
-    private List<@Valid User> followingList;
-    private List<@Valid User> followerList;
-    private List<@Valid Post> postList;
-    private List<@Valid Post> likedPostList;
+    private List<String> followingIdList;
+    private List<String> followersIdList;
+    private List<String> postIdList;
+    private List<String> likedPostIdList;
     @NotEmpty
     @Size(max = 40)
     private String name;
@@ -32,6 +28,11 @@ public class User {
     private int totalLikes;
 
     /**
+     * Default constructor for use with datastore
+     */
+    public User() {}
+
+    /**
      * @param userBuilder to initialize User object using builder attributes
      */
     private User(UserBuilder userBuilder) {
@@ -40,10 +41,10 @@ public class User {
         this.password = userBuilder.password;
         this.joinDate = userBuilder.joinDate;
         this.totalLikes = userBuilder.totalLikes;
-        this.followingList = Objects.requireNonNullElseGet(userBuilder.followingList, ArrayList::new);
-        this.followerList = Objects.requireNonNullElseGet(userBuilder.followerList, ArrayList::new);
-        this.postList = Objects.requireNonNullElseGet(userBuilder.postList, ArrayList::new);
-        this.likedPostList = Objects.requireNonNullElseGet(userBuilder.likedPostList, ArrayList::new);
+        this.followingIdList = Objects.requireNonNullElseGet(userBuilder.followingIdList, ArrayList::new);
+        this.followersIdList = Objects.requireNonNullElseGet(userBuilder.followersIdList, ArrayList::new);
+        this.postIdList = Objects.requireNonNullElseGet(userBuilder.postIdList, ArrayList::new);
+        this.likedPostIdList = Objects.requireNonNullElseGet(userBuilder.likedPostIdList, ArrayList::new);
     }
 
     /**
@@ -61,59 +62,59 @@ public class User {
     }
 
     /**
-     * @return followingList class variable
+     * @return followingIdList class variable
      */
-    public List<User> getFollowingList() {
-        return followingList;
+    public List<String> getFollowingIdList() {
+        return followingIdList;
     }
 
     /**
-     * @param followingList to set followingList class variable
+     * @param followingIdList to set followingIdList class variable
      */
-    public void setFollowing(List<User> followingList) {
-        this.followingList = followingList;
+    public void setFollowingIdList(List<String> followingIdList) {
+        this.followingIdList = followingIdList;
     }
 
     /**
-     * @return followerList class variable
+     * @return followersIdList class variable
      */
-    public List<User> getFollowerList() {
-        return followerList;
+    public List<String> getFollowersIdList() {
+        return followersIdList;
     }
 
     /**
-     * @param followerList to set followerList class variable
+     * @param followersIdList to set followersIdList class variable
      */
-    public void setFollowers(List<User> followerList) {
-        this.followerList = followerList;
+    public void setFollowersIdList(List<String> followersIdList) {
+        this.followersIdList = followersIdList;
     }
 
     /**
      * @return likedPostList class variable
      */
-    public List<Post> getLikedPostList() {
-        return likedPostList;
+    public List<String> getLikedPostIdList() {
+        return likedPostIdList;
     }
 
     /**
-     * @param likedPostList to set likedPostlist class variable
+     * @param likedPostIdList to set likedPostlist class variable
      */
-    public void setLikedPostList(List<Post> likedPostList) {
-        this.likedPostList = likedPostList;
+    public void setLikedPostIdList(List<String> likedPostIdList) {
+        this.likedPostIdList = likedPostIdList;
     }
 
     /**
      * @return postList class variable
      */
-    public List<Post> getPostList() {
-        return postList;
+    public List<String> getPostIdList() {
+        return postIdList;
     }
 
     /**
-     * @param postList to set class variable postList
+     * @param postIdList to set class variable postList
      */
-    public void setPostList(List<Post> postList) {
-        this.postList = postList;
+    public void setPostIdList(List<String> postIdList) {
+        this.postIdList = postIdList;
     }
 
     /**
@@ -175,31 +176,31 @@ public class User {
     /**
      * @param post to add Post object to class variable postList
      */
-    public void addPost(@Valid Post post) {
-        this.postList.add(post);
+    public void addPost(String post) {
+        this.postIdList.add(post);
     }
 
     /**
      * @param followerUser to add User object to class variable followerList
      */
-    public void addFollower(@Valid User followerUser) {
-        this.followerList.add(followerUser);
+    public void addFollower(String followerUser) {
+        this.followersIdList.add(followerUser);
     }
 
     /**
      * @param followingUser to add User object to class variable followingList
      */
-    public void addFollowing(@Valid User followingUser) {
-        this.followingList.add(followingUser);
+    public void addFollowing(String followingUser) {
+        this.followingIdList.add(followingUser);
     }
 
     public static class UserBuilder {
 
         private String id;
-        private List<User> followingList;
-        private List<User> followerList;
-        private List<Post> postList;
-        private List<Post> likedPostList;
+        private List<String> followingIdList;
+        private List<String> followersIdList;
+        private List<String> postIdList;
+        private List<String> likedPostIdList;
         private String name;
         private String password;
         private Date joinDate;
@@ -208,20 +209,11 @@ public class User {
         public UserBuilder() { }
 
         /**
-         * @param val to set id class variable
-         * @return current object
-         */
-        public UserBuilder withId(String val) {
-            this.id = val;
-            return this;
-        }
-
-        /**
          * @param val to set
          * @return current object
          */
-        public UserBuilder withFollowingList(List<User> val) {
-            this.followingList = val;
+        public UserBuilder withFollowingList(List<String> val) {
+            this.followingIdList = val;
             return this;
         }
 
@@ -229,8 +221,8 @@ public class User {
          * @param val to set followerList class variable
          * @return current object
          */
-        public UserBuilder withFollowerList(List<User> val) {
-            this.followerList = val;
+        public UserBuilder withFollowersList(List<String> val) {
+            this.followersIdList = val;
             return this;
         }
 
@@ -238,8 +230,8 @@ public class User {
          * @param val to set likedPostList class variable
          * @return current object
          */
-        public UserBuilder withLikedPostList(List<Post> val) {
-            this.likedPostList = val;
+        public UserBuilder withLikedPostList(List<String> val) {
+            this.likedPostIdList = val;
             return this;
         }
 
@@ -247,8 +239,8 @@ public class User {
          * @param val to set postList class variable
          * @return current object
          */
-        public UserBuilder withPostList(List<Post> val) {
-            this.postList = val;
+        public UserBuilder withPostList(List<String> val) {
+            this.postIdList = val;
             return this;
         }
 
@@ -292,6 +284,7 @@ public class User {
          * @return User object using current object attributes
          */
         public User build() {
+            this.id = UUID.randomUUID().toString();
             return new User(this);
         }
     }

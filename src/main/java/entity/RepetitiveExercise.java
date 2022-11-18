@@ -11,9 +11,14 @@ public class RepetitiveExercise extends Exercise {
     private int sets;
 
     /**
+     * Default constructor for use with datastore
+     */
+    public RepetitiveExercise() {}
+
+    /**
      * @param repetitiveExerciseBuilder to initialize RepetitiveExercise object using builder attributes
      */
-    public RepetitiveExercise(RepetitiveExerciseBuilder repetitiveExerciseBuilder) {
+    private RepetitiveExercise(RepetitiveExerciseBuilder repetitiveExerciseBuilder) {
         super(repetitiveExerciseBuilder);
         this.reps = repetitiveExerciseBuilder.reps;
         this.sets = repetitiveExerciseBuilder.sets;
