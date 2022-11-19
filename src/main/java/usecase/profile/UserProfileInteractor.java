@@ -16,7 +16,7 @@ public class UserProfileInteractor implements UserProfileInputBoundary{
         UserProfileDsRequestModel userDsModel = new UserProfileDsRequestModel(requestModel.getId());
         User user = userProfileDsGateway.findById(userDsModel.getId());
 
-        UserProfileResponseModel profileResponseModel = new UserProfileResponseModel(user.getId(), user.getName(), user.getFollowingIdList().size(), user.getFollowersIdList().size(), user.getJoinDate().toString(), user.getPostIdList(), user.getLikedPostIdList());
+        UserProfileResponseModel profileResponseModel = new UserProfileResponseModel(user.getName(), user.getFollowingList().size(), user.getFollowerList().size(), user.getJoinDate().toString(), user.getPostList(), user.getLikedPostList());
         return userPresenter.prepareSuccessView(profileResponseModel);
     }
 }
