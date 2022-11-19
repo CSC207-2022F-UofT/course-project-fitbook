@@ -7,7 +7,6 @@ import usecase.profile.*;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,17 +16,33 @@ class UserProfileInteractorTest {
 
     @Test
     void create() {
+        // To test the use case:
+        // 1) Create a UserRegisterInteractor and prerequisite objects
+        //    (arguments for the UserRegisterInteractor constructor parameters)
+        // 2) create the Input Data
+        // 3) Call the use case User Input Boundary method to run the use case
+        // 4) Check that the Output Data passed to the Presenter is correct
+        // 5) Check that the expected changes to the data layer are there.
+
+        // 1) UserRegisterInteractor and prerequisite objects
+        // We're going to need a place to save and look up information. We could
+        // use FileUser, but because unit tests are supposed to be independent
+        // that would make us also reset the file when we are done.
+        // Instead, we're going to "mock" that info using a short-lived solution
+        // that just keeps the info in a dictionary, and it won't be persistent.
+        // (Separately, elsewhere, we will need to test the FileUser works
+        // properly.)
         UserProfileDsGateway userRepository = new InMemoryUser();
 
+        // This creates an anonymous implementing class for the Output Boundary.
         UserProfilePresenter presenter = new UserProfilePresenter() {
             @Override
             public UserProfileResponseModel prepareSuccessView(UserProfileResponseModel user) {
-                // Check that the Output Data and associated changes
+                // 4) Check that the Output Data and associated changes
                 // are correct
                 assertEquals("jpablo2002", user.getName());
                 assertNotNull(user.getJoinDate()); // any creation time is fine.
-                assertEquals(0, user.getFollowerSize());
-                assertNotNull(userRepository.findById(user.getId()));
+                assertNotNull(userRepository.findById("1912"));
                 return null;
             }
 
@@ -40,19 +55,18 @@ class UserProfileInteractorTest {
 
         User.UserBuilder userBuilder = new User.UserBuilder();
         Date now = new Date();
-        User user1 = userBuilder.withJoinDate(now).withName("jpablo2002").build();
-        userRepository.save(user1);
-        User user2 = userBuilder.withJoinDate(now).withName("john03").build();
-        userRepository.save(user2);
-        User user3 = userBuilder.withJoinDate(now).withName("bappoChapo").build();
-        userRepository.save(user3);
-
+        User user = userBuilder.withJoinDate(now).withId("1912").withName("jpablo2002").build();
+        userRepository.save(user);
         UserProfileInputBoundary interactor = new UserProfileInteractor(
                 userRepository, presenter);
-        UserProfileRequestModel inputData1 = new UserProfileRequestModel(
-                user1.getId());
 
-        interactor.create(inputData1);
+        // 2) Input data — we can make this up for the test. Normally it would
+        // be created by the Controller.
+        UserProfileRequestModel inputData = new UserProfileRequestModel(
+                "1912");
+
+        // 3) Run the use case
+        interactor.create(inputData);
     }
 
     private class InMemoryUser implements UserProfileDsGateway{
