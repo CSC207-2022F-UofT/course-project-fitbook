@@ -10,9 +10,14 @@ public class TemporalExercise extends Exercise{
     private Date time;
 
     /**
+     * Default constructor for use with datastore
+     */
+    public TemporalExercise() {}
+
+    /**
      * @param temporalExerciseBuilder to initialize TemporalExercise object using builder attributes
      */
-    public TemporalExercise(TemporalExerciseBuilder temporalExerciseBuilder) {
+    private TemporalExercise(TemporalExerciseBuilder temporalExerciseBuilder) {
         super(temporalExerciseBuilder);
         this.time = temporalExerciseBuilder.time;
     }

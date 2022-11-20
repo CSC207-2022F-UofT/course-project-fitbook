@@ -16,6 +16,11 @@ public abstract class Exercise {
     protected List<String> bodyParts;
 
     /**
+     * Default constructor for use with datastore
+     */
+    public Exercise() {}
+
+    /**
      * @param exerciseBuilder to initialize Exercise object using builder attributes
      */
     protected Exercise(ExerciseBuilder<?> exerciseBuilder) {
