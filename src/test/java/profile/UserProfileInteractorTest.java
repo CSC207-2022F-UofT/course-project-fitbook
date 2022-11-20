@@ -7,6 +7,7 @@ import usecase.profile.*;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,7 +26,8 @@ class UserProfileInteractorTest {
                 // are correct
                 assertEquals("jpablo2002", user.getName());
                 assertNotNull(user.getJoinDate()); // any creation time is fine.
-                assertNotNull(userRepository.findById("1912"));
+                assertEquals(0, user.getFollowerSize());
+                assertNotNull(userRepository.findById(user.getId()));
                 return null;
             }
 
@@ -38,15 +40,19 @@ class UserProfileInteractorTest {
 
         User.UserBuilder userBuilder = new User.UserBuilder();
         Date now = new Date();
-        User user = userBuilder.withJoinDate(now).withId("1912").withName("jpablo2002").build();
-        userRepository.save(user);
+        User user1 = userBuilder.withJoinDate(now).withName("jpablo2002").build();
+        userRepository.save(user1);
+        User user2 = userBuilder.withJoinDate(now).withName("john03").build();
+        userRepository.save(user2);
+        User user3 = userBuilder.withJoinDate(now).withName("bappoChapo").build();
+        userRepository.save(user3);
+
         UserProfileInputBoundary interactor = new UserProfileInteractor(
                 userRepository, presenter);
+        UserProfileRequestModel inputData1 = new UserProfileRequestModel(
+                user1.getId());
 
-        UserProfileRequestModel inputData = new UserProfileRequestModel(
-                "1912");
-
-        interactor.create(inputData);
+        interactor.create(inputData1);
     }
 
     private class InMemoryUser implements UserProfileDsGateway{
