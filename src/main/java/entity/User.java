@@ -1,8 +1,11 @@
 package entity;
 
+
 import lombok.*;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 @Data
 @Builder

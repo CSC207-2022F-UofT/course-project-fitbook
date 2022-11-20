@@ -2,10 +2,8 @@ package entity;
 
 import lombok.*;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 @Data
