@@ -10,6 +10,8 @@ import java.util.List;
 
 public class UserProfileResponseModel {
     @NotEmpty
+    private final String id;
+    @NotEmpty
     private final String name;
     @NotEmpty
     private final int followingSize;
@@ -18,11 +20,12 @@ public class UserProfileResponseModel {
     @NotNull
     private String joinDate;
     @NotNull
-    private final List<@Valid Post> postList;
+    private final List<String> postList;
     @NotNull
-    private final List<@Valid Post> likedPostList;
+    private final List<String> likedPostList;
 
-    public UserProfileResponseModel(String name, int followingSize, int followerSize, String joinDate, List<Post> postList, List<Post> likedPostList) {
+    public UserProfileResponseModel(String id, String name, int followingSize, int followerSize, String joinDate, List<String> postList, List<String> likedPostList) {
+        this.id = id;
         this.name = name;
         this.followingSize = followingSize;
         this.followerSize = followerSize;
@@ -30,7 +33,7 @@ public class UserProfileResponseModel {
         this.postList = postList;
         this.likedPostList = likedPostList;
     }
-
+    public String getId() { return id; }
     public String getName(){
         return name;
     }
@@ -49,11 +52,11 @@ public class UserProfileResponseModel {
 
     public void setJoinDate(String joinDate) {this.joinDate = joinDate;}
 
-    public List<Post> getPostList(){
+    public List<String> getPostList(){
         return postList;
     }
 
-    public List<Post> getLikedPostList(){
+    public List<String> getLikedPostList(){
         return likedPostList;
     }
 }
