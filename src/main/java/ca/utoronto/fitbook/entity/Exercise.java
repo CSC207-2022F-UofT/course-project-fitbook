@@ -1,4 +1,4 @@
-package entity;
+package ca.utoronto.fitbook.entity;
 
 import lombok.Builder;
 import lombok.Data;
@@ -14,9 +14,15 @@ import java.util.UUID;
 @NoArgsConstructor
 public abstract class Exercise {
 
+    public enum ExerciseType {
+        TEMPORAL,
+        REPETITIVE
+    }
+
     @Builder.Default
     @NonNull
     protected String id = UUID.randomUUID().toString();
+    protected ExerciseType type;
     @NonNull
     protected List<String> keywords;
     @NonNull

@@ -1,9 +1,6 @@
-package entity;
+package ca.utoronto.fitbook.entity;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.util.Date;
@@ -14,6 +11,8 @@ import java.util.Date;
 @NoArgsConstructor
 public class TemporalExercise extends Exercise {
 
+    @Builder.Default
+    private ExerciseType type = ExerciseType.TEMPORAL;
     @NonNull
     private Date time;
 
