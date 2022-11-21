@@ -3,6 +3,7 @@ package ca.utoronto.fitbook.adapter.persistence.firebase;
 import ca.utoronto.fitbook.adapter.persistence.ExerciseTypeToClassMap;
 import ca.utoronto.fitbook.adapter.persistence.GenericRepository;
 import ca.utoronto.fitbook.application.port.in.EntityNotFoundException;
+import ca.utoronto.fitbook.application.port.in.LoadExerciseListPort;
 import ca.utoronto.fitbook.entity.Exercise;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentSnapshot;
@@ -10,11 +11,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 @Repository
-public class ExerciseFirebaseRepository implements GenericRepository<Exercise>
+public class ExerciseFirebaseRepository implements GenericRepository<Exercise>, LoadExerciseListPort
 {
     private final FirebaseDatastore datastore;
 
@@ -60,5 +63,19 @@ public class ExerciseFirebaseRepository implements GenericRepository<Exercise>
     @Override
     public void save(Exercise entity) {
         datastore.getCollection("exercises").document(entity.getId()).set(entity);
+    }
+
+    /**
+     * @param exerciseIds The post ids to be fetched
+     * @return A list of exercises
+     * @throws EntityNotFoundException If a single exercise is not found
+     */
+    @Override
+    public List<Exercise> loadExerciseList(List<String> exerciseIds) throws EntityNotFoundException {
+        List<Exercise> exerciseList = new ArrayList<>();
+        for (String id : exerciseIds) {
+            exerciseList.add(getById(id));
+        }
+        return exerciseList;
     }
 }
