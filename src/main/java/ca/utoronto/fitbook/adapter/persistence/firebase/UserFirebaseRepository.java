@@ -18,7 +18,7 @@ public class UserFirebaseRepository implements GenericRepository<User>
     }
 
     /**
-     * @param id Id of the User
+     * @param id Id of the user
      * @return the user with the given Id
      */
     @Override
