@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class UserRegisterController {
     private final UserRegisterUseCase userRegisterUseCase;
 
-    @PostMapping(path = "/post")
-    String createPost(Model model, @RequestBody UserRegisterCommand command) {
+    @PostMapping(path = "/register")
+    String UserRegister(Model model, @RequestBody UserRegisterCommand command) {
         UserRegisterResponse response = userRegisterUseCase.createUser(command);
         model.addAttribute("id", response.getId());
         return "index";

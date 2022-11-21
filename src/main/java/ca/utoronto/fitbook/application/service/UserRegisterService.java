@@ -10,18 +10,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
 import java.util.ArrayList;
 import java.util.Date;
-
 @Service
 @RequiredArgsConstructor
 public class UserRegisterService implements UserRegisterUseCase {
     private final FindUserByNamePort findUserByNamePort;
     private final SaveUserPort saveUserPort;
     /**
-     * @param command
-     * @return
+     * @param command The username and password coming in from the user
+     * @return the id for the new user created
      */
     @Override
     public UserRegisterResponse createUser(UserRegisterCommand command){
@@ -29,11 +27,11 @@ public class UserRegisterService implements UserRegisterUseCase {
             throw  new UsernameAlreadyExists();
         } else if (!command.getPassword().equals(command.getRepeatedPassword())) {
             throw new PasswordNotMatch();
-        }else if (command.getName().length()>40){
+        } else if (command.getName().length() > 40){
             throw new NameTooLong(command);
-        }else if (command.getPassword().length()<8){
+        } else if (command.getPassword().length() < 8){
             throw new PasswordTooShort();
-        }else if (command.getPassword().length()>40){
+        } else if (command.getPassword().length() > 40){
             throw new PasswordTooLong(command);
         }
         var user = User.builder()
@@ -46,34 +44,33 @@ public class UserRegisterService implements UserRegisterUseCase {
                 .joinDate(new Date())
                 .build();
         saveUserPort.save(user);
-        UserRegisterResponse userRegisterResponse = new UserRegisterResponse(user.getId());
-        return userRegisterResponse;
+        return new UserRegisterResponse(user.getId());
     }
-    @ResponseStatus(value= HttpStatus.INTERNAL_SERVER_ERROR, reason="Username already exists")
+    @ResponseStatus(value= HttpStatus.CREATED, reason="Username already exists")
     public class UsernameAlreadyExists extends RuntimeException {
         public UsernameAlreadyExists() {
             super("Username already exists.");
         }
     }
-    @ResponseStatus(value= HttpStatus.INTERNAL_SERVER_ERROR, reason="Password don't match")
+    @ResponseStatus(value= HttpStatus.NOT_ACCEPTABLE, reason="Password don't match")
     public class PasswordNotMatch extends RuntimeException {
         public PasswordNotMatch() {
             super("Password don't match.");
         }
     }
-    @ResponseStatus(value= HttpStatus.INTERNAL_SERVER_ERROR, reason="Name is too long")
+    @ResponseStatus(value= HttpStatus.NOT_ACCEPTABLE, reason="Name is too long")
     public class NameTooLong extends RuntimeException {
         public NameTooLong(UserRegisterCommand command) {
             super("Name is too long by "+ ((command.getName().length())-40)+" characters");
         }
     }
-    @ResponseStatus(value= HttpStatus.INTERNAL_SERVER_ERROR, reason="Password is too long")
+    @ResponseStatus(value= HttpStatus.NOT_ACCEPTABLE, reason="Password is too long")
     public class PasswordTooLong extends RuntimeException {
         public PasswordTooLong(UserRegisterCommand command) {
             super("Password is too long by "+ ((command.getName().length())-40)+" characters");
         }
     }
-    @ResponseStatus(value= HttpStatus.INTERNAL_SERVER_ERROR, reason="Password is too short")
+    @ResponseStatus(value= HttpStatus.NOT_ACCEPTABLE, reason="Password is too short")
     public class PasswordTooShort extends RuntimeException {
         public PasswordTooShort() {
             super("Password is too short");
