@@ -2,9 +2,8 @@ package ca.utoronto.fitbook.adapter.persistence.firebase;
 
 import ca.utoronto.fitbook.adapter.persistence.ExerciseTypeToClassMap;
 import ca.utoronto.fitbook.adapter.persistence.GenericRepository;
+import ca.utoronto.fitbook.application.port.in.EntityNotFoundException;
 import ca.utoronto.fitbook.entity.Exercise;
-import ca.utoronto.fitbook.entity.RepetitiveExercise;
-import ca.utoronto.fitbook.entity.TemporalExercise;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentSnapshot;
 import org.springframework.http.HttpStatus;
@@ -35,7 +34,7 @@ public class ExerciseFirebaseRepository implements GenericRepository<Exercise>
      * @return the exercise with the given Id
      */
     @Override
-    public Exercise getById(String id) {
+    public Exercise getById(String id) throws EntityNotFoundException {
         ApiFuture<DocumentSnapshot> future = datastore.getCollection("exercises").document(id).get();
         try {
             DocumentSnapshot document = future.get();
@@ -47,13 +46,12 @@ public class ExerciseFirebaseRepository implements GenericRepository<Exercise>
                         return (Exercise) document.toObject(Class.forName(exerciseClassName));
                     }
                 }
-
                 throw new InvalidExerciseTypeException(type);
             }
+            throw new EntityNotFoundException(id);
         } catch (InterruptedException | ExecutionException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-        return null;
     }
 
     /**

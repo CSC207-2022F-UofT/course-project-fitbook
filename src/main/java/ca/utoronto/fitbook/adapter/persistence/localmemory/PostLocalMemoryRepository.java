@@ -1,6 +1,7 @@
 package ca.utoronto.fitbook.adapter.persistence.localmemory;
 
 import ca.utoronto.fitbook.adapter.persistence.GenericRepository;
+import ca.utoronto.fitbook.application.port.in.EntityNotFoundException;
 import ca.utoronto.fitbook.application.port.in.LoadPostPort;
 import ca.utoronto.fitbook.application.port.out.SavePostPort;
 import ca.utoronto.fitbook.entity.Post;
@@ -17,7 +18,9 @@ public class PostLocalMemoryRepository implements GenericRepository<Post>, LoadP
      * @return the post with the given Id
      */
     @Override
-    public Post getById(String id) {
+    public Post getById(String id) throws EntityNotFoundException {
+        if (!datastore.containsKey(id))
+            throw new EntityNotFoundException(id);
         return datastore.get(id);
     }
 
@@ -34,7 +37,7 @@ public class PostLocalMemoryRepository implements GenericRepository<Post>, LoadP
      * @return the post with the given Id
      */
     @Override
-    public Post loadPost(String id) {
+    public Post loadPost(String id) throws EntityNotFoundException {
         return getById(id);
     }
 

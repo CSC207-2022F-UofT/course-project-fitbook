@@ -1,6 +1,7 @@
 package ca.utoronto.fitbook.adapter.persistence.firebase;
 
 import ca.utoronto.fitbook.adapter.persistence.GenericRepository;
+import ca.utoronto.fitbook.application.port.in.EntityNotFoundException;
 import ca.utoronto.fitbook.application.port.in.LoadPostPort;
 import ca.utoronto.fitbook.application.port.out.SavePostPort;
 import com.google.api.core.ApiFuture;
@@ -22,19 +23,20 @@ public class PostFirebaseRepository implements GenericRepository<Post>, LoadPost
     /**
      * @param id Id of the post
      * @return the post with the given Id
+     * @throws EntityNotFoundException If the post doesn't exist
      */
     @Override
-    public Post getById(String id) {
+    public Post getById(String id) throws EntityNotFoundException {
         ApiFuture<DocumentSnapshot> future = datastore.getCollection("posts").document(id).get();
         try {
             DocumentSnapshot document = future.get();
             if (document.exists()) {
                 return document.toObject(Post.class);
             }
+            throw new EntityNotFoundException(id);
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
-        return null;
     }
 
     /**
@@ -48,9 +50,10 @@ public class PostFirebaseRepository implements GenericRepository<Post>, LoadPost
     /**
      * @param id Id of the post
      * @return the post with the given Id
+     * @throws EntityNotFoundException If the post is not found
      */
     @Override
-    public Post loadPost(String id) {
+    public Post loadPost(String id) throws EntityNotFoundException {
         return getById(id);
     }
 

@@ -1,6 +1,7 @@
 package ca.utoronto.fitbook.adapter.persistence.localmemory;
 
 import ca.utoronto.fitbook.adapter.persistence.GenericRepository;
+import ca.utoronto.fitbook.application.port.in.EntityNotFoundException;
 import ca.utoronto.fitbook.entity.Exercise;
 
 import java.util.HashMap;
@@ -15,7 +16,9 @@ public class ExerciseLocalMemoryRepository implements GenericRepository<Exercise
      * @return the exercise with the given Id
      */
     @Override
-    public Exercise getById(String id) {
+    public Exercise getById(String id) throws EntityNotFoundException {
+        if (!datastore.containsKey(id))
+            throw new EntityNotFoundException(id);
         return datastore.get(id);
     }
 
