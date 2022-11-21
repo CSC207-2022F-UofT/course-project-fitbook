@@ -1,5 +1,6 @@
 package ca.utoronto.fitbook.adapter.web;
 
+import ca.utoronto.fitbook.adapter.web.model.UserProfileModel;
 import ca.utoronto.fitbook.application.port.in.UserProfileUseCase;
 import ca.utoronto.fitbook.application.port.in.command.UserProfileCommand;
 import ca.utoronto.fitbook.application.port.out.response.UserProfileResponse;
@@ -18,16 +19,17 @@ public class UserProfileController
     @GetMapping(path = "/profile/{userId}")
     String userProfile(Model model, @PathVariable UserProfileCommand userId) {
         UserProfileResponse response = userProfileUseCase.createProfile(userId);
-
-        model.addAttribute("id", userId.getUserId());
-        model.addAttribute("name", response.getName());
-        model.addAttribute("followingSize", response.getFollowingSize());
-        model.addAttribute("followerSize", response.getFollowerSize());
-        model.addAttribute("joinedDate", response.getJoinDate());
-        model.addAttribute("likedPosts", response.getLikedPostList());
-        model.addAttribute("userPosts", response.getPostList());
-        model.addAttribute("userExercises", response.getUserExercises());
+        UserProfileModel profileModel = new UserProfileModel(
+                userId.getUserId(),
+                response.getName(),
+                response.getFollowingSize(),
+                response.getFollowerSize(),
+                response.getJoinDate(),
+                response.getPostList(),
+                response.getLikedPostList(),
+                response.getUserExercises()
+        );
+        model.addAttribute("profile", profileModel);
         return "profile";
-
     }
 }

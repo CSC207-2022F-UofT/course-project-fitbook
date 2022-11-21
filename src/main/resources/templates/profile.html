@@ -58,24 +58,24 @@
 <a href="/" class="button home">Home</a>
 <div class="profile-card">
     <div class="header">
-        <h1 th:text="${name}">Username</h1>
-        <a th:href="@{/follow/{id}(id=${id})}" class="button">Follow</a>
+        <h1 th:text="${profile.name}">Username</h1>
+        <a th:href="@{/follow/{id}(id=${profile.id})}" class="button">Follow</a>
     </div>
     <div class="header">
-        <p>Followers: <span th:text="${followerSize}"></span></p>
-        <p>Following: <span th:text="${followingSize}"></span></p>
-        <p>Joined <span th:text="${joinedDate}"></span></p>
+        <p>Followers: <span th:text="${profile.followerSize}"></span></p>
+        <p>Following: <span th:text="${profile.followingSize}"></span></p>
+        <p>Joined <span th:text="${profile.joinDate}"></span></p>
     </div>
     <h2>My Posts</h2>
     <div class="posts">
-        <div class="post-card" th:each="post : ${userPosts}">
+        <div class="post-card" th:each="post : ${profile.getPostList()}">
             <div class="header">
-                <h4 th:text="${name}">Author name</h4>
+                <h4 th:text="${profile.name}">Author name</h4>
                 <small th:text="${post.postDate}">Post Date</small>
             </div>
             <div class="exercise" th:each="exerciseId : ${post.getExerciseIdList()}">
-                <p th:text="${userExercises.get(exerciseId).getType()}"></p>
-                <span class="body-part" th:each="bodyPart : ${userExercises.get(exerciseId).getBodyParts()}" th:text="${bodyPart}"></span>
+                <p th:text="${profile.getUserExercises().get(exerciseId).getType()}"></p>
+                <span class="body-part" th:each="bodyPart : ${profile.getUserExercises().get(exerciseId).getBodyParts()}" th:text="${bodyPart}"></span>
             </div>
             <p> Likes <span th:text="${post.likes}">Post Likes</span></p>
             <p th:text="${post.description}"></p>
@@ -83,14 +83,14 @@
     </div>
     <h2>My Liked Posts</h2>
     <div class="posts">
-        <div class="post-card" th:each="post : ${likedPosts}">
+        <div class="post-card" th:each="post : ${profile.getLikedPostList()}">
             <div class="header">
                 <h4 th:text="${name}">Author name</h4>
                 <small th:text="${post.postDate}">Post Date</small>
             </div>
             <div class="exercise" th:each="exerciseId : ${post.getExerciseIdList()}">
-                <p th:text="${userExercises.get(exerciseId).getType()}"></p>
-                <span class="body-part" th:each="bodyPart : ${userExercises.get(exerciseId).getBodyParts()}" th:text="${bodyPart}"></span>
+                <p th:text="${profile.getUserExercises().get(exerciseId).getType()}"></p>
+                <span class="body-part" th:each="bodyPart : ${profile.getUserExercises().get(exerciseId).getBodyParts()}" th:text="${bodyPart}"></span>
             </div>
             <p> Likes <span th:text="${post.likes}">Post Likes</span></p>
             <p th:text="${post.description}"></p>
