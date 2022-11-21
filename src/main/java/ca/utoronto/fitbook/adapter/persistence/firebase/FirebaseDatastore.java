@@ -1,4 +1,4 @@
-package datastore;
+package ca.utoronto.fitbook.adapter.persistence.firebase;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.firestore.CollectionReference;
@@ -11,29 +11,29 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class Datastore
+public class FirebaseDatastore
 {
     private static final String DATABASE_URL = "https://fitbook-746a5.us-east1.firebaseio.com/";
     private final Firestore database;
-    private static volatile Datastore instance;
+    private static volatile FirebaseDatastore instance;
 
     public CollectionReference getCollection(String collection) {
         return database.collection(collection);
     }
 
-    public static Datastore getInstance() {
+    public static FirebaseDatastore getInstance() {
         if (instance != null) {
             return instance;
         }
-        synchronized (Datastore.class) {
+        synchronized (FirebaseDatastore.class) {
             if (instance == null) {
-                instance = new Datastore();
+                instance = new FirebaseDatastore();
             }
             return instance;
         }
     }
 
-    private Datastore() {
+    private FirebaseDatastore() {
         try {
             InputStream serviceAccount = new FileInputStream("fitbook.json");
             FirebaseOptions options = FirebaseOptions.builder()
