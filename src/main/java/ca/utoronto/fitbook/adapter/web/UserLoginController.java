@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class UserLoginController {
     private final UserLoginUseCase userLoginUseCase;
 
-    @PostMapping(path = "/post")
-    String createPost(Model model, @RequestBody UserLoginCommand command) {
+    @PostMapping(path = "/login")
+    String UserLogin(Model model, @RequestBody UserLoginCommand command) {
         UserLoginResponse response = userLoginUseCase.loginUser(command);
         model.addAttribute("id", response.getId());
         return "index";
