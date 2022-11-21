@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${name}">Profile</title>
+    <style>
+        body{
+            margin: 0;
+            height: 100vh;
+            width: 100vw;
+            background-color: #4158D0;
+            background-image: linear-gradient(43deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%);
+
+        }
+        .profile-card{
+            font-family: "Helvetica Neue",serif;
+            margin: 0 auto;
+            width: 50%;
+            height: 60%;
+            display: flex;
+            flex-direction: column;
+        }
+        .header{
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .button{
+            padding: 10px;
+            color: white;
+            background-color: cornflowerblue;
+            border-radius: 8%;
+            text-decoration: none;
+        }
+
+        .home{
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+
+        .post-card{
+            width: 70%;
+            box-shadow: 0 .1rem 1rem rgba(0, 0, 0, 0.1);
+            border-radius: 1em;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            background: #ECE9E6;
+            background: linear-gradient(to right, #FFFFFF, #ECE9E6);
+            padding: 5%;
+        }
+
+    </style>
+</head>
+<body>
+<a href="/" class="button home">Home</a>
+<div class="profile-card">
+    <div class="header">
+        <h1 th:text="${name}">Username</h1>
+        <a th:href="@{/follow/{id}(id=${id})}" class="button">Follow</a>
+    </div>
+    <div class="header">
+        <p>Followers: <span th:text="${followerSize}"></span></p>
+        <p>Following: <span th:text="${followingSize}"></span></p>
+        <p>Joined <span th:text="${joinedDate}"></span></p>
+    </div>
+    <h2>My Posts</h2>
+    <div class="posts">
+        <div class="post-card" th:each="post : ${userPosts}">
+            <div class="header">
+                <h4 th:text="${name}">Author name</h4>
+                <small th:text="${post.postDate}">Post Date</small>
+            </div>
+            <div class="exercise" th:each="exerciseId : ${post.getExerciseIdList()}">
+                <p th:text="${userExercises.get(exerciseId).getType()}"></p>
+                <span class="body-part" th:each="bodyPart : ${userExercises.get(exerciseId).getBodyParts()}" th:text="${bodyPart}"></span>
+            </div>
+            <p> Likes <span th:text="${post.likes}">Post Likes</span></p>
+            <p th:text="${post.description}"></p>
+        </div>
+    </div>
+    <h2>My Liked Posts</h2>
+    <div class="posts">
+        <div class="post-card" th:each="post : ${likedPosts}">
+            <div class="header">
+                <h4 th:text="${name}">Author name</h4>
+                <small th:text="${post.postDate}">Post Date</small>
+            </div>
+            <div class="exercise" th:each="exerciseId : ${post.getExerciseIdList()}">
+                <p th:text="${userExercises.get(exerciseId).getType()}"></p>
+                <span class="body-part" th:each="bodyPart : ${userExercises.get(exerciseId).getBodyParts()}" th:text="${bodyPart}"></span>
+            </div>
+            <p> Likes <span th:text="${post.likes}">Post Likes</span></p>
+            <p th:text="${post.description}"></p>
+        </div>
+    </div>
+</div>
+</body>
+</html>
