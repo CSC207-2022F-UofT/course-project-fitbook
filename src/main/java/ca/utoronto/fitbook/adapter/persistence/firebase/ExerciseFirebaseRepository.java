@@ -66,7 +66,7 @@ public class ExerciseFirebaseRepository implements GenericRepository<Exercise>, 
     }
 
     /**
-     * @param exerciseIds The post ids to be fetched
+     * @param exerciseIds The exercise ids to be fetched
      * @return A list of exercises
      * @throws EntityNotFoundException If a single exercise is not found
      */
