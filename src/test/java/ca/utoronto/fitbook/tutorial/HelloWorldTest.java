@@ -1,5 +1,6 @@
-package tutorial;
+package ca.utoronto.fitbook.tutorial;
 
+import ca.utoronto.fitbook.tutorial.HelloWorld;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -1,11 +1,8 @@
-package tutorial;
+package ca.utoronto.fitbook.tutorial;
 
 public class HelloWorld {
 
     public static void main(String[] args) {
-        for (int i = 1; i <= 100; i++) {
-            System.out.println(convert(i));
-        }
     }
 
     public static String convert(int decide) {
