@@ -1,5 +1,6 @@
 package ca.utoronto.fitbook.adapter.persistence.firebase;
 
+import ca.utoronto.fitbook.adapter.persistence.ExerciseTypeToClassMap;
 import ca.utoronto.fitbook.adapter.persistence.GenericRepository;
 import ca.utoronto.fitbook.entity.Exercise;
 import ca.utoronto.fitbook.entity.RepetitiveExercise;
@@ -40,14 +41,16 @@ public class ExerciseFirebaseRepository implements GenericRepository<Exercise>
             DocumentSnapshot document = future.get();
             if (document.exists()) {
                 String type = document.getString("type");
-                if (Objects.equals(type, Exercise.ExerciseType.REPETITIVE.toString()))
-                    return document.toObject(RepetitiveExercise.class);
-                else if (Objects.equals(type, Exercise.ExerciseType.TEMPORAL.toString()))
-                    return document.toObject(TemporalExercise.class);
+                for (Exercise.ExerciseType exerciseType : Exercise.ExerciseType.values()) {
+                    if (Objects.equals(type, exerciseType.toString())) {
+                        String exerciseClassName = ExerciseTypeToClassMap.get(exerciseType);
+                        return (Exercise) document.toObject(Class.forName(exerciseClassName));
+                    }
+                }
 
                 throw new InvalidExerciseTypeException(type);
             }
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (InterruptedException | ExecutionException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
         return null;
