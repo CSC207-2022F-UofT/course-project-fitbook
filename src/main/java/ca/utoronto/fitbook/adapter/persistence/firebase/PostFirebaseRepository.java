@@ -2,6 +2,7 @@ package ca.utoronto.fitbook.adapter.persistence.firebase;
 
 import ca.utoronto.fitbook.adapter.persistence.GenericRepository;
 import ca.utoronto.fitbook.application.port.in.EntityNotFoundException;
+import ca.utoronto.fitbook.application.port.in.LoadPostListPort;
 import ca.utoronto.fitbook.application.port.in.LoadPostPort;
 import ca.utoronto.fitbook.application.port.out.SavePostPort;
 import com.google.api.core.ApiFuture;
@@ -9,10 +10,12 @@ import com.google.cloud.firestore.DocumentSnapshot;
 import ca.utoronto.fitbook.entity.Post;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @Repository
-public class PostFirebaseRepository implements GenericRepository<Post>, LoadPostPort, SavePostPort
+public class PostFirebaseRepository implements GenericRepository<Post>, LoadPostPort, SavePostPort, LoadPostListPort
 {
     private final FirebaseDatastore datastore;
 
@@ -63,5 +66,19 @@ public class PostFirebaseRepository implements GenericRepository<Post>, LoadPost
     @Override
     public void savePost(Post post) {
         save(post);
+    }
+
+    /**
+     * @param postIds The post ids to be fetched
+     * @return A list of posts
+     * @throws EntityNotFoundException If a single post is not found
+     */
+    @Override
+    public List<Post> loadPostList(List<String> postIds) throws EntityNotFoundException {
+        List<Post> postList = new ArrayList<>();
+        for (String id : postIds) {
+            postList.add(getById(id));
+        }
+        return postList;
     }
 }
