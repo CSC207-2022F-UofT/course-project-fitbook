@@ -1,4 +1,4 @@
-package entity;
+package ca.utoronto.fitbook.entity;
 
 import lombok.*;
 
@@ -22,5 +22,7 @@ public class Post {
     private Date postDate;
     @NonNull
     private List<String> exerciseIdList;
+    @NonNull
+    private String description;
 
 }

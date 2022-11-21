@@ -1,4 +1,4 @@
-package entity;
+package ca.utoronto.fitbook.entity;
 
 
 import lombok.*;
