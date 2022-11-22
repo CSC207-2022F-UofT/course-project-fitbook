@@ -1,8 +1,19 @@
-# Project Template
+# Fitbook
 
-This is a template repository for CSC 207 projects. 
-This repository contains starter code for a gradle project.
-It also contains workflow documents that give instructions on how to manage your Github repository and how to use Github Projects for efficient collaboration.
+Fitbook is a web application for users to share and see each other's exercise routines! The goal of this project is to provide users the opportunity to share exercise routines that they have found success with, and to take inspiration from others!
+
+Throughout the development, our team has faced many obstacles trying to get all of the features working for Fitbook to combine into a smooth experience for users to share and be guided by the experiences of others. Fitbook provides you with multiple features to allow you to interact with and take inspiration from the many users of Fitbook.
+
+Fitbook allows you to:
+
+ - Create an account and login/register!
+ - View a personalized feed of user's post when you enter the app!
+ - Make your own posts to share with other users!
+ - Like/upvote the posts of users' that you've found useful or enjoyed!
+ - Keep track of your posts and those you've liked!
+ - Search for posts of interest based on the exercises' keywords!
+ - Follow users' who interest you, and build a following!
+ - View your own and other users' profiles!
 
 ## Checklist For Your Project
 - [ ] Verify the correct settings for your project repository
