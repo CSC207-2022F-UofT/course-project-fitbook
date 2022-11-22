@@ -6,4 +6,3 @@ public interface SaveUserPort
 {
     void saveUser(User user);
 }
-
