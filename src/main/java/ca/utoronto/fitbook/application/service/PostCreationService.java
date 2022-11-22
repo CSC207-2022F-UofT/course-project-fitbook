@@ -2,8 +2,7 @@ package ca.utoronto.fitbook.application.service;
 
 import ca.utoronto.fitbook.application.port.in.*;
 import ca.utoronto.fitbook.application.port.in.command.PostCreationCommand;
-import ca.utoronto.fitbook.application.port.in.exception.EmptyListException;
-import ca.utoronto.fitbook.application.port.in.exception.UserNotFoundException;
+import ca.utoronto.fitbook.application.port.in.exception.*;
 import ca.utoronto.fitbook.application.port.out.SavePostPort;
 import ca.utoronto.fitbook.application.port.out.response.PostCreationResponse;
 import ca.utoronto.fitbook.entity.Post;
@@ -18,30 +17,31 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostCreationService implements PostCreationUseCase{
     private final SavePostPort savePostPort;
-
     private final LoadUserPort loadUserPort;
-
     private final CheckUserExistsPort checkUserExistsPort;
+    private final LoadExerciseListPort loadExerciseListPort;
 
     @Override
     public PostCreationResponse createPost(PostCreationCommand command) {
-
         // Certify user existence
         String userId = command.getUserID();
-        if (!checkUserExistsPort.checkExists(userId)) {
+        if (!checkUserExistsPort.checkExists(userId))
             throw new UserNotFoundException("User does not exist");
-        }
 
-        // TODO Certify exercise existence
+        // Certify exercise existence
         List<String> exerciseIdList = command.getExerciseIdList();
+        try {
+            loadExerciseListPort.loadExerciseList(exerciseIdList);
+        } catch (EntityNotFoundException e) {
+            throw new ExerciseInListNotFoundException();
+        }
 
         String description = command.getDescription();
         Date date = new Date();
 
         // Check if exercise list is empty, throw exception if so
-        if (exerciseIdList.size() == 0) {
+        if (exerciseIdList.size() == 0)
             throw new EmptyListException();
-        }
 
         // Create new post using given information
         Post newPost = Post.builder()
