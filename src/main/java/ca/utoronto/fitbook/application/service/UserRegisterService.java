@@ -23,17 +23,16 @@ public class UserRegisterService implements UserRegisterUseCase {
      */
     @Override
     public UserRegisterResponse createUser(UserRegisterCommand command){
-        if (findUserByNamePort.findByName(command.getName())) {
+        if (findUserByNamePort.findByName(command.getName()))
             throw  new UsernameAlreadyExists();
-        } else if (!command.getPassword().equals(command.getRepeatedPassword())) {
+        if (!command.getPassword().equals(command.getRepeatedPassword()))
             throw new PasswordNotMatch();
-        } else if (command.getName().length() > 40){
+        if (command.getName().length() > 40)
             throw new NameTooLong(command);
-        } else if (command.getPassword().length() < 8){
+        if (command.getPassword().length() < 8)
             throw new PasswordTooShort();
-        } else if (command.getPassword().length() > 40){
+        if (command.getPassword().length() > 40)
             throw new PasswordTooLong(command);
-        }
         var user = User.builder()
                 .likedPostIdList(new ArrayList<>())
                 .followingIdList(new ArrayList<>())
