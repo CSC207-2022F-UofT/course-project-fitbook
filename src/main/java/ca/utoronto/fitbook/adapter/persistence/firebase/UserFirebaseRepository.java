@@ -60,6 +60,14 @@ public class UserFirebaseRepository implements GenericRepository<User>, LoadUser
     }
 
     /**
+     * @param user The user to be saved
+     */
+    @Override
+    public void saveUser(User user) {
+        save(user);
+    }
+
+    /**
      * @param name Name of user to fetch
      * @return If the user exists, return the user
      * @throws UsernameCollisionException If there are more than one users with the same name
