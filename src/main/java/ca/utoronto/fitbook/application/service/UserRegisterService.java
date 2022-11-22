@@ -61,13 +61,13 @@ public class UserRegisterService implements UserRegisterUseCase {
     @ResponseStatus(value= HttpStatus.NOT_ACCEPTABLE, reason="Name is too long")
     public class NameTooLong extends RuntimeException {
         public NameTooLong(UserRegisterCommand command) {
-            super("Name is too long by "+ ((command.getName().length())-40)+" characters");
+            super("Name is too long by " + ((command.getName().length()) - 40) + " characters");
         }
     }
     @ResponseStatus(value= HttpStatus.NOT_ACCEPTABLE, reason="Password is too long")
     public class PasswordTooLong extends RuntimeException {
         public PasswordTooLong(UserRegisterCommand command) {
-            super("Password is too long by "+ ((command.getName().length())-40)+" characters");
+            super("Password is too long by " + ((command.getName().length()) - 40) + " characters");
         }
     }
     @ResponseStatus(value= HttpStatus.NOT_ACCEPTABLE, reason="Password is too short")
