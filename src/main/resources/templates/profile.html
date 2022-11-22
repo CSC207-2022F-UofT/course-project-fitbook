@@ -6,10 +6,9 @@
     <style>
         body{
             margin: 0;
-            height: 100vh;
+            min-height: 100vh;
             width: 100vw;
-            background-color: #4158D0;
-            background-image: linear-gradient(43deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%);
+            background-color: #fff8eb;
 
         }
         .profile-card{
@@ -29,7 +28,7 @@
         .button{
             padding: 10px;
             color: white;
-            background-color: cornflowerblue;
+            background-color: #ffb34a;
             border-radius: 8%;
             text-decoration: none;
         }
@@ -47,8 +46,8 @@
             margin: 0 auto;
             display: flex;
             flex-direction: column;
-            background: #ECE9E6;
-            background: linear-gradient(to right, #FFFFFF, #ECE9E6);
+            background: #ffb34a;
+            background: linear-gradient(to right, #ffb34a, #ffb10b);
             padding: 5%;
         }
 
@@ -89,10 +88,9 @@
                 <small th:text="${post.postDate}">Post Date</small>
             </div>
             <div class="exercise" th:each="exerciseId : ${post.getExerciseIdList()}">
-                <p th:text="${profile.getUserExercises().get(exerciseId).getType()}"></p>
                 <span class="body-part" th:each="bodyPart : ${profile.getUserExercises().get(exerciseId).getBodyParts()}" th:text="${bodyPart}"></span>
             </div>
-            <p> Likes <span th:text="${post.likes}">Post Likes</span></p>
+            <p> <span th:text="${post.likes}">Post Likes</span> likes</p>
             <p th:text="${post.description}"></p>
         </div>
     </div>
