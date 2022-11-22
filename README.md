@@ -24,7 +24,7 @@ To run the Spring application, first clone this GitHub repository to wherever yo
 
 ```shell
 cd ~/PROJECT_REPOSITORY_LOCATION
-git clone GITHUB_REPOSITORY_URL
+git clone https://github.com/CSC207-2022F-UofT/course-project-fitbook.git
 ```
 
 Next, open the project in your favourite code editor!
