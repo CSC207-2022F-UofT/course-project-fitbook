@@ -17,7 +17,7 @@ public class UpvotePostsController {
 
     @PostMapping(path = "/upvote")
     String upvotePosts(Model model, @RequestBody UpvotePostsCommand command) {
-        UpvotePostsResponse response = UpvotePostsUsecase.upvotePost(command);
+        UpvotePostsResponse response = upvotePostsUsecase.upvotePost(command);
         model.addAttribute("likes", response.getLikes());
         return "likes";
     }
