@@ -27,7 +27,8 @@ public class UserProfileController
                 response.getJoinDate(),
                 response.getPostList(),
                 response.getLikedPostList(),
-                response.getUserExercises()
+                response.getUserExercises(),
+                response.getTotalLikes()
         );
         model.addAttribute("profile", profileModel);
         return "profile";
