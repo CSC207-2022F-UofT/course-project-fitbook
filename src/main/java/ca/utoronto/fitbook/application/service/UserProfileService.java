@@ -49,6 +49,6 @@ public class UserProfileService implements UserProfileUseCase
         String cleanDate = dateFormatter.format(user.getJoinDate());
 
 
-        return new UserProfileResponse(user.getId(), user.getName(), user.getFollowingIdList().size(), user.getFollowersIdList().size(), cleanDate, userPosts, likedPosts, userExercises);
+        return new UserProfileResponse(user.getId(), user.getName(), user.getFollowingIdList().size(), user.getFollowersIdList().size(), cleanDate, userPosts, likedPosts, userExercises, user.getTotalLikes());
     }
 }
