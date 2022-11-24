@@ -38,9 +38,9 @@ public class UserProfileService implements UserProfileUseCase
         List<Post> likedPosts = loadPostListPort.loadPostList(user.getLikedPostIdList());
         Map<String, Exercise> userExercises = new HashMap<>();
 
-        for(Post post : userPosts){
+        for (Post post : userPosts) {
             List<Exercise> postExercises = loadExerciseListPort.loadExerciseList(post.getExerciseIdList());
-            for(Exercise exercise: postExercises){
+            for (Exercise exercise: postExercises) {
                 userExercises.put(exercise.getId(), exercise);
             }
         }
@@ -48,7 +48,14 @@ public class UserProfileService implements UserProfileUseCase
         DateFormat dateFormatter = new SimpleDateFormat("MMMM dd, yyyy");
         String cleanDate = dateFormatter.format(user.getJoinDate());
 
-
-        return new UserProfileResponse(user.getId(), user.getName(), user.getFollowingIdList().size(), user.getFollowersIdList().size(), cleanDate, userPosts, likedPosts, userExercises, user.getTotalLikes());
+        return new UserProfileResponse(user.getId(),
+                                        user.getName(),
+                                        user.getFollowingIdList().size(),
+                                        user.getFollowersIdList().size(),
+                                        cleanDate,
+                                        userPosts,
+                                        likedPosts,
+                                        userExercises,
+                                        user.getTotalLikes());
     }
 }
