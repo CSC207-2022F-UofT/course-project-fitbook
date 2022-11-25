@@ -8,6 +8,8 @@ import ca.utoronto.fitbook.application.port.out.SavePostPort;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentSnapshot;
 import ca.utoronto.fitbook.entity.Post;
+import com.google.cloud.firestore.Firestore;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -17,11 +19,12 @@ import java.util.concurrent.ExecutionException;
 @Repository
 public class PostFirebaseRepository implements GenericRepository<Post>, LoadPostPort, SavePostPort, LoadPostListPort
 {
-    private final FirebaseDatastore datastore;
 
-    public PostFirebaseRepository() {
-        this.datastore = FirebaseDatastore.getInstance();
-    }
+    @Autowired
+    private Firestore firestore;
+
+    private static final String COLLECTION_NAME = "posts";
+
 
     /**
      * @param id Id of the post
@@ -30,7 +33,7 @@ public class PostFirebaseRepository implements GenericRepository<Post>, LoadPost
      */
     @Override
     public Post getById(String id) throws EntityNotFoundException {
-        ApiFuture<DocumentSnapshot> future = datastore.getCollection("posts").document(id).get();
+        ApiFuture<DocumentSnapshot> future = firestore.collection(COLLECTION_NAME).document(id).get();
         try {
             DocumentSnapshot document = future.get();
             if (document.exists()) {
@@ -47,7 +50,7 @@ public class PostFirebaseRepository implements GenericRepository<Post>, LoadPost
      */
     @Override
     public void save(Post entity) {
-        datastore.getCollection("posts").document(entity.getId()).set(entity);
+        firestore.collection(COLLECTION_NAME).document(entity.getId()).set(entity);
     }
 
     /**
