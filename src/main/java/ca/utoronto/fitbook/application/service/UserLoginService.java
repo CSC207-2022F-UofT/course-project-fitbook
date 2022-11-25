@@ -23,10 +23,10 @@ public class UserLoginService implements UserLoginUseCase {
     public UserLoginResponse loginUser(UserLoginCommand command){
         if(!findUserByNamePort.findByName(command.getName())){
             throw new UserNotFound();
-        } else if (loadUserByNamePort.loadUser(command.getName()).getPassword() != command.getPassword()){
+        } else if (loadUserByNamePort.loadUserByName(command.getName()).getPassword() != command.getPassword()){
             throw new IncorrectPassword();
         }
-        User user = loadUserByNamePort.loadUser(command.getName());
+        User user = loadUserByNamePort.loadUserByName(command.getName());
         return new UserLoginResponse(user.getId());
     }
     @ResponseStatus(value= HttpStatus.UNAUTHORIZED, reason="Incorrect Password")

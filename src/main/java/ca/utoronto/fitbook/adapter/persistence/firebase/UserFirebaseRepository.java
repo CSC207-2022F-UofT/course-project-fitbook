@@ -2,7 +2,10 @@ package ca.utoronto.fitbook.adapter.persistence.firebase;
 
 import ca.utoronto.fitbook.adapter.persistence.GenericRepository;
 import ca.utoronto.fitbook.application.port.in.EntityNotFoundException;
+import ca.utoronto.fitbook.application.port.in.FindUserByNamePort;
+import ca.utoronto.fitbook.application.port.in.LoadUserByNamePort;
 import ca.utoronto.fitbook.application.port.in.LoadUserPort;
+import ca.utoronto.fitbook.application.port.out.SaveUserPort;
 import ca.utoronto.fitbook.entity.User;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentSnapshot;
@@ -11,8 +14,7 @@ import org.springframework.stereotype.Repository;
 import java.util.concurrent.ExecutionException;
 
 @Repository
-public class UserFirebaseRepository implements GenericRepository<User>, LoadUserPort
-{
+public class UserFirebaseRepository implements GenericRepository<User>, LoadUserPort, LoadUserByNamePort, FindUserByNamePort, SaveUserPort {
     private final FirebaseDatastore datastore;
 
     public UserFirebaseRepository() {
@@ -52,5 +54,25 @@ public class UserFirebaseRepository implements GenericRepository<User>, LoadUser
     @Override
     public User loadUser(String id) {
         return getById(id);
+    }
+
+    /**
+     * @param name
+     * @return
+     */
+    @Override
+    public User loadUserByName(String name) {
+        //TODO implement this method
+        return null;
+    }
+
+    /**
+     * @param userName
+     * @return
+     */
+    @Override
+    public boolean findByName(String userName) {
+        //TODO implement this method
+        return false;
     }
 }
