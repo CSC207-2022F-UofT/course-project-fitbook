@@ -23,7 +23,9 @@ public class UserLoginService implements UserLoginUseCase {
     public UserLoginResponse loginUser(UserLoginCommand command){
         if(!findUserByNamePort.findByName(command.getName())){
             throw new UserNotFound();
-        } else if (loadUserByNamePort.loadUserByName(command.getName()).getPassword() != command.getPassword()){
+
+        User user = loadUserByNamePort.loadUserByName(command.getName());
+        if (!user.getPassword().equals(command.getPassword()))
             throw new IncorrectPassword();
         }
         User user = loadUserByNamePort.loadUserByName(command.getName());
