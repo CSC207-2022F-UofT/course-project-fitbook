@@ -10,6 +10,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.annotation.PostConstruct;
 import java.io.FileInputStream;
@@ -41,8 +43,14 @@ public class FirebaseConfiguration {
                     .build();
             FirebaseApp.initializeApp(options);
         } catch (IOException e)  {
-            System.err.println("Error: invalid database credentials.");
-            throw new RuntimeException(e);
+            throw new FirebaseConfigurationException();
+        }
+    }
+
+    @ResponseStatus(value= HttpStatus.INTERNAL_SERVER_ERROR, reason="Failed to configure to Firebase")
+    public static class FirebaseConfigurationException extends RuntimeException {
+        public FirebaseConfigurationException() {
+            super("Failed to connect to Firebase");
         }
     }
 }
