@@ -6,5 +6,4 @@ import ca.utoronto.fitbook.entity.User;
 
 public interface UpvotePostsUsecase {
     UpvotePostsResponse upvotePost(UpvotePostsCommand command);
-
 }
