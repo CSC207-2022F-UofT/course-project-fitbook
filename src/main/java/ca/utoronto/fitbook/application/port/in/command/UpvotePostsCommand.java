@@ -10,5 +10,4 @@ public class UpvotePostsCommand {
     String postId;
     @NonNull
     String userId;
-
 }
