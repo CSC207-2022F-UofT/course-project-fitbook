@@ -28,11 +28,17 @@ public class FirebaseConfiguration {
     @Value("${fitbook.config-file}")
     private String configFile;
 
+    /**
+     * @return Firestore instance
+     */
     @Bean
     public Firestore getFirestore(){
         return FirestoreClient.getFirestore();
     }
 
+    /**
+     * Initializes instance of FirebaseApp
+     */
     @PostConstruct
     public void init() {
         try {
