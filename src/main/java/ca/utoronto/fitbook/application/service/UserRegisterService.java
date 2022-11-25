@@ -23,17 +23,28 @@ public class UserRegisterService implements UserRegisterUseCase {
      */
     @Override
     public UserRegisterResponse createUser(UserRegisterCommand command){
+        // Verify the username isn't taken
         if (findUserByNamePort.findByName(command.getName()))
-            throw  new UsernameAlreadyExists();
+            throw new UsernameAlreadyExists();
+
+        // Make sure passwords match
         if (!command.getPassword().equals(command.getRepeatedPassword()))
             throw new PasswordNotMatch();
+
+        // Check username constraints
         if (command.getName().length() > 40)
             throw new NameTooLong(command);
+        if (command.getName().length() < 3)
+            throw new NameTooShort();
+
+        // Check password constraints
         if (command.getPassword().length() < 8)
             throw new PasswordTooShort();
         if (command.getPassword().length() > 40)
             throw new PasswordTooLong(command);
-        var user = User.builder()
+
+        // Create and save the new user
+        User user = User.builder()
                 .likedPostIdList(new ArrayList<>())
                 .followingIdList(new ArrayList<>())
                 .followersIdList(new ArrayList<>())
@@ -43,34 +54,48 @@ public class UserRegisterService implements UserRegisterUseCase {
                 .joinDate(new Date())
                 .build();
         saveUserPort.save(user);
+
+        // Return the user's id
         return new UserRegisterResponse(user.getId());
     }
-    @ResponseStatus(value= HttpStatus.CREATED, reason="Username already exists")
-    public class UsernameAlreadyExists extends RuntimeException {
+
+    @ResponseStatus(value=HttpStatus.CONFLICT, reason="Username already exists")
+    public static class UsernameAlreadyExists extends RuntimeException {
         public UsernameAlreadyExists() {
             super("Username already exists.");
         }
     }
-    @ResponseStatus(value= HttpStatus.NOT_ACCEPTABLE, reason="Password don't match")
-    public class PasswordNotMatch extends RuntimeException {
+
+    @ResponseStatus(value=HttpStatus.UNAUTHORIZED, reason="Password don't match")
+    public static class PasswordNotMatch extends RuntimeException {
         public PasswordNotMatch() {
             super("Password don't match.");
         }
     }
-    @ResponseStatus(value= HttpStatus.NOT_ACCEPTABLE, reason="Name is too long")
-    public class NameTooLong extends RuntimeException {
+
+    @ResponseStatus(value=HttpStatus.UNPROCESSABLE_ENTITY, reason="Name is too long")
+    public static class NameTooLong extends RuntimeException {
         public NameTooLong(UserRegisterCommand command) {
             super("Name is too long by " + ((command.getName().length()) - 40) + " characters");
         }
     }
-    @ResponseStatus(value= HttpStatus.NOT_ACCEPTABLE, reason="Password is too long")
-    public class PasswordTooLong extends RuntimeException {
+
+    @ResponseStatus(value=HttpStatus.UNPROCESSABLE_ENTITY, reason="Name is too short")
+    public static class NameTooShort extends RuntimeException {
+        public NameTooShort() {
+            super("Name is too short");
+        }
+    }
+
+    @ResponseStatus(value=HttpStatus.UNPROCESSABLE_ENTITY, reason="Password is too long")
+    public static class PasswordTooLong extends RuntimeException {
         public PasswordTooLong(UserRegisterCommand command) {
             super("Password is too long by " + ((command.getName().length()) - 40) + " characters");
         }
     }
-    @ResponseStatus(value= HttpStatus.NOT_ACCEPTABLE, reason="Password is too short")
-    public class PasswordTooShort extends RuntimeException {
+
+    @ResponseStatus(value=HttpStatus.UNPROCESSABLE_ENTITY, reason="Password is too short")
+    public static class PasswordTooShort extends RuntimeException {
         public PasswordTooShort() {
             super("Password is too short");
         }
