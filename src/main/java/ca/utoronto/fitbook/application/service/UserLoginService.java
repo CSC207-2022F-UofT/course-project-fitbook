@@ -15,28 +15,30 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class UserLoginService implements UserLoginUseCase {
     private final LoadUserByNamePort loadUserByNamePort;
     private final FindUserByNamePort findUserByNamePort;
+
     /**
      * @param command The username and password coming in from the user
      * @return the user id
      */
     @Override
-    public UserLoginResponse loginUser(UserLoginCommand command){
-        if(!findUserByNamePort.findByName(command.getName())){
+    public UserLoginResponse loginUser(UserLoginCommand command) {
+        if(!findUserByNamePort.findByName(command.getName()))
             throw new UserNotFound();
-        } else if (loadUserByNamePort.loadUserByName(command.getName()).getPassword() != command.getPassword()){
-            throw new IncorrectPassword();
-        }
+
         User user = loadUserByNamePort.loadUserByName(command.getName());
+        if (!user.getPassword().equals(command.getPassword()))
+            throw new IncorrectPassword();
+
         return new UserLoginResponse(user.getId());
     }
-    @ResponseStatus(value= HttpStatus.UNAUTHORIZED, reason="Incorrect Password")
-    public class IncorrectPassword extends RuntimeException {
+    @ResponseStatus(value=HttpStatus.UNAUTHORIZED, reason="Incorrect Password")
+    public static class IncorrectPassword extends RuntimeException {
         public IncorrectPassword() {
             super("Incorrect Password.");
         }
     }
-    @ResponseStatus(value= HttpStatus.UNPROCESSABLE_ENTITY, reason="User Not Found")
-    public class UserNotFound extends RuntimeException {
+    @ResponseStatus(value=HttpStatus.UNPROCESSABLE_ENTITY, reason="User Not Found")
+    public static class UserNotFound extends RuntimeException {
         public UserNotFound() {
             super("User Not Found.");
         }
