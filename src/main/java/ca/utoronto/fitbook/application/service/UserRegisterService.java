@@ -53,7 +53,7 @@ public class UserRegisterService implements UserRegisterUseCase {
                 .password(command.getPassword())
                 .joinDate(new Date())
                 .build();
-        saveUserPort.save(user);
+        saveUserPort.saveUser(user);
 
         // Return the user's id
         return new UserRegisterResponse(user.getId());
