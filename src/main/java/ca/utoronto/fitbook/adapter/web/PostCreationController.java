@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 @RequiredArgsConstructor
@@ -15,7 +16,7 @@ public class PostCreationController {
     private final PostCreationUseCase postCreationUseCase;
 
     @PostMapping(path = "/post")
-    String createPost(Model model, PostCreationCommand command){
+    String createPost(Model model, @RequestBody PostCreationCommand command){
         PostCreationResponse outputData = postCreationUseCase.createPost(command);
         model.addAttribute("id", outputData.getPostId());
 

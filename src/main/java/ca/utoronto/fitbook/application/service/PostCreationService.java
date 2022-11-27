@@ -25,7 +25,7 @@ public class PostCreationService implements PostCreationUseCase{
     @Override
     public PostCreationResponse createPost(PostCreationCommand command) {
         // Certify user existence
-        String userId = command.getUserID();
+        String userId = command.getUserId();
         if (!checkUserExistsPort.checkUserExists(userId))
             throw new UserNotFoundException("User does not exist");
 
@@ -62,7 +62,7 @@ public class PostCreationService implements PostCreationUseCase{
         user.getPostIdList().add(newPost.getId());
 
         // Save new user information to database
-        saveUserPort.save(user);
+        saveUserPort.saveUser(user);
 
         // Create OutputData type and return it with needed information (post id)
         return new PostCreationResponse(newPost.getId());
