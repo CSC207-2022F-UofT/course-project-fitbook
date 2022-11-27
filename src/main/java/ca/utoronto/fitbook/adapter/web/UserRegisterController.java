@@ -9,15 +9,20 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.servlet.http.HttpSession;
+
 @Controller
 @RequiredArgsConstructor
 public class UserRegisterController {
     private final UserRegisterUseCase userRegisterUseCase;
 
     @PostMapping(path = "/register")
-    String UserRegister(Model model, @RequestBody UserRegisterCommand command) {
+    String registerUser(Model model, HttpSession session, @RequestBody UserRegisterCommand command) {
         UserRegisterResponse response = userRegisterUseCase.createUser(command);
+        session.setAttribute("userId", response.getId());
         model.addAttribute("id", response.getId());
+
+        // TODO: Show a register success view
         return "index";
     }
 }
