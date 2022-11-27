@@ -3,7 +3,7 @@ package ca.utoronto.fitbook.application.port.in;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR, reason = "Username collision.")
+@ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY, reason = "Username not found.")
 public class UsernameNotFoundException extends RuntimeException
 {
     public UsernameNotFoundException(String name) {
