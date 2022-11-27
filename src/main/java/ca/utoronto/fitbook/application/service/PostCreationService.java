@@ -2,7 +2,6 @@ package ca.utoronto.fitbook.application.service;
 
 import ca.utoronto.fitbook.application.port.in.*;
 import ca.utoronto.fitbook.application.port.in.command.PostCreationCommand;
-import ca.utoronto.fitbook.application.port.in.exception.*;
 import ca.utoronto.fitbook.application.port.out.SavePostPort;
 import ca.utoronto.fitbook.application.port.out.response.PostCreationResponse;
 import ca.utoronto.fitbook.entity.Post;
