@@ -13,4 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Inject Firebase Secret
+        shell: bash
+        env:
+          FIREBASE_TEST_SECRET: ${{ secrets.FIREBASE_TEST_SECRET }}
+        run: |
+          echo "$FIREBASE_TEST_SECRET" > $GITHUB_WORKSPACE/fitbook-test.json
       - uses: education/autograding@v1
