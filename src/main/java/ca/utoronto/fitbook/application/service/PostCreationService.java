@@ -3,6 +3,7 @@ package ca.utoronto.fitbook.application.service;
 import ca.utoronto.fitbook.application.port.in.*;
 import ca.utoronto.fitbook.application.port.in.command.PostCreationCommand;
 import ca.utoronto.fitbook.application.port.out.SavePostPort;
+import ca.utoronto.fitbook.application.port.out.SaveUserPort;
 import ca.utoronto.fitbook.application.port.out.response.PostCreationResponse;
 import ca.utoronto.fitbook.entity.Post;
 import ca.utoronto.fitbook.entity.User;
@@ -16,6 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostCreationService implements PostCreationUseCase{
     private final SavePostPort savePostPort;
+    private final SaveUserPort saveUserPort;
     private final LoadUserPort loadUserPort;
     private final CheckUserExistsPort checkUserExistsPort;
     private final LoadExerciseListPort loadExerciseListPort;
@@ -58,6 +60,9 @@ public class PostCreationService implements PostCreationUseCase{
 
         // Add post to user post list
         user.getPostIdList().add(newPost.getId());
+
+        // Save new user information to database
+        saveUserPort.save(user);
 
         // Create OutputData type and return it with needed information (post id)
         return new PostCreationResponse(newPost.getId());
