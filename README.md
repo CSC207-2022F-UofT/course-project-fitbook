@@ -27,11 +27,13 @@ cd ~/PROJECT_REPOSITORY_LOCATION
 git clone https://github.com/CSC207-2022F-UofT/course-project-fitbook.git
 ```
 
-Next, open the project in your favourite code editor!
+Next, open the project in IntelliJ, which can be installed [here](https://www.jetbrains.com/idea/download/#section=mac)!
 
-After doing so, open the file, course-project-fitbook/src/main/java/ca/utoronto/fitbook/FitbookApplication.java. Right click on the FitbookApplication file and click on `Run FitbookApplication.main()` and run the main method!
+After doing so, open the file, course-project-fitbook/src/main/java/ca/utoronto/fitbook/FitbookApplication.java. and run `FitbookApplication.main()`!
 
-By default, the website should be using port 8080. so access it by entering http://localhost:8080 in your web browser of choice!
+Wait a few seconds while the application builds and starts up!
+
+By default, the website should be using port 8080. so access it by visiting http://localhost:8080 in your web browser of choice!
 
 Welcome to Fitbook!
 
