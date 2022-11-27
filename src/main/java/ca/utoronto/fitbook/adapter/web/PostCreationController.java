@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 @RequiredArgsConstructor
 public class PostCreationController {
 
-    private final PostCreationUseCase interactor;
+    private final PostCreationUseCase postCreationUseCase;
 
     @PostMapping(path = "/post")
     String createPost(Model model, PostCreationCommand command){
-        PostCreationResponse outputData = interactor.createPost(command);
+        PostCreationResponse outputData = postCreationUseCase.createPost(command);
         model.addAttribute("id", outputData.getPostId());
 
         return "index";
