@@ -8,7 +8,7 @@ import java.util.List;
 @Value
 public class PostCreationCommand {
     @NonNull
-    String UserID;
+    String userId;
 
     @NonNull
     List<String> exerciseIdList;

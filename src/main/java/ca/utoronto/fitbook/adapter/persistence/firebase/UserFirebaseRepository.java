@@ -4,6 +4,7 @@ import ca.utoronto.fitbook.adapter.persistence.GenericRepository;
 import ca.utoronto.fitbook.application.exceptions.EntityNotFoundException;
 import ca.utoronto.fitbook.application.exceptions.UsernameCollisionException;
 import ca.utoronto.fitbook.application.exceptions.UsernameNotFoundException;
+import ca.utoronto.fitbook.application.port.in.CheckUserExistsPort;
 import ca.utoronto.fitbook.application.port.in.FindUserByNamePort;
 import ca.utoronto.fitbook.application.port.in.LoadUserByNamePort;
 import ca.utoronto.fitbook.application.port.in.LoadUserListPort;
@@ -28,7 +29,8 @@ public class UserFirebaseRepository
         LoadUserByNamePort,
         FindUserByNamePort,
         SaveUserPort,
-        LoadUserListPort
+        LoadUserListPort,
+        CheckUserExistsPort
 {
 
     private static final String COLLECTION_NAME = "users";
@@ -85,10 +87,15 @@ public class UserFirebaseRepository
     /**
      * @param id Id of the user
      * @return the user with the given Id
+     * @throws UserNotFoundException when user with given Id is not found
      */
     @Override
     public User loadUser(String id) {
-        return getById(id);
+        try {
+            return getById(id);
+        } catch (EntityNotFoundException e) {
+            throw new UserNotFoundException(id);
+        }
     }
 
     /**
@@ -149,5 +156,20 @@ public class UserFirebaseRepository
             userList.add(document.toObject(User.class));
         }
         return userList;
+    }
+
+    /**
+     *
+     * @param userId Id of the user to find
+     * @return Whether the user exists
+     */
+    @Override
+    public boolean checkUserExists(String userId) {
+        try {
+            loadUser(userId);
+            return true;
+        } catch (UserNotFoundException e) {
+            return false;
+        }
     }
 }
