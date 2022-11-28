@@ -2,7 +2,7 @@ package ca.utoronto.fitbook.adapter.persistence.firebase;
 
 import ca.utoronto.fitbook.adapter.persistence.ExerciseTypeToClassMap;
 import ca.utoronto.fitbook.adapter.persistence.GenericRepository;
-import ca.utoronto.fitbook.application.port.in.EntityNotFoundException;
+import ca.utoronto.fitbook.application.exceptions.EntityNotFoundException;
 import ca.utoronto.fitbook.application.port.in.LoadExerciseListPort;
 import ca.utoronto.fitbook.entity.Exercise;
 import com.google.api.core.ApiFuture;
