@@ -9,6 +9,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.servlet.http.HttpSession;
+
 @Controller
 @RequiredArgsConstructor
 public class PostCreationController {
@@ -16,7 +18,7 @@ public class PostCreationController {
     private final PostCreationUseCase postCreationUseCase;
 
     @PostMapping(path = "/post")
-    String createPost(Model model, @RequestBody PostCreationCommand command){
+    String createPost(Model model, HttpSession session, @RequestBody PostCreationCommand command){
         PostCreationResponse outputData = postCreationUseCase.createPost(command);
         model.addAttribute("id", outputData.getPostId());
 
