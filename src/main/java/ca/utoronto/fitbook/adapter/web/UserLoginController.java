@@ -6,6 +6,7 @@ import ca.utoronto.fitbook.application.port.out.response.UserLoginResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -16,13 +17,18 @@ import javax.servlet.http.HttpSession;
 public class UserLoginController {
     private final UserLoginUseCase userLoginUseCase;
 
-    @PostMapping(path = "/login")
-    String loginUser(Model model, HttpSession session, @RequestBody UserLoginCommand command) {
+    @PostMapping(path = "/login", consumes = "application/x-www-form-urlencoded")
+    String PostLoginUser(Model model, HttpSession session, UserLoginCommand command) {
         UserLoginResponse response = userLoginUseCase.loginUser(command);
         session.setAttribute("userId", response.getId());
         model.addAttribute("id", response.getId());
 
         // TODO: Show a login success view
+        return "home";
+    }
+
+    @GetMapping(path = "/login")
+    String getLoginUser(){
         return "login";
     }
 }
