@@ -23,6 +23,6 @@ public class UserLoginController {
         model.addAttribute("id", response.getId());
 
         // TODO: Show a login success view
-        return "index";
+        return "login";
     }
 }

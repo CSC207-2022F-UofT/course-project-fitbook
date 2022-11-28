@@ -23,6 +23,6 @@ public class UserRegisterController {
         model.addAttribute("id", response.getId());
 
         // TODO: Show a register success view
-        return "index";
+        return "home";
     }
 }
