@@ -42,7 +42,7 @@ public class PostCreationService implements PostCreationUseCase{
 
         // Check if exercise list is empty, throw exception if so
         if (exerciseIdList.size() == 0)
-            throw new EmptyListException();
+            throw new EmptyExerciseListException();
 
         // Create new post using given information
         Post newPost = Post.builder()
