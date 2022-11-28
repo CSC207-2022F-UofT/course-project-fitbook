@@ -27,7 +27,7 @@ public class PostCreationService implements PostCreationUseCase{
         // Certify user existence
         String userId = command.getUserId();
         if (!checkUserExistsPort.checkUserExists(userId))
-            throw new UserNotFoundException("User does not exist");
+            throw new UserNotFoundException(userId);
 
         // Certify exercise existence
         List<String> exerciseIdList = command.getExerciseIdList();
