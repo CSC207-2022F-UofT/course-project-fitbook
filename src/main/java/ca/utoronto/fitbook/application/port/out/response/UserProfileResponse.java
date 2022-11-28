@@ -1,17 +1,14 @@
 package ca.utoronto.fitbook.application.port.out.response;
 
-import ca.utoronto.fitbook.entity.Exercise;
-import ca.utoronto.fitbook.entity.Post;
 import lombok.NonNull;
 import lombok.Value;
 
 import java.util.List;
-import java.util.Map;
 
 @Value
 public class UserProfileResponse {
     @NonNull
-    String id;
+    String profileId;
     @NonNull
     String name;
     int followingSize;
@@ -19,10 +16,8 @@ public class UserProfileResponse {
     @NonNull
     String joinDate;
     @NonNull
-    List<Post> postList;
+    List<ProfilePostResponse> postList;
     @NonNull
-    List<Post> likedPostList;
-    @NonNull
-    Map<String, Exercise> userExercises;
+    List<ProfilePostResponse> likedPostList;
     int totalLikes;
 }
