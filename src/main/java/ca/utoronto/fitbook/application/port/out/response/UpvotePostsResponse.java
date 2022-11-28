@@ -6,5 +6,8 @@ import lombok.Value;
 @Value
 public class UpvotePostsResponse {
     @NonNull
-    String likes;
+    String postLikerID;
+    @NonNull
+    String postAuthorID;
+    int postLikes;
 }
