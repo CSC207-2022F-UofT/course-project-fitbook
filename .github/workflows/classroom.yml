@@ -1,4 +1,4 @@
-name: GitHub Classroom Workflow
+name: Fitbook Test Suite
 
 on: [push]
 
@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   build:
-    name: Autograding
+    name: All Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
