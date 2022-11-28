@@ -5,6 +5,7 @@ import ca.utoronto.fitbook.application.port.in.LoadPostListPort;
 import ca.utoronto.fitbook.application.port.in.LoadUserPort;
 import ca.utoronto.fitbook.application.port.in.UserProfileUseCase;
 import ca.utoronto.fitbook.application.port.in.command.UserProfileCommand;
+import ca.utoronto.fitbook.application.port.out.response.ProfilePostResponse;
 import ca.utoronto.fitbook.application.port.out.response.UserProfileResponse;
 import ca.utoronto.fitbook.entity.Exercise;
 import ca.utoronto.fitbook.entity.Post;
@@ -14,9 +15,8 @@ import org.springframework.stereotype.Service;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 
 @Service
@@ -33,29 +33,48 @@ public class UserProfileService implements UserProfileUseCase
      */
     @Override
     public UserProfileResponse createProfile(UserProfileCommand command) {
-        User user = userProfilePort.loadUser(command.getUserId());
-        List<Post> userPosts = loadPostListPort.loadPostList(user.getPostIdList());
-        List<Post> likedPosts = loadPostListPort.loadPostList(user.getLikedPostIdList());
-        Map<String, Exercise> userExercises = new HashMap<>();
+        User profileUser = userProfilePort.loadUser(command.getProfileId());
+        User currUser = userProfilePort.loadUser(command.getUserId());
+        List<Post> posts = loadPostListPort.loadPostList(profileUser.getPostIdList());
+        List<Post> likedPosts = loadPostListPort.loadPostList(profileUser.getLikedPostIdList());
 
-        for (Post post : userPosts) {
-            List<Exercise> postExercises = loadExerciseListPort.loadExerciseList(post.getExerciseIdList());
-            for (Exercise exercise: postExercises) {
-                userExercises.put(exercise.getId(), exercise);
-            }
-        }
+        List<ProfilePostResponse> profilePosts = new ArrayList<>();
+        List<ProfilePostResponse> profileLikedPosts = new ArrayList<>();
 
         DateFormat dateFormatter = new SimpleDateFormat("MMMM dd, yyyy");
-        String cleanDate = dateFormatter.format(user.getJoinDate());
 
-        return new UserProfileResponse(user.getId(),
-                                        user.getName(),
-                                        user.getFollowingIdList().size(),
-                                        user.getFollowersIdList().size(),
-                                        cleanDate,
-                                        userPosts,
-                                        likedPosts,
-                                        userExercises,
-                                        user.getTotalLikes());
+        createProfilePosts(currUser, posts, profilePosts, dateFormatter);
+
+        createProfilePosts(currUser, likedPosts, profilePosts, dateFormatter);
+
+        String dateJoined = dateFormatter.format(profileUser.getJoinDate());
+
+        return new UserProfileResponse(
+                profileUser.getId(),
+                profileUser.getName(),
+                profileUser.getFollowingIdList().size(),
+                profileUser.getFollowersIdList().size(),
+                dateJoined,
+                profilePosts,
+                profileLikedPosts,
+                profileUser.getTotalLikes());
+    }
+
+    private void createProfilePosts(User currUser, List<Post> posts, List<ProfilePostResponse> profilePosts, DateFormat dateFormatter) {
+        for (Post post : posts) {
+            List<Exercise> postExercises = loadExerciseListPort.loadExerciseList(post.getExerciseIdList());
+            String dateCreated = dateFormatter.format(post.getPostDate());
+            boolean userLiked = currUser.getLikedPostIdList().contains(post.getId());
+
+            profilePosts.add(new ProfilePostResponse(
+                    post.getId(),
+                    userProfilePort.loadUser(post.getAuthorId()),
+                    post.getLikes(),
+                    dateCreated,
+                    postExercises,
+                    post.getDescription(),
+                    userLiked
+            ));
+        }
     }
 }
