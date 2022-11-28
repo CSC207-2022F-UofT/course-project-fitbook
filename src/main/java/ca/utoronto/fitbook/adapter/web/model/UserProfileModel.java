@@ -1,6 +1,7 @@
 package ca.utoronto.fitbook.adapter.web.model;
 
 import ca.utoronto.fitbook.application.port.out.response.ProfilePostResponse;
+import ca.utoronto.fitbook.application.port.out.response.UserProfileResponse;
 import lombok.NonNull;
 import lombok.Value;
 
@@ -21,4 +22,16 @@ public class UserProfileModel {
     @NonNull
     List<ProfilePostResponse> likedPostList;
     int totalLikes;
+    public static UserProfileModel fromResponseToModel(UserProfileResponse response){
+        return new UserProfileModel(
+                response.getProfileId(),
+                response.getName(),
+                response.getFollowingSize(),
+                response.getFollowerSize(),
+                response.getJoinDate(),
+                response.getPostList(),
+                response.getLikedPostList(),
+                response.getTotalLikes()
+        );
+    }
 }
