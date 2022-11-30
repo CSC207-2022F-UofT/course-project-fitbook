@@ -1,4 +1,4 @@
-package ca.utoronto.fitbook.application.port.in;
+package ca.utoronto.fitbook.application.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

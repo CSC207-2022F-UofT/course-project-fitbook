@@ -1,6 +1,6 @@
 package ca.utoronto.fitbook.application.service;
 
-import ca.utoronto.fitbook.application.exceptions.EntityNotFoundException;
+import ca.utoronto.fitbook.application.exceptions.*;
 import ca.utoronto.fitbook.application.port.in.*;
 import ca.utoronto.fitbook.application.port.in.command.PostCreationCommand;
 import ca.utoronto.fitbook.application.port.out.SavePostPort;
@@ -30,20 +30,24 @@ public class PostCreationService implements PostCreationUseCase{
         if (!checkUserExistsPort.checkUserExists(userId))
             throw new UserNotFoundException(userId);
 
-        // Certify exercise existence
+        // Check if exercise list is empty, throw exception if so
         List<String> exerciseIdList = command.getExerciseIdList();
+        if (exerciseIdList.size() == 0)
+            throw new EmptyExerciseListException();
+
+        // Certify exercise existence
         try {
             loadExerciseListPort.loadExerciseList(exerciseIdList);
         } catch (EntityNotFoundException e) {
             throw new ExerciseInListNotFoundException();
         }
 
+        // Certify proper description length
         String description = command.getDescription();
-        Date date = new Date();
+        if (description.length() > 100)
+            throw new DescriptionTooLongException();
 
-        // Check if exercise list is empty, throw exception if so
-        if (exerciseIdList.size() == 0)
-            throw new EmptyExerciseListException();
+        Date date = new Date();
 
         // Create new post using given information
         Post newPost = Post.builder()
