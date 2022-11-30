@@ -21,16 +21,19 @@ public class PostCreationController {
     @PostMapping(path = "/post")
     String createPost(Model model, HttpSession session, @RequestBody PostCreationRequestBody body){
 
+        // Get session userId, throw error if null
         String userId = (String) session.getAttribute("userId");
         if (userId == null)
             throw new UnauthorizedUserException();
             throw new UnauthorizedUserException();
         }
 
+        // Create input data with session userId
         PostCreationCommand command = new PostCreationCommand(userId,
                 body.getExerciseIdList(),
                 body.getDescription());
 
+        // Create output data using service method
         PostCreationResponse outputData = postCreationUseCase.createPost(command);
         model.addAttribute("id", outputData.getPostId());
 
