@@ -22,7 +22,8 @@ public class PostCreationController {
     String createPost(Model model, HttpSession session, @RequestBody PostCreationRequestBody body){
 
         String userId = (String) session.getAttribute("userId");
-        if (userId == null){
+        if (userId == null)
+            throw new UnauthorizedUserException();
             throw new UnauthorizedUserException();
         }
 
