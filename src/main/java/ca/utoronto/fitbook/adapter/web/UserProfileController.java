@@ -26,7 +26,7 @@ public class UserProfileController
             throw new UnauthorizedUserException();
         }
         UserProfileCommand command = new UserProfileCommand(profileId, userId);
-        UserProfileResponse response = userProfileUseCase.createProfile(command);
+        UserProfileResponse response = userProfileUseCase.findProfile(command);
         UserProfileModel profileModel = UserProfileModel.fromResponseToModel(response);
         model.addAttribute("profile", profileModel);
         return "profile";
