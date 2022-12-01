@@ -1,7 +1,6 @@
 package ca.utoronto.fitbook.adapter.web;
 
 import ca.utoronto.fitbook.adapter.persistence.UnauthorizedUserException;
-import ca.utoronto.fitbook.adapter.web.model.UserProfileModel;
 import ca.utoronto.fitbook.application.port.in.UserProfileUseCase;
 import ca.utoronto.fitbook.application.port.in.command.UserProfileCommand;
 import ca.utoronto.fitbook.application.port.out.response.UserProfileResponse;
@@ -22,13 +21,12 @@ public class UserProfileController
     @GetMapping(path = "/profile/{profileId}")
     String userProfile(Model model, HttpSession session, @PathVariable String profileId) {
         String userId = (String) session.getAttribute("userId");
-        if (userId == null){
+        if (userId == null)
             throw new UnauthorizedUserException();
-        }
         UserProfileCommand command = new UserProfileCommand(profileId, userId);
         UserProfileResponse response = userProfileUseCase.findProfile(command);
-        UserProfileModel profileModel = UserProfileModel.fromResponseToModel(response);
-        model.addAttribute("profile", profileModel);
+        model.addAttribute("profile", response);
+        model.addAttribute("currUser", userId);
         return "profile";
     }
 }
