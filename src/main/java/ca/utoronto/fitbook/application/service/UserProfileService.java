@@ -32,7 +32,7 @@ public class UserProfileService implements UserProfileUseCase
      * @return a profile response with user information
      */
     @Override
-    public UserProfileResponse createProfile(UserProfileCommand command) {
+    public UserProfileResponse findProfile(UserProfileCommand command) {
         User profileUser = userProfilePort.loadUser(command.getProfileId());
         User currUser = userProfilePort.loadUser(command.getUserId());
         List<Post> posts = loadPostListPort.loadPostList(profileUser.getPostIdList());
@@ -43,9 +43,9 @@ public class UserProfileService implements UserProfileUseCase
 
         DateFormat dateFormatter = new SimpleDateFormat("MMMM dd, yyyy");
 
-        createProfilePosts(currUser, posts, profilePosts, dateFormatter);
+        findProfilePosts(currUser, posts, profilePosts, dateFormatter);
 
-        createProfilePosts(currUser, likedPosts, profilePosts, dateFormatter);
+        findProfilePosts(currUser, likedPosts, profilePosts, dateFormatter);
 
         String dateJoined = dateFormatter.format(profileUser.getJoinDate());
 
@@ -60,7 +60,7 @@ public class UserProfileService implements UserProfileUseCase
                 profileUser.getTotalLikes());
     }
 
-    private void createProfilePosts(User currUser, List<Post> posts, List<ProfilePostResponse> profilePosts, DateFormat dateFormatter) {
+    private void findProfilePosts(User currUser, List<Post> posts, List<ProfilePostResponse> profilePosts, DateFormat dateFormatter) {
         for (Post post : posts) {
             List<Exercise> postExercises = loadExerciseListPort.loadExerciseList(post.getExerciseIdList());
             String dateCreated = dateFormatter.format(post.getPostDate());
