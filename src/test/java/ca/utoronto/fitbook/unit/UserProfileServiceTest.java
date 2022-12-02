@@ -38,6 +38,8 @@ public class UserProfileServiceTest extends BaseTest {
     private ExerciseLocalMemoryRepository exerciseLocalMemoryRepository;
     private UserProfileService userProfileService;
 
+    private User testUser;
+
     @BeforeAll
     public void init() {
         this.postLocalMemoryRepository = new PostLocalMemoryRepository();
@@ -45,8 +47,7 @@ public class UserProfileServiceTest extends BaseTest {
         this.exerciseLocalMemoryRepository = new ExerciseLocalMemoryRepository();
         this.userProfileService = new UserProfileService(userLocalMemoryRepository, postLocalMemoryRepository, exerciseLocalMemoryRepository);
 
-        User user = User.builder()
-                .id("0001")
+        testUser = User.builder()
                 .followersIdList(new ArrayList<>())
                 .joinDate(new Date())
                 .name("Jan")
@@ -57,7 +58,7 @@ public class UserProfileServiceTest extends BaseTest {
                 .followersIdList(new ArrayList<>())
                 .likedPostIdList(new ArrayList<>())
                 .build();
-        userLocalMemoryRepository.save(user);
+        userLocalMemoryRepository.save(testUser);
     }
 
     @AfterAll
@@ -67,19 +68,18 @@ public class UserProfileServiceTest extends BaseTest {
 
     @Test
     public void findExistingProfileReturnsUserWithValidAttributes() {
-        String id = "0001";
-        UserProfileCommand userProfileCommand = new UserProfileCommand(id);
+        UserProfileCommand userProfileCommand = new UserProfileCommand(testUser.getId());
 
         UserProfileResponse response = this.userProfileService.createProfile(userProfileCommand);
 
-        Assertions.assertEquals(id, response.getId());
+        Assertions.assertEquals(testUser.getId(), response.getId());
         Assertions.assertEquals("Jan", response.getName());
         Assertions.assertEquals(1, response.getTotalLikes());
     }
 
     @Test
     public void findNoneExistentUserProfileThrowsEntityNotFoundException() {
-        String id = "0002";
+        String id = "-1";
         UserProfileCommand userProfileCommand = new UserProfileCommand(id);
         Assertions.assertThrows(EntityNotFoundException.class, () -> this.userProfileService.createProfile(userProfileCommand));
     }
