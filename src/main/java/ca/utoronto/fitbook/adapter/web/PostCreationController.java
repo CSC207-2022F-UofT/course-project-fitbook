@@ -25,8 +25,6 @@ public class PostCreationController {
         String userId = (String) session.getAttribute("userId");
         if (userId == null)
             throw new UnauthorizedUserException();
-            throw new UnauthorizedUserException();
-        }
 
         // Create input data with session userId
         PostCreationCommand command = new PostCreationCommand(userId,
