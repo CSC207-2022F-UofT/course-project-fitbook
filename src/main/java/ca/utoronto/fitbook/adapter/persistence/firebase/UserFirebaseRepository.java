@@ -54,6 +54,14 @@ public class UserFirebaseRepository implements GenericRepository<User>, LoadUser
     }
 
     /**
+     * @param id
+     */
+    @Override
+    public void delete(String id) {
+        firestore.collection(COLLECTION_NAME).document(id).delete();
+    }
+
+    /**
      * @param id Id of the user
      * @return the user with the given Id
      */

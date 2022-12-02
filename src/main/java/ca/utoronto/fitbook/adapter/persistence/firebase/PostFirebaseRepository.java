@@ -54,6 +54,14 @@ public class PostFirebaseRepository implements GenericRepository<Post>, LoadPost
     }
 
     /**
+     * @param id
+     */
+    @Override
+    public void delete(String id) {
+        firestore.collection(COLLECTION_NAME).document(id).delete();
+    }
+
+    /**
      * @param id Id of the post
      * @return the post with the given Id
      * @throws EntityNotFoundException If the post is not found

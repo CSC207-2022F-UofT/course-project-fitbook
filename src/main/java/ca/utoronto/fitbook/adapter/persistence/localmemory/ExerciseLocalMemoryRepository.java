@@ -34,6 +34,14 @@ public class ExerciseLocalMemoryRepository implements GenericRepository<Exercise
     }
 
     /**
+     * @param id
+     */
+    @Override
+    public void delete(String id) {
+        datastore.remove(id);
+    }
+
+    /**
      * @param exerciseIds The exercise ids to be fetched
      * @return A list of exercises
      * @throws EntityNotFoundException If a single exercise is not found
