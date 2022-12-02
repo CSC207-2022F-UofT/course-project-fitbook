@@ -44,8 +44,7 @@ public class UserProfileControllerIntegrationTest extends ControllerBaseIntegrat
 
 
     @Test
-    public void profileExistsUserControllerTest() throws Exception {
-        //Tests createProfile in userProfileService with existing user, expected result is a valid response with the users name
+    public void findExistingUserReturnsProfileWithValidContentAndAttributes() throws Exception {
         String id  = "0001";
         this.mockMvc.perform(get(String.format("/profile/%s", id)))
                 .andExpect(status().isOk())
@@ -54,8 +53,7 @@ public class UserProfileControllerIntegrationTest extends ControllerBaseIntegrat
     }
 
     @Test
-    public void profileNotFoundUserControllerTest() throws Exception {
-        //Tests createProfile in userProfileService with a nonexistent user, expected result is a thrown EntityNotFoundException
+    public void findNonExistentUserProfileReturnsServerErrorHttpStatus() throws Exception {
         this.mockMvc.perform(get("/profile/-1"))
                 .andExpect(status().is5xxServerError());
     }
