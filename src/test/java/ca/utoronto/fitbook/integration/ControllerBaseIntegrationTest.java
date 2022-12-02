@@ -12,7 +12,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public abstract class ControllerBaseIntergrationTest extends BaseTest {
+public abstract class ControllerBaseIntegrationTest extends BaseTest {
 
     protected MockMvc mockMvc;
 
