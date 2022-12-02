@@ -18,11 +18,12 @@ public class UserProfileControllerIntegrationTest extends ControllerBaseIntegrat
     @Autowired
     private UserFirebaseRepository userFirebaseRepository;
 
+    private User testUser;
+
     @BeforeAll
     public void init() {
 
-        User user = User.builder()
-                .id("0001")
+        testUser = User.builder()
                 .followersIdList(new ArrayList<>())
                 .joinDate(new Date())
                 .name("Jan")
@@ -34,26 +35,25 @@ public class UserProfileControllerIntegrationTest extends ControllerBaseIntegrat
                 .likedPostIdList(new ArrayList<>())
                 .build();
 
-        userFirebaseRepository.save(user);
+        userFirebaseRepository.save(testUser);
     }
 
     @AfterAll
     public void cleanUp() {
-        userFirebaseRepository.delete("0001");
+        userFirebaseRepository.delete(testUser.getId());
     }
 
 
     @Test
-    public void findExistingUserReturnsProfileWithValidContentAndAttributes() throws Exception {
-        String id  = "0001";
-        this.mockMvc.perform(get(String.format("/profile/%s", id)))
+    public void findExistingUserReturnsProfileWithValidContentAndAttributesTest() throws Exception {
+        this.mockMvc.perform(get(String.format("/profile/%s", testUser.getId())))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("text/html;charset=UTF-8"))
                 .andExpect(model().attributeExists("profile"));
     }
 
     @Test
-    public void findNonExistentUserProfileReturnsServerErrorHttpStatus() throws Exception {
+    public void findNonExistentUserProfileReturnsServerErrorHttpStatusTest() throws Exception {
         this.mockMvc.perform(get("/profile/-1"))
                 .andExpect(status().is5xxServerError());
     }
