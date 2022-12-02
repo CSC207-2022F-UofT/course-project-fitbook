@@ -13,7 +13,7 @@ import java.util.Date;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-public class UserProfileControllerIntegrationTest extends ControllerBaseIntergrationTest {
+public class UserProfileControllerIntegrationTest extends ControllerBaseIntegrationTest {
 
     @Autowired
     private UserFirebaseRepository userFirebaseRepository;
