@@ -36,7 +36,7 @@ public class PostLocalMemoryRepository implements GenericRepository<Post>, LoadP
     }
 
     /**
-     * @param id
+     * @param id if post to be deleted
      */
     @Override
     public void delete(String id) {

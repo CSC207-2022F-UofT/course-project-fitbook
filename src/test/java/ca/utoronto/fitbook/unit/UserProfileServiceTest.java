@@ -67,6 +67,7 @@ public class UserProfileServiceTest extends BaseTest {
 
     @Test
     public void createProfileTest() {
+        //Tests createProfile in userProfileService with existing user, expected result is a valid response with the users name
         String id = "0001";
         UserProfileCommand userProfileCommand = new UserProfileCommand(id);
 
@@ -79,11 +80,10 @@ public class UserProfileServiceTest extends BaseTest {
 
     @Test
     public void createProfileUserNotExists() {
+        //Tests createProfile in userProfileService with a nonexistent user, expected result is a thrown EntityNotFoundException
         String id = "0002";
         UserProfileCommand userProfileCommand = new UserProfileCommand(id);
-        Assertions.assertThrows(EntityNotFoundException.class, () -> {
-            this.userProfileService.createProfile(userProfileCommand);
-        });
+        Assertions.assertThrows(EntityNotFoundException.class, () -> this.userProfileService.createProfile(userProfileCommand));
     }
 
 }
