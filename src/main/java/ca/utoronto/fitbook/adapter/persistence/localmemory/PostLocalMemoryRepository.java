@@ -36,6 +36,14 @@ public class PostLocalMemoryRepository implements GenericRepository<Post>, LoadP
     }
 
     /**
+     * @param id
+     */
+    @Override
+    public void delete(String id) {
+        datastore.remove(id);
+    }
+
+    /**
      * @param id Id of the post
      * @return the post with the given Id
      */

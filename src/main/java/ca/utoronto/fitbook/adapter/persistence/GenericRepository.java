@@ -6,4 +6,6 @@ public interface GenericRepository<T>
 {
     T getById(String id) throws EntityNotFoundException;
     void save(T entity);
+
+    void delete(String id);
 }

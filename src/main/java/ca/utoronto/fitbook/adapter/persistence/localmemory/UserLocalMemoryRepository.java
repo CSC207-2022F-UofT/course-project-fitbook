@@ -32,6 +32,14 @@ public class UserLocalMemoryRepository implements GenericRepository<User>, LoadU
     }
 
     /**
+     * @param id
+     */
+    @Override
+    public void delete(String id) {
+        datastore.remove(id);
+    }
+
+    /**
      * @param id Id of the user
      * @return the user with the given Id
      */

@@ -69,6 +69,14 @@ public class ExerciseFirebaseRepository implements GenericRepository<Exercise>, 
     }
 
     /**
+     * @param id
+     */
+    @Override
+    public void delete(String id) {
+        firestore.collection(COLLECTION_NAME).document(id).delete();
+    }
+
+    /**
      * @param exerciseIds The exercise ids to be fetched
      * @return A list of exercises
      * @throws EntityNotFoundException If a single exercise is not found
