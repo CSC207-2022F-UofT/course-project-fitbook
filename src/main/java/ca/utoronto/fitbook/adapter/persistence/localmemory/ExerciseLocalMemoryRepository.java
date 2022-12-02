@@ -34,7 +34,7 @@ public class ExerciseLocalMemoryRepository implements GenericRepository<Exercise
     }
 
     /**
-     * @param id
+     * @param id of exercise to be deleted
      */
     @Override
     public void delete(String id) {

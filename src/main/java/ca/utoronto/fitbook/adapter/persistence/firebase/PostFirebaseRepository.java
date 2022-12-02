@@ -54,7 +54,7 @@ public class PostFirebaseRepository implements GenericRepository<Post>, LoadPost
     }
 
     /**
-     * @param id
+     * @param id of post to be deleted
      */
     @Override
     public void delete(String id) {

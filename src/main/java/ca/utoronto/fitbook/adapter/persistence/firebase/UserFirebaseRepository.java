@@ -54,7 +54,7 @@ public class UserFirebaseRepository implements GenericRepository<User>, LoadUser
     }
 
     /**
-     * @param id
+     * @param id of user to be deleted
      */
     @Override
     public void delete(String id) {
