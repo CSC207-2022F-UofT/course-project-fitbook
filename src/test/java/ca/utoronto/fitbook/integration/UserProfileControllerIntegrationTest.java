@@ -1,7 +1,6 @@
 package ca.utoronto.fitbook.integration;
 import ca.utoronto.fitbook.adapter.persistence.firebase.UserFirebaseRepository;
 import ca.utoronto.fitbook.entity.User;
-import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

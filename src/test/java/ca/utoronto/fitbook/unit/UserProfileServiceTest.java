@@ -1,28 +1,18 @@
 package ca.utoronto.fitbook.unit;
 
 import ca.utoronto.fitbook.BaseTest;
-import ca.utoronto.fitbook.adapter.persistence.firebase.UserFirebaseRepository;
 import ca.utoronto.fitbook.adapter.persistence.localmemory.ExerciseLocalMemoryRepository;
 import ca.utoronto.fitbook.adapter.persistence.localmemory.PostLocalMemoryRepository;
 import ca.utoronto.fitbook.adapter.persistence.localmemory.UserLocalMemoryRepository;
-import ca.utoronto.fitbook.application.port.in.*;
+import ca.utoronto.fitbook.application.exceptions.EntityNotFoundException;
 import ca.utoronto.fitbook.application.port.in.command.UserProfileCommand;
 import ca.utoronto.fitbook.application.port.out.response.UserProfileResponse;
 import ca.utoronto.fitbook.application.service.UserProfileService;
-import ca.utoronto.fitbook.entity.Exercise;
 import ca.utoronto.fitbook.entity.User;
-import lombok.RequiredArgsConstructor;
-import org.junit.Assert;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.ArrayList;
 import java.util.Date;
