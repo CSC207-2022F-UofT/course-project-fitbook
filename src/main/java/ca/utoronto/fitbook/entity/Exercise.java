@@ -24,6 +24,8 @@ public abstract class Exercise {
     protected String id = UUID.randomUUID().toString();
     protected ExerciseType type;
     @NonNull
+    protected String name;
+    @NonNull
     protected List<String> keywords;
     @NonNull
     protected List<String> bodyParts;
