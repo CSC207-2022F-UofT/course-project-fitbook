@@ -3,6 +3,8 @@ package ca.utoronto.fitbook.adapter.persistence.firebase;
 import ca.utoronto.fitbook.adapter.persistence.ExerciseTypeToClassMap;
 import ca.utoronto.fitbook.adapter.persistence.GenericRepository;
 import ca.utoronto.fitbook.application.exceptions.EntityNotFoundException;
+import ca.utoronto.fitbook.application.port.in.LoadExerciseByBodyPartsPort;
+import ca.utoronto.fitbook.application.port.in.LoadExerciseListByKeywordsPort;
 import ca.utoronto.fitbook.application.port.in.LoadExerciseListPort;
 import ca.utoronto.fitbook.entity.Exercise;
 import com.google.api.core.ApiFuture;
@@ -10,6 +12,7 @@ import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.WriteResult;
 import lombok.RequiredArgsConstructor;
+import com.google.cloud.firestore.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -23,7 +26,8 @@ import java.util.concurrent.ExecutionException;
 @RequiredArgsConstructor
 public class ExerciseFirebaseRepository
         extends GenericFirebaseRepository
-        implements GenericRepository<Exercise>, LoadExerciseListPort
+        implements GenericRepository<Exercise>,
+        LoadExerciseListPort, LoadExerciseListByKeywordsPort, LoadExerciseByBodyPartsPort
 {
 
     private static final String COLLECTION_NAME = "exercises";
@@ -33,10 +37,72 @@ public class ExerciseFirebaseRepository
     protected Firestore getFirestore() {
         return firestore;
     }
-
     @Override
     protected String getCollectionName() {
         return COLLECTION_NAME;
+    }
+
+    /**
+     * @param keywords
+     * @return
+     */
+    @Override
+    public List<Exercise> loadExerciseListByKeywords(List<String> keywords) {
+
+        try {
+            List<QueryDocumentSnapshot> querySnapshot = firestore.collection(COLLECTION_NAME)
+                    .whereArrayContainsAny("keywords", keywords)
+                    .get()
+                    .get()
+                    .getDocuments();
+            List<Exercise> exerciseList = new ArrayList<>();
+            for (QueryDocumentSnapshot document : querySnapshot) {
+                String type = document.getString("type");
+                for (Exercise.ExerciseType exerciseType : Exercise.ExerciseType.values()) {
+                    if (Objects.equals(type, exerciseType.toString())) {
+                        String exerciseClassName = ExerciseTypeToClassMap.get(exerciseType);
+                        exerciseList.add((Exercise) document.toObject(Class.forName(exerciseClassName)));
+                    } else {
+                        throw new InvalidExerciseTypeException(type);
+                    }
+                }
+                exerciseList.add(document.toObject(Exercise.class));
+            }
+            return exerciseList;
+        } catch (ClassNotFoundException | InterruptedException | ExecutionException e) {
+            throw new RuntimeException();
+        }
+    }
+
+    /**
+     * @param bodyParts
+     * @return
+     */
+    @Override
+    public List<Exercise> loadExerciseByBodyParts(List<String> bodyParts) {
+        try {
+            List<QueryDocumentSnapshot> querySnapshot = firestore.collection(COLLECTION_NAME)
+                    .whereArrayContainsAny("bodyParts", bodyParts)
+                    .get()
+                    .get()
+                    .getDocuments();
+            List<Exercise> exerciseList = new ArrayList<>();
+            for (QueryDocumentSnapshot document : querySnapshot) {
+                String type = document.getString("type");
+                for (Exercise.ExerciseType exerciseType : Exercise.ExerciseType.values()) {
+                    if (Objects.equals(type, exerciseType.toString())) {
+                        String exerciseClassName = ExerciseTypeToClassMap.get(exerciseType);
+                        exerciseList.add((Exercise) document.toObject(Class.forName(exerciseClassName)));
+                    } else {
+                        throw new InvalidExerciseTypeException(type);
+                    }
+                }
+                exerciseList.add(document.toObject(Exercise.class));
+            }
+            return exerciseList;
+        } catch (ClassNotFoundException | InterruptedException | ExecutionException e) {
+            throw new RuntimeException();
+        }
     }
 
     /**

@@ -3,6 +3,7 @@ package ca.utoronto.fitbook.adapter.persistence.firebase;
 import ca.utoronto.fitbook.adapter.persistence.GenericRepository;
 import ca.utoronto.fitbook.application.exceptions.EntityNotFoundException;
 import ca.utoronto.fitbook.application.port.in.LoadPaginatedPosts;
+import ca.utoronto.fitbook.application.port.in.LoadPostListByExerciseListPort;
 import ca.utoronto.fitbook.application.port.in.LoadPostListPort;
 import ca.utoronto.fitbook.application.port.in.LoadPostPort;
 import ca.utoronto.fitbook.application.port.out.SavePostPort;
@@ -10,6 +11,7 @@ import ca.utoronto.fitbook.entity.Post;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import lombok.RequiredArgsConstructor;
+import com.google.cloud.firestore.QueryDocumentSnapshot;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -24,7 +26,8 @@ public class PostFirebaseRepository
         LoadPostPort,
         SavePostPort,
         LoadPostListPort,
-        LoadPaginatedPosts
+        LoadPaginatedPosts,
+        LoadPostListByExerciseListPort
 {
 
     private static final String COLLECTION_NAME = "posts";
@@ -146,6 +149,29 @@ public class PostFirebaseRepository
             return posts;
         } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
+        }
+    }
+    /**
+     * Loads posts based on exercise ids
+     *
+     * @param exerciseIdList list of ids of exercises
+     * @return postList list of posts
+     */
+    @Override
+    public List<Post> loadPostListByExerciseList(List<String> exerciseIdList) {
+        try {
+            List<QueryDocumentSnapshot> querySnapshot = firestore.collection(COLLECTION_NAME)
+                    .whereArrayContainsAny("exerciseIdList", exerciseIdList)
+                    .get()
+                    .get()
+                    .getDocuments();
+            List<Post> postList = new ArrayList<>();
+            for (QueryDocumentSnapshot document : querySnapshot) {
+                postList.add(document.toObject(Post.class));
+            }
+            return postList;
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException();
         }
     }
 }
