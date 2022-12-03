@@ -43,8 +43,8 @@ public class ExerciseFirebaseRepository
     }
 
     /**
-     * @param keywords
-     * @return
+     * @param keywords list of keywords
+     * @return list of exercises
      */
     @Override
     public List<Exercise> loadExerciseListByKeywords(List<String> keywords) {
@@ -75,8 +75,8 @@ public class ExerciseFirebaseRepository
     }
 
     /**
-     * @param bodyParts
-     * @return
+     * @param bodyParts list of body parts
+     * @return list of exercises
      */
     @Override
     public List<Exercise> loadExerciseByBodyParts(List<String> bodyParts) {

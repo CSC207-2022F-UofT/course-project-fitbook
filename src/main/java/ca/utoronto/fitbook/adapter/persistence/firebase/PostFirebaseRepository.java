@@ -152,10 +152,8 @@ public class PostFirebaseRepository
         }
     }
     /**
-     * Loads posts based on exercise ids
-     *
-     * @param exerciseIdList list of ids of exercises
-     * @return postList list of posts
+     * @param exerciseIdList a list of exercise ids
+     * @return a list of posts
      */
     @Override
     public List<Post> loadPostListByExerciseList(List<String> exerciseIdList) {

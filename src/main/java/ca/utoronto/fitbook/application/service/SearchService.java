@@ -56,11 +56,20 @@ public class SearchService implements SearchPostsUseCase {
         return new SearchResponse(weightedPostList.stream().map(Pair::getFirst).collect(Collectors.toList()));
     }
 
+    /**
+     * @param queryString string to be split
+     * @return list of strings
+     */
     private List<String> extractKeywords(String queryString) {
         String[] words = queryString.split(" ");
         return Arrays.asList(words);
     }
 
+    /**
+     * @param queryString query string
+     * @param description string
+     * @return similarity between the two strings
+     */
     private double findSimilarity(String queryString, String description) {
         int vectorDimension = Math.max(queryString.length(), description.length());
         int[] queryVector = new int[vectorDimension];
@@ -85,6 +94,11 @@ public class SearchService implements SearchPostsUseCase {
         return Math.cos(quotient);
     }
 
+    /**
+     * @param vector1 vector
+     * @param vector2 vector
+     * @return dot product of the two vectors
+     */
     private double calculateDotProduct(int[] vector1, int[] vector2) {
         int sum = 0;
         for(int i = 0; i < vector1.length; i++) {
