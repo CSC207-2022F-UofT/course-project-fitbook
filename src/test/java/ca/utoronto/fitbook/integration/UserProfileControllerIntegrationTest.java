@@ -60,6 +60,6 @@ public class UserProfileControllerIntegrationTest extends ControllerBaseIntegrat
     @Test
     public void findNonExistentUserProfileReturnsServerErrorHttpStatusTest() throws Exception {
         this.mockMvc.perform(get("/profile/-1").session(session))
-                .andExpect(status().is5xxServerError());
+                .andExpect(status().isUnprocessableEntity());
     }
 }
