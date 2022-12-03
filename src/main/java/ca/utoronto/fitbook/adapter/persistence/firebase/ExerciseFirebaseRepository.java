@@ -8,6 +8,7 @@ import ca.utoronto.fitbook.entity.Exercise;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
@@ -19,11 +20,11 @@ import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 @Repository
+@RequiredArgsConstructor
 public class ExerciseFirebaseRepository implements GenericRepository<Exercise>, LoadExerciseListPort
 {
 
-    @Autowired
-    private Firestore firestore;
+    private final Firestore firestore;
 
     private static final String COLLECTION_NAME = "exercises";
 
