@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 
-public class UserProfileServiceTest extends BaseTest {
+public class UserProfileUseCaseTest extends BaseTest {
 
 
     private PostLocalMemoryRepository postLocalMemoryRepository;
