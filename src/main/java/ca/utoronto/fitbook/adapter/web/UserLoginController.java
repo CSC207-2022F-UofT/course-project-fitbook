@@ -18,12 +18,11 @@ public class UserLoginController {
     private final UserLoginUseCase userLoginUseCase;
 
     @PostMapping(path = "/login", consumes = "application/x-www-form-urlencoded")
-    String PostLoginUser(Model model, HttpSession session, UserLoginCommand command) {
+    String postLoginUser(Model model, HttpSession session, UserLoginCommand command) {
         UserLoginResponse response = userLoginUseCase.loginUser(command);
         session.setAttribute("userId", response.getId());
         model.addAttribute("id", response.getId());
 
-        // TODO: Show a login success view
         return "home";
     }
 
