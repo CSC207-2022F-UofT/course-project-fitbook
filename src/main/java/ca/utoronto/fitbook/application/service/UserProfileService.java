@@ -29,26 +29,29 @@ public class UserProfileService implements UserProfileUseCase
 
     /**
      * @param command the user's input
-     * @return a profile response with user information
+     * @return a profile response containing user information
      */
     @Override
     public UserProfileResponse findProfile(UserProfileCommand command) {
+        // TODO: Add custom UserNotFoundException
+        // Check that the request user and current user exist
         User profileUser = userProfilePort.loadUser(command.getProfileId());
         User currUser = userProfilePort.loadUser(command.getUserId());
+
+        // TODO: Add custom PostNotFoundException
+        // Check that the requested user's posts and liked posts exist.
         List<Post> posts = loadPostListPort.loadPostList(profileUser.getPostIdList());
         List<Post> likedPosts = loadPostListPort.loadPostList(profileUser.getLikedPostIdList());
 
-        List<ProfilePostResponse> profilePosts = new ArrayList<>();
-        List<ProfilePostResponse> profileLikedPosts = new ArrayList<>();
-
         DateFormat dateFormatter = new SimpleDateFormat("MMMM dd, yyyy");
 
-        findProfilePosts(currUser, posts, profilePosts, dateFormatter);
-
-        findProfilePosts(currUser, likedPosts, profilePosts, dateFormatter);
+        // Convert list of profile posts to post responses with full information
+        List<ProfilePostResponse> profilePosts = findProfilePosts(currUser, posts, dateFormatter);
+        List<ProfilePostResponse> profileLikedPosts = findProfilePosts(currUser, likedPosts, dateFormatter);
 
         String dateJoined = dateFormatter.format(profileUser.getJoinDate());
 
+        // Create response to return all relevant user's profile information
         return new UserProfileResponse(
                 profileUser.getId(),
                 profileUser.getName(),
@@ -60,15 +63,33 @@ public class UserProfileService implements UserProfileUseCase
                 profileUser.getTotalLikes());
     }
 
-    private void findProfilePosts(User currUser, List<Post> posts, List<ProfilePostResponse> profilePosts, DateFormat dateFormatter) {
+    /**
+     * Converts list of requested user's posts to post responses with full information.
+     * Invokes loadExerciseList and loadUser functions to convert id's to full entities
+     * @param currUser current session's user entity
+     * @param posts list of requested user's posts
+     * @param dateFormatter date formatting object
+     * @return list of user's posts with full information.
+     */
+    private List<ProfilePostResponse> findProfilePosts(User currUser, List<Post> posts, DateFormat dateFormatter) {
+        List<ProfilePostResponse> postResponses = new ArrayList<>();
         for (Post post : posts) {
-            List<Exercise> postExercises = loadExerciseListPort.loadExerciseList(post.getExerciseIdList());
             String dateCreated = dateFormatter.format(post.getPostDate());
+
+            // TODO: Add custom ExerciseNotFoundException
+            // Convert post's list of exercise id's to exercise entities
+            List<Exercise> postExercises = loadExerciseListPort.loadExerciseList(post.getExerciseIdList());
+
+            // Check if current session's user has liked the current post
             boolean userLiked = currUser.getLikedPostIdList().contains(post.getId());
 
-            profilePosts.add(new ProfilePostResponse(
+            // TODO: Add custom UserNotFoundException
+            User postAuthor = userProfilePort.loadUser(post.getAuthorId());
+
+            // Add post response with full post information
+            postResponses.add(new ProfilePostResponse(
                     post.getId(),
-                    userProfilePort.loadUser(post.getAuthorId()),
+                    postAuthor,
                     post.getLikes(),
                     dateCreated,
                     postExercises,
@@ -76,5 +97,6 @@ public class UserProfileService implements UserProfileUseCase
                     userLiked
             ));
         }
+        return postResponses;
     }
 }
