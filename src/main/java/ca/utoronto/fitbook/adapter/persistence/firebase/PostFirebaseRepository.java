@@ -9,6 +9,7 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentSnapshot;
 import ca.utoronto.fitbook.entity.Post;
 import com.google.cloud.firestore.Firestore;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -17,11 +18,11 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @Repository
+@RequiredArgsConstructor
 public class PostFirebaseRepository implements GenericRepository<Post>, LoadPostPort, SavePostPort, LoadPostListPort
 {
 
-    @Autowired
-    private Firestore firestore;
+    private final Firestore firestore;
 
     private static final String COLLECTION_NAME = "posts";
 
