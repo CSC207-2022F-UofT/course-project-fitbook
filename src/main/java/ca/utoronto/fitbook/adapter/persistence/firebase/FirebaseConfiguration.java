@@ -22,9 +22,6 @@ import java.io.InputStream;
 @ConfigurationProperties("fitbook")
 public class FirebaseConfiguration {
 
-    @Value("${spring.datasource.url}")
-    private String databaseUrl;
-
     @Value("${fitbook.config-file}")
     private String configFile;
 
@@ -45,7 +42,6 @@ public class FirebaseConfiguration {
             InputStream serviceAccount = new FileInputStream(configFile);
             FirebaseOptions options = FirebaseOptions.builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                    .setDatabaseUrl(databaseUrl)
                     .build();
             FirebaseApp.initializeApp(options);
         } catch (IOException e)  {
