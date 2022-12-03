@@ -5,6 +5,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockHttpSession;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -18,6 +19,8 @@ public class UserProfileControllerIntegrationTest extends ControllerBaseIntegrat
     private UserFirebaseRepository userFirebaseRepository;
 
     private User testUser;
+
+    private MockHttpSession session;
 
     @BeforeAll
     public void init() {
@@ -35,6 +38,9 @@ public class UserProfileControllerIntegrationTest extends ControllerBaseIntegrat
                 .build();
 
         userFirebaseRepository.save(testUser);
+
+        session = new MockHttpSession();
+        session.setAttribute("userId", testUser.getId());
     }
 
     @AfterAll
@@ -45,7 +51,7 @@ public class UserProfileControllerIntegrationTest extends ControllerBaseIntegrat
 
     @Test
     public void findExistingUserReturnsProfileWithValidContentAndAttributesTest() throws Exception {
-        this.mockMvc.perform(get(String.format("/profile/%s", testUser.getId())))
+        this.mockMvc.perform(get(String.format("/profile/%s", testUser.getId())).session(session))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("text/html;charset=UTF-8"))
                 .andExpect(model().attributeExists("profile"));
@@ -53,7 +59,7 @@ public class UserProfileControllerIntegrationTest extends ControllerBaseIntegrat
 
     @Test
     public void findNonExistentUserProfileReturnsServerErrorHttpStatusTest() throws Exception {
-        this.mockMvc.perform(get("/profile/-1"))
+        this.mockMvc.perform(get("/profile/-1").session(session))
                 .andExpect(status().is5xxServerError());
     }
 }

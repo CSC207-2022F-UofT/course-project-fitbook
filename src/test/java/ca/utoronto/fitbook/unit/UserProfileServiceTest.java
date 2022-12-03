@@ -58,11 +58,11 @@ public class UserProfileServiceTest extends BaseTest {
 
     @Test
     public void findExistingProfileReturnsUserWithValidAttributes() {
-        UserProfileCommand userProfileCommand = new UserProfileCommand(testUser.getId());
+        UserProfileCommand userProfileCommand = new UserProfileCommand(testUser.getId(), testUser.getId());
 
-        UserProfileResponse response = this.userProfileService.createProfile(userProfileCommand);
+        UserProfileResponse response = this.userProfileService.findProfile(userProfileCommand);
 
-        Assertions.assertEquals(testUser.getId(), response.getId());
+        Assertions.assertEquals(testUser.getId(), response.getProfileId());
         Assertions.assertEquals("Jan", response.getName());
         Assertions.assertEquals(1, response.getTotalLikes());
     }
@@ -70,8 +70,8 @@ public class UserProfileServiceTest extends BaseTest {
     @Test
     public void findNoneExistentUserProfileThrowsEntityNotFoundException() {
         String id = "-1";
-        UserProfileCommand userProfileCommand = new UserProfileCommand(id);
-        Assertions.assertThrows(EntityNotFoundException.class, () -> this.userProfileService.createProfile(userProfileCommand));
+        UserProfileCommand userProfileCommand = new UserProfileCommand(id, id);
+        Assertions.assertThrows(EntityNotFoundException.class, () -> this.userProfileService.findProfile(userProfileCommand));
     }
 
 }
