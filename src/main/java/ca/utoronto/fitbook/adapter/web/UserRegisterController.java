@@ -23,7 +23,6 @@ public class UserRegisterController {
         session.setAttribute("userId", response.getId());
         model.addAttribute("id", response.getId());
 
-        // TODO: Show a register success view
         return "home";
     }
 
