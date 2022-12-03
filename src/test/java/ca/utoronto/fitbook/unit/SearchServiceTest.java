@@ -22,7 +22,6 @@ import java.util.List;
 
 public class SearchServiceTest extends BaseTest {
 
-
     private PostLocalMemoryRepository postLocalMemoryRepository;
 
     private UserLocalMemoryRepository userLocalMemoryRepository;
@@ -51,12 +50,6 @@ public class SearchServiceTest extends BaseTest {
                 .likedPostIdList(new ArrayList<>())
                 .build();
         userLocalMemoryRepository.save(testUser);
-    }
-
-    @AfterEach
-    public void exerciseAndPostCleanUp() {
-       // exerciseLocalMemoryRepository.delete();
-        // postLocalMemoryRepository.delete();
     }
 
     @Test
@@ -116,6 +109,13 @@ public class SearchServiceTest extends BaseTest {
         SearchResponse response = this.searchService.search(searchCommand);
         Assertions.assertEquals(2, response.getPostList().size());
         Assertions.assertEquals(post1.getId(), response.getPostList().get(0).getId());
+
+        postLocalMemoryRepository.delete(post1.getId());
+        postLocalMemoryRepository.delete(post2.getId());
+        postLocalMemoryRepository.delete(post3.getId());
+        exerciseLocalMemoryRepository.delete(exercise1.getId());
+        exerciseLocalMemoryRepository.delete(exercise2.getId());
+        exerciseLocalMemoryRepository.delete(exercise3.getId());
     }
 
     @Test
@@ -127,25 +127,7 @@ public class SearchServiceTest extends BaseTest {
                 .keywords(List.of("glute", "squat"))
                 .build();
 
-        Exercise exercise2 = RepetitiveExercise.builder()
-                .reps(5)
-                .sets(2)
-                .bodyParts(List.of("bicep"))
-                .keywords(List.of("bicep", "curl"))
-                .build();
-
-        Exercise exercise3 = RepetitiveExercise.builder()
-                .reps(5)
-                .sets(2)
-                .bodyParts(List.of("glute"))
-                .keywords(List.of("squat", "glute"))
-                .build();
-
         exerciseLocalMemoryRepository.save(exercise1);
-        exerciseLocalMemoryRepository.save(exercise2);
-        exerciseLocalMemoryRepository.save(exercise3);
-
-
 
         Post post1 = Post.builder()
                 .postDate(new Date())
@@ -154,27 +136,13 @@ public class SearchServiceTest extends BaseTest {
                 .exerciseIdList(List.of(exercise1.getId()))
                 .likes(2).build();
 
-        Post post2 = Post.builder()
-                .postDate(new Date())
-                .authorId(this.testUser.getId())
-                .description("Average glute workout.")
-                .exerciseIdList(List.of(exercise3.getId()))
-                .likes(2).build();
-
-        Post post3 = Post.builder()
-                .postDate(new Date())
-                .authorId(this.testUser.getId())
-                .description("Amazing bicep workout!")
-                .exerciseIdList(List.of(exercise2.getId()))
-                .likes(2)
-                .build();
-
         postLocalMemoryRepository.save(post1);
-        postLocalMemoryRepository.save(post2);
-        postLocalMemoryRepository.save(post3);
 
         SearchCommand searchCommand = new SearchCommand("Abrakadabtra");
         SearchResponse response = this.searchService.search(searchCommand);
         Assertions.assertEquals(0, response.getPostList().size());
+
+        postLocalMemoryRepository.delete(post1.getId());
+        exerciseLocalMemoryRepository.delete(exercise1.getId());
     }
 }

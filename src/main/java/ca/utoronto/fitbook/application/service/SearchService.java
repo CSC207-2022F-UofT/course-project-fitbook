@@ -50,7 +50,7 @@ public class SearchService implements SearchPostsUseCase {
         List<Pair<Post, Double>> weightedPostList = postList.stream().map(post -> new Pair<>(post, findSimilarity(queryString, post.getDescription()))).collect(Collectors.toList());
 
         //Sorts query results by calculated weight
-        Comparator<Pair<Post, Double>> compareByWeight = (Pair<Post, Double> p1, Pair<Post, Double> p2) -> (int) Math.ceil((p1.getSecond() - p2.getSecond()) * 10);
+        Comparator<Pair<Post, Double>> compareByWeight = (Pair<Post, Double> p1, Pair<Post, Double> p2) -> (int) -Math.ceil((p1.getSecond() - p2.getSecond()) * 1000);
         weightedPostList.sort(compareByWeight);
 
         return new SearchResponse(weightedPostList.stream().map(Pair::getFirst).collect(Collectors.toList()));
