@@ -57,8 +57,12 @@ public class UserLocalMemoryRepository implements GenericRepository<User>,
      * @return the user with the given Id
      */
     @Override
-    public User loadUser(String id) throws EntityNotFoundException {
-        return getById(id);
+    public User loadUser(String id) {
+        try {
+            return getById(id);
+        } catch (EntityNotFoundException e) {
+            throw new UserNotFoundException(id);
+        }
     }
 
     /**
