@@ -21,6 +21,7 @@ public class UserProfileControllerIntegrationTest extends ControllerBaseIntegrat
     private User testUser;
 
     private MockHttpSession session;
+    private MockHttpSession unauthorizedSession;
 
     @BeforeAll
     public void init() {
@@ -41,6 +42,8 @@ public class UserProfileControllerIntegrationTest extends ControllerBaseIntegrat
 
         session = new MockHttpSession();
         session.setAttribute("userId", testUser.getId());
+
+        unauthorizedSession = new MockHttpSession();
     }
 
     @AfterAll
@@ -58,8 +61,14 @@ public class UserProfileControllerIntegrationTest extends ControllerBaseIntegrat
     }
 
     @Test
-    public void findNonExistentUserProfileReturnsServerErrorHttpStatusTest() throws Exception {
+    public void findNonExistentUserProfileReturnsClientErrorHttpStatusTest() throws Exception {
         this.mockMvc.perform(get("/profile/-1").session(session))
                 .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    public void findExistingUserProfileUnauthorizedReturnsClientErrorHttpStatusTest() throws Exception {
+        this.mockMvc.perform(get(String.format("/profile/%s", testUser.getId())).session(unauthorizedSession))
+                .andExpect(status().isUnauthorized());
     }
 }
