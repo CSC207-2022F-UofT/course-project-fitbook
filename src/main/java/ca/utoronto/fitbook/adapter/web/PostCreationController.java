@@ -35,6 +35,6 @@ public class PostCreationController {
         PostCreationResponse outputData = postCreationUseCase.createPost(command);
         model.addAttribute("id", outputData.getPostId());
 
-        return "index";
+        return "postCreationSuccess";
     }
 }
