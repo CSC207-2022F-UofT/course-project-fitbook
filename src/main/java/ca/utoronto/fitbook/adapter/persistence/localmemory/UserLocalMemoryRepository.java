@@ -107,6 +107,20 @@ public class UserLocalMemoryRepository implements GenericRepository<User>,
     }
 
     /**
+     * @param userId Id of the user to find
+     * @return Whether the user exists
+     */
+    @Override
+    public boolean checkUserExists(String userId) {
+        try {
+            loadUser(userId);
+            return true;
+        } catch (EntityNotFoundException e) {
+            return false;
+        }
+    }
+
+    /**
      * @param userIds The user ids to be fetched
      * @return A list of users
      * @throws EntityNotFoundException If a single user is not found
