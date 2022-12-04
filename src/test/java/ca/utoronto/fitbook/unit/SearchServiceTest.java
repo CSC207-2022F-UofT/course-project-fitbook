@@ -58,6 +58,7 @@ public class SearchServiceTest extends BaseTest {
                 .reps(5)
                 .sets(2)
                 .bodyParts(List.of("glute"))
+                .name("squat")
                 .keywords(List.of("glute", "squat"))
                 .build();
 
@@ -66,11 +67,13 @@ public class SearchServiceTest extends BaseTest {
                 .sets(2)
                 .bodyParts(List.of("bicep"))
                 .keywords(List.of("bicep", "curl"))
+                .name("bicep curl")
                 .build();
 
         Exercise exercise3 = RepetitiveExercise.builder()
                 .reps(5)
                 .sets(2)
+                .name("squat")
                 .bodyParts(List.of("glute"))
                 .keywords(List.of("squat", "glute"))
                 .build();
@@ -123,6 +126,7 @@ public class SearchServiceTest extends BaseTest {
         Exercise exercise1 = RepetitiveExercise.builder()
                 .reps(5)
                 .sets(2)
+                .name("squat")
                 .bodyParts(List.of("glute"))
                 .keywords(List.of("glute", "squat"))
                 .build();
