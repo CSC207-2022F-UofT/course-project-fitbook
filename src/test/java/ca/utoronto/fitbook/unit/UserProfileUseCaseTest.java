@@ -94,7 +94,7 @@ public class UserProfileUseCaseTest extends BaseTest {
                 .exerciseIdList(List.of(exercise1.getId(), exercise2.getId(), exercise3.getId()))
                 .authorId("2005")
                 .description("My favourite all in one evening workout! :)")
-                .likes(0)
+                .likes(1)
                 .build();
 
         postLocalMemoryRepository.save(post1);
@@ -202,6 +202,28 @@ public class UserProfileUseCaseTest extends BaseTest {
         Assertions.assertEquals(post1.getId(), response.getPostList().get(1).getPostId());
         Assertions.assertEquals(post1.getLikes(), response.getPostList().get(1).getLikes());
         Assertions.assertEquals(post1.getDescription(), response.getPostList().get(1).getDescription());
+    }
+
+    @Test
+    public void findExistingProfileReturnsPostCorrectInfo() {
+        UserProfileCommand userProfileCommand = new UserProfileCommand(testUser3.getId(), testUser2.getId());
+
+        UserProfileResponse response = this.userProfileService.findProfile(userProfileCommand);
+
+        Assertions.assertEquals(testUser3.getId(), response.getProfileId());
+        Assertions.assertEquals("Jim", response.getName());
+        Assertions.assertEquals(1, response.getTotalLikes());
+        Assertions.assertEquals(1, response.getPostList().size());
+        Assertions.assertEquals(1, response.getFollowerSize());
+        Assertions.assertFalse(response.isUserFollows());
+        Assertions.assertEquals(post3.getId(), response.getPostList().get(0).getPostId());
+        Assertions.assertEquals(post3.getLikes(), response.getPostList().get(0).getLikes());
+        Assertions.assertEquals(post3.getDescription(), response.getPostList().get(0).getDescription());
+        Assertions.assertEquals(post3.getAuthorId(), response.getPostList().get(0).getAuthor().getId());
+        Assertions.assertNotNull(response.getPostList().get(0).getPostDate());
+        Assertions.assertTrue(response.getPostList().get(0).isUserLiked());
+        Assertions.assertEquals(exercise1.getId(), response.getPostList().get(0).getExerciseList().get(0).getId());
+
     }
 
     @Test
