@@ -2,11 +2,12 @@ package ca.utoronto.fitbook.adapter.persistence.firebase;
 
 import ca.utoronto.fitbook.adapter.persistence.GenericRepository;
 import ca.utoronto.fitbook.application.exceptions.EntityNotFoundException;
+import ca.utoronto.fitbook.application.port.in.LoadPaginatedPosts;
 import ca.utoronto.fitbook.application.port.in.LoadPostListPort;
 import ca.utoronto.fitbook.application.port.in.LoadPostPort;
 import ca.utoronto.fitbook.application.port.out.SavePostPort;
 import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.DocumentSnapshot;
+import com.google.cloud.firestore.*;
 import ca.utoronto.fitbook.entity.Post;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.WriteResult;
@@ -19,7 +20,11 @@ import java.util.concurrent.ExecutionException;
 
 @Repository
 @RequiredArgsConstructor
-public class PostFirebaseRepository implements GenericRepository<Post>, LoadPostPort, SavePostPort, LoadPostListPort
+public class PostFirebaseRepository implements GenericRepository<Post>,
+        LoadPostPort,
+        SavePostPort,
+        LoadPostListPort,
+        LoadPaginatedPosts
 {
 
     private final Firestore firestore;
@@ -104,5 +109,40 @@ public class PostFirebaseRepository implements GenericRepository<Post>, LoadPost
             postList.add(getById(id));
         }
         return postList;
+    }
+
+    /**
+     * Loads a maximum of `limit` number of posts after the paginationKey Id post
+     *
+     * @param paginationKey The post Id to begin the search at
+     * @param limit         The maximum number of posts to return
+     * @return A maximum of `limit` posts in a list
+     */
+    @Override
+    public List<Post> loadPaginatedPosts(String paginationKey, int limit) {
+        try {
+            // Create a query to sort all posts by date and only fetch everything
+            // after the key and only grab `limit` amount
+            Query query = firestore.collection(COLLECTION_NAME)
+                    .orderBy("postDate", Query.Direction.DESCENDING);
+
+            // Use the pagination key if we have one
+            if (paginationKey != null) {
+                DocumentSnapshot paginationKeyPost = firestore.collection(COLLECTION_NAME).document(paginationKey).get().get();
+                query = query.startAfter(paginationKeyPost);
+            }
+
+            ApiFuture<QuerySnapshot> future = query.limit(limit).get();
+
+            // Collect all the posts from the query
+            List<Post> posts = new ArrayList<>();
+            List<QueryDocumentSnapshot> documents = future.get().getDocuments();
+            for (QueryDocumentSnapshot document : documents)
+                posts.add(document.toObject(Post.class));
+
+            return posts;
+        } catch (ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
