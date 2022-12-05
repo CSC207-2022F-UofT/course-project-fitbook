@@ -3,55 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="${name}">Profile</title>
-    <style>
-        body{
-            margin: 0;
-            min-height: 100vh;
-            width: 100vw;
-            background-color: #fff8eb;
-
-        }
-        .profile-card{
-            font-family: "Helvetica Neue",serif;
-            margin: 0 auto;
-            width: 50%;
-            height: 60%;
-            display: flex;
-            flex-direction: column;
-        }
-        .header{
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .button{
-            padding: 10px;
-            color: white;
-            background-color: #ffb34a;
-            border-radius: 8%;
-            text-decoration: none;
-        }
-
-        .home{
-            position: absolute;
-            top: 20px;
-            left: 20px;
-        }
-
-        .post-card{
-            width: 70%;
-            box-shadow: 0 .1rem 1rem rgba(0, 0, 0, 0.1);
-            border-radius: 1em;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            background: #ffb34a;
-            background: linear-gradient(to right, #ffb34a, #ffb10b);
-            padding: 5%;
-        }
-
-    </style>
+    <link href="/css/layout.css" rel="stylesheet">
 </head>
 <body>
 <a href="/" class="button home">Home</a>
