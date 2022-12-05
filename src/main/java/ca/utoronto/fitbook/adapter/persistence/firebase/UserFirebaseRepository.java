@@ -8,11 +8,8 @@ import ca.utoronto.fitbook.application.port.in.*;
 import ca.utoronto.fitbook.application.port.out.SaveUserPort;
 import ca.utoronto.fitbook.entity.User;
 import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.DocumentSnapshot;
-import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.*;
 import lombok.RequiredArgsConstructor;
-import com.google.cloud.firestore.QueryDocumentSnapshot;
-import com.google.cloud.firestore.QuerySnapshot;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -50,7 +47,13 @@ public class UserFirebaseRepository implements GenericRepository<User>, LoadUser
      */
     @Override
     public void save(User entity) {
-        firestore.collection(COLLECTION_NAME).document(entity.getId()).set(entity);
+        try {
+            ApiFuture<WriteResult> future = firestore.collection(COLLECTION_NAME).document(entity.getId()).set(entity);
+            // Make the save synchronous
+            future.get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -58,7 +61,13 @@ public class UserFirebaseRepository implements GenericRepository<User>, LoadUser
      */
     @Override
     public void delete(String id) {
-        firestore.collection(COLLECTION_NAME).document(id).delete();
+        try {
+            ApiFuture<WriteResult> future = firestore.collection(COLLECTION_NAME).document(id).delete();
+            // Make delete synchronous
+            future.get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
