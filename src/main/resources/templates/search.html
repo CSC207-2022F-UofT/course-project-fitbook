@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Posts</title>
+    <style>
+        body{
+            margin: 0;
+            min-height: 100vh;
+            width: 100vw;
+            background-color: #fff8eb;
+
+        }
+        .profile-card{
+            font-family: "Helvetica Neue",serif;
+            margin: 0 auto;
+            width: 50%;
+            height: 60%;
+            display: flex;
+            flex-direction: column;
+        }
+        .header{
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .button{
+            padding: 10px;
+            color: white;
+            background-color: #ffb34a;
+            border-radius: 8%;
+            text-decoration: none;
+        }
+
+        .post-card{
+            width: 70%;
+            box-shadow: 0 .1rem 1rem rgba(0, 0, 0, 0.1);
+            border-radius: 1em;
+            margin: 2%;
+            display: flex;
+            flex-direction: column;
+            background: #ffb34a;
+            background: linear-gradient(to right, #ffb34a, #ffb10b);
+            padding: 5%;
+        }
+
+        .home{
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+
+        .search-bar {
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+        }
+
+    </style>
+</head>
+<body>
+<a href="/" class="button home">Home</a>
+<div class="search-bar">
+    <form action="/search">
+        <input type="text" name="queryString" placeholder="Search..">
+        <button type="submit">submit</button>
+    </form>
+</div>
+<div class="profile-card">
+    <h2>Seach Posts</h2>
+    <div class="posts">
+        <div class="post-card" th:each="post : ${postList}">
+            <div class="header">
+                <h4 th:text="${postAuthorNames.get(post.getAuthorId())}">Author name</h4>
+                <small th:text="${post.postDate}">Post Date</small>
+            </div>
+            <div class="exercise" th:each="exerciseId : ${post.getExerciseIdList()}">
+                <p th:text="${exerciseListMap.get(exerciseId).getType()}"></p>
+                <span class="body-part" th:each="bodyPart : ${exerciseListMap.get(exerciseId).getBodyParts()}" th:text="${bodyPart}"></span>
+            </div>
+            <p> Likes <span th:text="${post.likes}">Post Likes</span></p>
+            <p th:text="${post.description}"></p>
+        </div>
+    </div>
+</div>
+</body>
+</html>
