@@ -1,47 +1,41 @@
 package ca.utoronto.fitbook.integration;
 
+import ca.utoronto.fitbook.TestUtilities;
 import ca.utoronto.fitbook.adapter.persistence.firebase.UserFirebaseRepository;
-import ca.utoronto.fitbook.application.port.in.UserLoginUseCase;
-import ca.utoronto.fitbook.application.port.in.command.UserLoginCommand;
-import ca.utoronto.fitbook.application.port.out.response.UserLoginResponse;
-import ca.utoronto.fitbook.application.service.UserLoginService;
 import ca.utoronto.fitbook.entity.User;
-import org.junit.Test;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpSession;
+import org.springframework.test.web.servlet.MvcResult;
 
-import java.util.ArrayList;
-import java.util.Date;
-
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class UserLoginControllerIntegrationTest extends ControllerBaseIntegrationTest{
+public class UserLoginControllerIntegrationTest extends ControllerBaseIntegrationTest {
     @Autowired
     private UserFirebaseRepository userFirebaseRepository;
 
     private User testUser;
+    private MockHttpSession session;
+
     @BeforeAll
     public void init() {
-
-        testUser = User.builder()
-                .followersIdList(new ArrayList<>())
-                .joinDate(new Date())
-                .name("jhon")
-                .totalLikes(1)
-                .password("123123123")
-                .postIdList(new ArrayList<>())
-                .followingIdList(new ArrayList<>())
-                .followersIdList(new ArrayList<>())
-                .likedPostIdList(new ArrayList<>())
-                .build();
+        // Initializing the instances
+        testUser = TestUtilities.randomUser();
 
         userFirebaseRepository.save(testUser);
 
-    }
 
+        session = new MockHttpSession();
+
+
+    }
 
 
     @AfterAll
@@ -49,16 +43,31 @@ public class UserLoginControllerIntegrationTest extends ControllerBaseIntegratio
         userFirebaseRepository.delete(testUser.getId());
     }
 
+    // Making a post request to login with valid params and expecting it to return userId with homePage
     @Test
-    public void successfullyLogTheUserInandReturnTheHomePage() throws Exception {
-            this.mockMvc.perform(post(String.format("/login"))
-                            .param("name","jhon")
-                            .param("password","123123123"))
-                            .andExpect(status().isOk())
-                            .andExpect(content().contentType("text/html;charset=UTF-8"));
+    public void successfullyLogTheUserIn() throws Exception {
 
-        }
+        MvcResult result = this.mockMvc.perform(post("/login")
+                        .queryParam("name", testUser.getName())
+                        .queryParam("password", testUser.getPassword())
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .session(session))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("text/html;charset=UTF-8")).andReturn();
+        Assertions.assertEquals(testUser.getId(), session.getAttribute("userId"));
+
+        userFirebaseRepository.loadUser((String) result.getModelAndView().getModel().get("id"));
 
     }
+
+    // Making a get request to login and expecting the login page returned
+    @Test
+    public void successfullyLoadTheLoginpage() throws Exception {
+        this.mockMvc.perform(get("/login"))
+                .andExpect(status().isOk()).
+                andExpect(content().contentType("text/html;charset=UTF-8"));
+    }
+
+}
 
 
