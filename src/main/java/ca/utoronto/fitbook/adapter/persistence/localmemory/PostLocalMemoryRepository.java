@@ -74,6 +74,7 @@ public class PostLocalMemoryRepository implements GenericRepository<Post>, LoadP
     }
 
     /**
+<<<<<<< HEAD
      * Loads a maximum of `limit` number of posts after the paginationKey Id post
      *
      * @param paginationKey The post Id to begin the search at
@@ -103,8 +104,8 @@ public class PostLocalMemoryRepository implements GenericRepository<Post>, LoadP
         return posts;
     }
     /**
-     * @param exerciseIdList list of exercise ids
-     * @return lists of posts based on exercises
+     * @param exerciseIdList list of exerciseIds to be fetched from database
+     * @return list of post objects
      */
     @Override
     public List<Post> loadPostListByExerciseList(List<String> exerciseIdList) {
