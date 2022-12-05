@@ -60,6 +60,32 @@ public class UserLoginControllerIntegrationTest extends ControllerBaseIntegratio
 
     }
 
+    // Making a post request to login with wrong password and expecting it to return client error
+    @Test
+    public void failToLogUserForWrongPassword() throws Exception {
+
+        MvcResult result = this.mockMvc.perform(post("/login")
+                        .queryParam("name", testUser.getName())
+                        .queryParam("password", "wrongpassword")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .session(session))
+                .andExpect(status().is4xxClientError()).andReturn();
+
+    }
+
+    // Making a post request to login with a username that does not exist and expecting it to return client error
+    @Test
+    public void failToLogUserForUsernameDoesNotExist() throws Exception {
+
+        MvcResult result = this.mockMvc.perform(post("/login")
+                        .queryParam("name", "thisnamedoesnotexist")
+                        .queryParam("password", testUser.getPassword())
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .session(session))
+                .andExpect(status().is4xxClientError()).andReturn();
+
+    }
+
     // Making a get request to login and expecting the login page returned
     @Test
     public void successfullyLoadTheLoginpage() throws Exception {
