@@ -20,4 +20,5 @@ public class UserProfileResponse {
     @NonNull
     List<ProfilePostResponse> likedPostList;
     int totalLikes;
+    boolean userFollows;
 }
