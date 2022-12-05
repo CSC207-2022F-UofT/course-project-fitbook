@@ -1,4 +1,4 @@
-package ca.utoronto.fitbook.adapter.persistence;
+package ca.utoronto.fitbook.adapter.web;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
