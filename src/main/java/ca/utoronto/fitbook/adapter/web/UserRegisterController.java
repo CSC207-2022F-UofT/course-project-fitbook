@@ -17,6 +17,7 @@ import javax.servlet.http.HttpSession;
 public class UserRegisterController {
     private final UserRegisterUseCase userRegisterUseCase;
 
+    // Passing the user provided info to the use case and returning either error or homePage
     @PostMapping(path = "/register", consumes = "application/x-www-form-urlencoded")
     String postRegisterUser(Model model, HttpSession session, UserRegisterCommand command) {
         UserRegisterResponse response = userRegisterUseCase.createUser(command);
