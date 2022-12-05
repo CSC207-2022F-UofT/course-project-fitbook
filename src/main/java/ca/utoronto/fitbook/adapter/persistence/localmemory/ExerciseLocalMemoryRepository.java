@@ -2,6 +2,7 @@ package ca.utoronto.fitbook.adapter.persistence.localmemory;
 
 import ca.utoronto.fitbook.adapter.persistence.GenericRepository;
 import ca.utoronto.fitbook.application.exceptions.EntityNotFoundException;
+import ca.utoronto.fitbook.application.port.in.LoadAllExercisesPort;
 import ca.utoronto.fitbook.application.port.in.LoadExerciseByBodyPartsPort;
 import ca.utoronto.fitbook.application.port.in.LoadExerciseListByKeywordsPort;
 import ca.utoronto.fitbook.application.port.in.LoadExerciseListPort;
@@ -16,7 +17,8 @@ public class ExerciseLocalMemoryRepository
         implements GenericRepository<Exercise>,
         LoadExerciseListPort,
         LoadExerciseByBodyPartsPort,
-        LoadExerciseListByKeywordsPort
+        LoadExerciseListByKeywordsPort,
+        LoadAllExercisesPort
 {
     private static final Map<String, Exercise> datastore = new HashMap<>();
 

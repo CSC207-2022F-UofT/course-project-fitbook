@@ -3,16 +3,15 @@ package ca.utoronto.fitbook.adapter.persistence.firebase;
 import ca.utoronto.fitbook.adapter.persistence.ExerciseTypeToClassMap;
 import ca.utoronto.fitbook.adapter.persistence.GenericRepository;
 import ca.utoronto.fitbook.application.exceptions.EntityNotFoundException;
+import ca.utoronto.fitbook.application.port.in.LoadAllExercisesPort;
+import ca.utoronto.fitbook.application.port.in.LoadAllExercisesPort;
 import ca.utoronto.fitbook.application.port.in.LoadExerciseByBodyPartsPort;
 import ca.utoronto.fitbook.application.port.in.LoadExerciseListByKeywordsPort;
 import ca.utoronto.fitbook.application.port.in.LoadExerciseListPort;
 import ca.utoronto.fitbook.entity.Exercise;
 import com.google.api.core.ApiFuture;
 import com.google.api.core.ApiFutures;
-import com.google.cloud.firestore.DocumentSnapshot;
-import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.QueryDocumentSnapshot;
-import com.google.cloud.firestore.WriteResult;
+import com.google.cloud.firestore.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
@@ -30,7 +29,8 @@ public class ExerciseFirebaseRepository
         implements GenericRepository<Exercise>,
         LoadExerciseListPort,
         LoadExerciseByBodyPartsPort,
-        LoadExerciseListByKeywordsPort
+        LoadExerciseListByKeywordsPort,
+        LoadAllExercisesPort
 {
 
     private static final String COLLECTION_NAME = "exercises";
@@ -155,6 +155,24 @@ public class ExerciseFirebaseRepository
         } catch (ClassNotFoundException | InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * @return A list of all exercises in the database
+     */
+    @Override
+    public ArrayList<Exercise> loadAllExercises() {
+        Iterable<DocumentReference> future = firestore.collection(COLLECTION_NAME).listDocuments();
+        ArrayList<Exercise> exercises = new ArrayList<>();
+        for (DocumentReference reference : future) {
+            ApiFuture<DocumentSnapshot> snapshot = reference.get();
+            try {
+                exercises.add(documentToExercise(snapshot.get()));
+            } catch (InterruptedException | ExecutionException e){
+                throw new RuntimeException(e);
+            }
+        }
+        return exercises;
     }
 
     /**
