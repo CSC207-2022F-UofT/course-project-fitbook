@@ -28,7 +28,10 @@ public class UserProfileUseCaseTest extends BaseTest {
     private ExerciseLocalMemoryRepository exerciseLocalMemoryRepository;
     private UserProfileService userProfileService;
 
-    private User testUser;
+    private User testUser1;
+    private User testUser2;
+    private Exercise exercise1;
+    private Post post1;
 
     @BeforeAll
     public void init() {
@@ -37,23 +40,80 @@ public class UserProfileUseCaseTest extends BaseTest {
         this.exerciseLocalMemoryRepository = new ExerciseLocalMemoryRepository();
         this.userProfileService = new UserProfileService(userLocalMemoryRepository, postLocalMemoryRepository, exerciseLocalMemoryRepository);
 
-        testUser = User.builder()
+        List<String> bodyParts1 = new ArrayList<>();
+        bodyParts1.add("rectus abdominis");
+        bodyParts1.add("transverse abdominis");
+        bodyParts1.add("obliques");
+
+        List<String> keywords1 = new ArrayList<>();
+        keywords1.add("abs");
+        bodyParts1.add("sit-ups");
+
+        exercise1 = TemporalExercise.builder()
+                .name("Sit-ups")
+                .bodyParts(bodyParts1)
+                .keywords(keywords1)
+                .build();
+
+        exerciseLocalMemoryRepository.save(exercise1);
+
+        List<String> exerciseIdList1 = new ArrayList<>();
+        exerciseIdList1.add(exercise1.getId());
+
+        post1 = Post.builder()
+                .postDate(new Date())
+                .exerciseIdList(exerciseIdList1)
+                .authorId("1912")
+                .description("My favourite morning workout! :)")
+                .likes(0)
+                .build();
+
+        postLocalMemoryRepository.save(post1);
+
+        List<String> postIdList1 = new ArrayList<>();
+        postIdList1.add(post1.getId());
+
+        List<String> followingIdList1 = new ArrayList<>();
+        followingIdList1.add("2002");
+
+        testUser1 = User.builder()
+                .id("1912")
                 .followersIdList(new ArrayList<>())
                 .joinDate(new Date())
                 .name("Jan")
                 .totalLikes(1)
                 .password("pw")
-                .postIdList(new ArrayList<>())
-                .followingIdList(new ArrayList<>())
+                .postIdList(postIdList1)
+                .followingIdList(followingIdList1)
                 .followersIdList(new ArrayList<>())
                 .likedPostIdList(new ArrayList<>())
                 .build();
-        userLocalMemoryRepository.save(testUser);
+        userLocalMemoryRepository.save(testUser1);
+
+        List<String> followerIdList2 = new ArrayList<>();
+        followerIdList2.add("2002");
+
+        testUser2 = User.builder()
+                .id("2002")
+                .followersIdList(new ArrayList<>())
+                .joinDate(new Date())
+                .name("Pedro")
+                .totalLikes(0)
+                .password("us")
+                .postIdList(new ArrayList<>())
+                .followingIdList(new ArrayList<>())
+                .followersIdList(followerIdList2)
+                .likedPostIdList(postIdList1)
+                .build();
+        userLocalMemoryRepository.save(testUser2);
     }
 
     @AfterAll
     public void cleanUp() {
-        userLocalMemoryRepository.delete("0001");
+        userLocalMemoryRepository.delete(testUser1.getId());
+        userLocalMemoryRepository.delete(testUser2.getId());
+        postLocalMemoryRepository.delete(post1.getId());
+        exerciseLocalMemoryRepository.delete(exercise1.getId());
     }
 
     @Test
