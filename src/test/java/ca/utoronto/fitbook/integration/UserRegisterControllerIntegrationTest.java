@@ -16,12 +16,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class UserRegisterControllerIntegrationTest extends ControllerBaseIntegrationTest{
+public class UserRegisterControllerIntegrationTest extends ControllerBaseIntegrationTest {
 
     @Autowired
     private UserFirebaseRepository userFirebaseRepository;
     private User testUser;
     private MockHttpSession session;
+
     @BeforeAll
     public void init() {
         // Initializing the instances
@@ -33,9 +34,7 @@ public class UserRegisterControllerIntegrationTest extends ControllerBaseIntegra
         session = new MockHttpSession();
 
 
-
     }
-
 
 
     @AfterAll
@@ -46,12 +45,12 @@ public class UserRegisterControllerIntegrationTest extends ControllerBaseIntegra
     // Making a post request to register with valid params and expecting it to register the user and return homePage
     @Test
     public void successfullyRegisterAUser() throws Exception {
-        MvcResult result =  this.mockMvc.perform(post("/register")
-                        .queryParam("name","modaser1")
-                        .queryParam("password","modaser123")
-                        .queryParam("repeatedPassword","modaser123")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .session(session))
+        MvcResult result = this.mockMvc.perform(post("/register")
+                        .queryParam("name", "modaser1")
+                        .queryParam("password", "modaser123")
+                        .queryParam("repeatedPassword", "modaser123")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .session(session))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("text/html;charset=UTF-8")).andReturn();
 
@@ -59,17 +58,85 @@ public class UserRegisterControllerIntegrationTest extends ControllerBaseIntegra
         userFirebaseRepository.delete(userFirebaseRepository.loadUserByName("modaser1").getId());
     }
 
-    // Making a post request to register with invalid params and expecting it to return a client error
+    // Making a post request to register with mismatch passwords and expecting it to return a client error
     @Test
-    public void failUserRegisterForWrongParams() throws Exception {
-        MvcResult result =  this.mockMvc.perform(post("/register")
+    public void failUserRegisterForPasswordMismatch() throws Exception {
+        MvcResult result = this.mockMvc.perform(post("/register")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .queryParam("name","modaserr")
-                        .queryParam("password","modaser12")
-                        .queryParam("repeatedPassword","modaser123")
+                        .queryParam("name", "modaserr")
+                        .queryParam("password", "modaser12")
+                        .queryParam("repeatedPassword", "modaser123")
                         .session(session))
                 .andExpect(status().is4xxClientError())
                 .andReturn();
+    }
+
+    // Making a post request to register with too short passwords and expecting it to return a client error
+    @Test
+    public void failUserRegisterForShortPasswords() throws Exception {
+        MvcResult result = this.mockMvc.perform(post("/register")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .queryParam("name", "modaserr")
+                        .queryParam("password", "12")
+                        .queryParam("repeatedPassword", "12")
+                        .session(session))
+                .andExpect(status().is4xxClientError())
+                .andReturn();
+    }
+
+    // Making a post request to register with too long passwords and expecting it to return a client error
+    @Test
+    public void failUserRegisterForLongPasswords() throws Exception {
+        MvcResult result = this.mockMvc.perform(post("/register")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .queryParam("name", "modaserr")
+                        .queryParam("password", "123412341234123412341234123412341234123412341234")
+                        .queryParam("repeatedPassword", "123412341234123412341234123412341234123412341234")
+                        .session(session))
+                .andExpect(status().is4xxClientError())
+                .andReturn();
+    }
+
+    // Making a post request to register with too long username and expecting it to return a client error
+    @Test
+    public void failUserRegisterForLongUsername() throws Exception {
+        MvcResult result = this.mockMvc.perform(post("/register")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .queryParam("name", "modaser123modaser123modaser123modaser123m")
+                        .queryParam("password", "123123123")
+                        .queryParam("repeatedPassword", "123123123")
+                        .session(session))
+                .andExpect(status().is4xxClientError())
+                .andReturn();
+    }
+
+    // Making a post request to register with too long username and expecting it to return a client error
+    @Test
+    public void failUserRegisterForShortUsername() throws Exception {
+        MvcResult result = this.mockMvc.perform(post("/register")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .queryParam("name", "mo")
+                        .queryParam("password", "123123123")
+                        .queryParam("repeatedPassword", "123123123")
+                        .session(session))
+                .andExpect(status().is4xxClientError())
+                .andReturn();
+    }
+
+    // Making a post request to register with an existing username and expecting it to return a client error
+    @Test
+    public void failUserRegisterForUsernameAlreadyExists() throws Exception {
+        User existUser = TestUtilities.randomUser();
+        userFirebaseRepository.save(existUser);
+        MvcResult result = this.mockMvc.perform(post("/register")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .queryParam("name", existUser.getName())
+                        .queryParam("password", "123123123")
+                        .queryParam("repeatedPassword", "123123123")
+                        .session(session))
+                .andExpect(status().is4xxClientError())
+                .andReturn();
+        userFirebaseRepository.delete(existUser.getId());
     }
 
     // Making a get request to register and expecting the register page
