@@ -22,8 +22,8 @@ public class upvotePostsService implements UpvotePostsUsecase{
     private final SaveUserPort saveUserPort;
 
     /**
-     * @param command the likes coming in from a user liking a post and a post being liked
-     * @return null
+     * @param command The likes coming in from a user liking a post and a post being liked
+     * @return Post likers ID, post authors ID, post's total likes
      */
     @Override
     public UpvotePostsResponse upvotePost(UpvotePostsCommand command) {
