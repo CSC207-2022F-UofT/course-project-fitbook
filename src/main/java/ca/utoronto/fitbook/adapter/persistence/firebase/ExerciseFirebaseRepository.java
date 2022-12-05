@@ -62,11 +62,8 @@ public class ExerciseFirebaseRepository
                     if (Objects.equals(type, exerciseType.toString())) {
                         String exerciseClassName = ExerciseTypeToClassMap.get(exerciseType);
                         exerciseList.add((Exercise) document.toObject(Class.forName(exerciseClassName)));
-                    } else {
-                        throw new InvalidExerciseTypeException(type);
                     }
                 }
-                exerciseList.add(document.toObject(Exercise.class));
             }
             return exerciseList;
         } catch (ClassNotFoundException | InterruptedException | ExecutionException e) {
@@ -93,11 +90,8 @@ public class ExerciseFirebaseRepository
                     if (Objects.equals(type, exerciseType.toString())) {
                         String exerciseClassName = ExerciseTypeToClassMap.get(exerciseType);
                         exerciseList.add((Exercise) document.toObject(Class.forName(exerciseClassName)));
-                    } else {
-                        throw new InvalidExerciseTypeException(type);
                     }
                 }
-                exerciseList.add(document.toObject(Exercise.class));
             }
             return exerciseList;
         } catch (ClassNotFoundException | InterruptedException | ExecutionException e) {

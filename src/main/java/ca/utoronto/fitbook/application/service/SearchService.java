@@ -1,19 +1,18 @@
 package ca.utoronto.fitbook.application.service;
 
 import ca.utoronto.fitbook.application.exceptions.EmptyQueryStringException;
-import ca.utoronto.fitbook.application.port.in.LoadExerciseByBodyPartsPort;
-import ca.utoronto.fitbook.application.port.in.LoadExerciseListByKeywordsPort;
-import ca.utoronto.fitbook.application.port.in.LoadPostListByExerciseListPort;
-import ca.utoronto.fitbook.application.port.in.SearchPostsUseCase;
+import ca.utoronto.fitbook.application.port.in.*;
 import ca.utoronto.fitbook.application.port.in.command.SearchCommand;
 import ca.utoronto.fitbook.application.port.out.response.SearchResponse;
 import ca.utoronto.fitbook.entity.Exercise;
 import ca.utoronto.fitbook.entity.Post;
+import ca.utoronto.fitbook.entity.User;
 import com.google.firebase.database.utilities.Pair;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,6 +22,8 @@ public class SearchService implements SearchPostsUseCase {
     private final LoadExerciseListByKeywordsPort loadExerciseListByKeywordsPort;
     private final LoadPostListByExerciseListPort loadPostListByExerciseList;
     private final LoadExerciseByBodyPartsPort loadExerciseByBodyPartsPort;
+    private final LoadExerciseListPort loadExerciseListPort;
+    private final LoadUserPort loadUserPort;
 
     /**
      * @param searchCommand contains query string
@@ -40,11 +41,26 @@ public class SearchService implements SearchPostsUseCase {
         List<String> keywordsAndBodyParts = extractKeywords(queryString);
 
         //Queries exercise collection by keywords and body parts
-        List<Exercise> exerciseList = new ArrayList<>(loadExerciseByBodyPartsPort.loadExerciseByBodyParts(keywordsAndBodyParts));
-        exerciseList.addAll(loadExerciseListByKeywordsPort.loadExerciseListByKeywords(keywordsAndBodyParts));
+        List<Exercise> queryExerciseList = new ArrayList<>(loadExerciseByBodyPartsPort.loadExerciseByBodyParts(keywordsAndBodyParts));
+        queryExerciseList.addAll(loadExerciseListByKeywordsPort.loadExerciseListByKeywords(keywordsAndBodyParts));
 
         //Loads posts based on exercises
-        List<Post> postList = loadPostListByExerciseList.loadPostListByExerciseList(exerciseList.stream().map(Exercise::getId).collect(Collectors.toList()));
+        List<Post> postList;
+        try {
+            postList = loadPostListByExerciseList.loadPostListByExerciseList(queryExerciseList.stream().map(Exercise::getId).collect(Collectors.toList()));
+        } catch (InterruptedException | ExecutionException e) {
+            postList = new ArrayList<>();
+        }
+
+        //Get list of all exercises and map them to their ids
+        List<Exercise> exerciseList = loadExerciseListPort.loadExerciseList(postList.stream().flatMap(post -> post.getExerciseIdList().stream()).collect(Collectors.toList()));
+        HashMap<String, Exercise> exerciseListMap = new HashMap<>();
+        exerciseList.forEach(exercise -> exerciseListMap.put(exercise.getId(), exercise));
+
+        //Get List of author names
+        HashMap<String, String> postAuthorMap = new HashMap<>();
+        postList.forEach(post -> postAuthorMap.put(post.getAuthorId(), loadUserPort.loadUser(post.getAuthorId()).getName()));
+
 
         //Calculates similarity between query string and post descriptions
         List<Pair<Post, Double>> weightedPostList = postList.stream().map(post -> new Pair<>(post, findSimilarity(queryString, post.getDescription()))).collect(Collectors.toList());
@@ -53,7 +69,7 @@ public class SearchService implements SearchPostsUseCase {
         Comparator<Pair<Post, Double>> compareByWeight = (Pair<Post, Double> p1, Pair<Post, Double> p2) -> (int) -Math.ceil((p1.getSecond() - p2.getSecond()) * 1000);
         weightedPostList.sort(compareByWeight);
 
-        return new SearchResponse(weightedPostList.stream().map(Pair::getFirst).collect(Collectors.toList()));
+        return new SearchResponse(weightedPostList.stream().map(Pair::getFirst).collect(Collectors.toList()), exerciseListMap, postAuthorMap);
     }
 
     /**
@@ -91,7 +107,7 @@ public class SearchService implements SearchPostsUseCase {
         double dotProduct = calculateDotProduct(queryVector, descriptionVector);
         double quotient = dotProduct/(descriptionVectorMag * queryVectorMag);
         //Calculates cosine similarity
-        return Math.cos(quotient);
+        return quotient;
     }
 
     /**

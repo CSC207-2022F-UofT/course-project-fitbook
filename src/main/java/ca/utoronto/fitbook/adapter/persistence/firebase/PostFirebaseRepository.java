@@ -156,20 +156,18 @@ public class PostFirebaseRepository
      * @return a list of posts
      */
     @Override
-    public List<Post> loadPostListByExerciseList(List<String> exerciseIdList) {
-        try {
-            List<QueryDocumentSnapshot> querySnapshot = firestore.collection(COLLECTION_NAME)
+    public List<Post> loadPostListByExerciseList(List<String> exerciseIdList) throws ExecutionException, InterruptedException {
+        List<QueryDocumentSnapshot> querySnapshot = firestore.collection(COLLECTION_NAME)
                     .whereArrayContainsAny("exerciseIdList", exerciseIdList)
                     .get()
                     .get()
                     .getDocuments();
-            List<Post> postList = new ArrayList<>();
-            for (QueryDocumentSnapshot document : querySnapshot) {
-                postList.add(document.toObject(Post.class));
-            }
-            return postList;
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException();
+
+        List<Post> postList = new ArrayList<>();
+        for (QueryDocumentSnapshot document : querySnapshot) {
+            postList.add(document.toObject(Post.class));
         }
+        return postList;
+
     }
 }
