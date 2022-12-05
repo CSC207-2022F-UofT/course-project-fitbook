@@ -6,7 +6,6 @@ import ca.utoronto.fitbook.application.port.in.command.SearchCommand;
 import ca.utoronto.fitbook.application.port.out.response.SearchResponse;
 import ca.utoronto.fitbook.entity.Exercise;
 import ca.utoronto.fitbook.entity.Post;
-import ca.utoronto.fitbook.entity.User;
 import com.google.firebase.database.utilities.Pair;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -69,7 +68,14 @@ public class SearchService implements SearchPostsUseCase {
         Comparator<Pair<Post, Double>> compareByWeight = (Pair<Post, Double> p1, Pair<Post, Double> p2) -> (int) -Math.ceil((p1.getSecond() - p2.getSecond()) * 1000);
         weightedPostList.sort(compareByWeight);
 
-        return new SearchResponse(weightedPostList.stream().map(Pair::getFirst).collect(Collectors.toList()), exerciseListMap, postAuthorMap);
+        List<Pair<Post, Double>> shortenedWeightedPostList = new ArrayList<>();
+
+        //Limit search results to 10 posts
+        int i = 0;
+        while(i < weightedPostList.size() && i < 10)
+            shortenedWeightedPostList.add(weightedPostList.get(i++));
+
+        return new SearchResponse(shortenedWeightedPostList.stream().map(Pair::getFirst).collect(Collectors.toList()), exerciseListMap, postAuthorMap);
     }
 
     /**
@@ -105,9 +111,8 @@ public class SearchService implements SearchPostsUseCase {
         double descriptionVectorMag = Math.sqrt(Arrays.stream(descriptionVector).map(entry -> entry * entry).sum());
         //Calculates dotProduct
         double dotProduct = calculateDotProduct(queryVector, descriptionVector);
-        double quotient = dotProduct/(descriptionVectorMag * queryVectorMag);
-        //Calculates cosine similarity
-        return quotient;
+        //Calculates similarity
+        return dotProduct/(descriptionVectorMag * queryVectorMag);
     }
 
     /**
