@@ -8,6 +8,9 @@ import ca.utoronto.fitbook.application.exceptions.EntityNotFoundException;
 import ca.utoronto.fitbook.application.port.in.command.UserProfileCommand;
 import ca.utoronto.fitbook.application.port.out.response.UserProfileResponse;
 import ca.utoronto.fitbook.application.service.UserProfileService;
+import ca.utoronto.fitbook.entity.Exercise;
+import ca.utoronto.fitbook.entity.Post;
+import ca.utoronto.fitbook.entity.TemporalExercise;
 import ca.utoronto.fitbook.entity.User;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -16,6 +19,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 public class UserProfileUseCaseTest extends BaseTest {
@@ -117,14 +121,28 @@ public class UserProfileUseCaseTest extends BaseTest {
     }
 
     @Test
-    public void findExistingProfileReturnsUserWithValidAttributes() {
-        UserProfileCommand userProfileCommand = new UserProfileCommand(testUser.getId(), testUser.getId());
+    public void findSelfExistingProfileReturnsUserWithValidAttributes() {
+        UserProfileCommand userProfileCommand = new UserProfileCommand(testUser2.getId(), testUser2.getId());
 
         UserProfileResponse response = this.userProfileService.findProfile(userProfileCommand);
 
-        Assertions.assertEquals(testUser.getId(), response.getProfileId());
+        Assertions.assertEquals(testUser2.getId(), response.getProfileId());
+        Assertions.assertEquals("Pedro", response.getName());
+        Assertions.assertEquals(0, response.getTotalLikes());
+        Assertions.assertEquals(post1.getId(), response.getLikedPostList().get(0).getPostId());
+    }
+
+    @Test
+    public void findExistingProfileReturnsUserWithValidAttributes() {
+        UserProfileCommand userProfileCommand = new UserProfileCommand(testUser1.getId(), testUser2.getId());
+
+        UserProfileResponse response = this.userProfileService.findProfile(userProfileCommand);
+
+        Assertions.assertEquals(testUser1.getId(), response.getProfileId());
         Assertions.assertEquals("Jan", response.getName());
         Assertions.assertEquals(1, response.getTotalLikes());
+        Assertions.assertEquals(post1.getId(), response.getPostList().get(0).getPostId());
+        Assertions.assertEquals(1, response.getFollowingSize());
     }
 
     @Test
