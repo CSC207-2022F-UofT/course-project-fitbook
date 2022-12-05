@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Feed</title>
+    <link href="/css/layout.css" rel="stylesheet">
+</head>
+<body>
+<div class="posts">
+    <div class="post-card" th:each="post : ${posts}">
+        <div class="header">
+            <small th:text="${post.postDate}">Post Date</small>
+        </div>
+        <p> Likes <span th:text="${post.likes}">Post Likes</span></p>
+        <p th:text="${post.description}"></p>
+    </div>
+    <p th:if="${posts.size() == 0}">Sorry, no posts found for given query</p>
+    <a th:if="${paginationKey == null}" th:href="@{'/feed'}">Go back to the start of the feed</a>
+    <a th:if="${paginationKey != null}" th:href="@{'/feed' + ${'?paginationKey=' + paginationKey}}">Next Page</a>
+</div>
+</body>
+</html>
