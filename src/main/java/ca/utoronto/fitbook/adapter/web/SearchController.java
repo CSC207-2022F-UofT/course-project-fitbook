@@ -18,12 +18,16 @@ public class SearchController {
     private final SearchPostsUseCase searchUseCase;
 
     @GetMapping(path = "/search")
-    String search(Model model, HttpSession httpSession, @RequestParam SearchCommand searchCommand) {
-        if(httpSession.getId().isEmpty())
+    String search(Model model, HttpSession session, @RequestParam SearchCommand queryString) {
+        String userId = (String) session.getAttribute("userId");
+        if (userId == null)
             throw new UnauthorizedUserException();
-        SearchResponse searchResponse = searchUseCase.search(searchCommand);
 
-        return "index";
+        SearchResponse searchResponse = searchUseCase.search(queryString);
+        model.addAttribute("postList", searchResponse.getPostList());
+        model.addAttribute("exerciseListMap", searchResponse.getExerciseListMap());
+        model.addAttribute("postAuthorNames", searchResponse.getPostAuthorNames());
+        return "search";
     }
 
 }
