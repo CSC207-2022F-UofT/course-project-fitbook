@@ -59,6 +59,7 @@ public class UserRegisterService implements UserRegisterUseCase {
         return new UserRegisterResponse(user.getId());
     }
 
+    // The error thrown given a username already in the database
     @ResponseStatus(value=HttpStatus.CONFLICT, reason="Username already exists")
     public static class UsernameAlreadyExists extends RuntimeException {
         public UsernameAlreadyExists() {
@@ -66,6 +67,7 @@ public class UserRegisterService implements UserRegisterUseCase {
         }
     }
 
+    // The error thrown given two mismatch passwords
     @ResponseStatus(value=HttpStatus.UNAUTHORIZED, reason="Password don't match")
     public static class PasswordNotMatch extends RuntimeException {
         public PasswordNotMatch() {
@@ -73,6 +75,7 @@ public class UserRegisterService implements UserRegisterUseCase {
         }
     }
 
+    // The error thrown given a longer username than 40 chars
     @ResponseStatus(value=HttpStatus.UNPROCESSABLE_ENTITY, reason="Name is too long")
     public static class NameTooLong extends RuntimeException {
         public NameTooLong(UserRegisterCommand command) {
@@ -80,6 +83,7 @@ public class UserRegisterService implements UserRegisterUseCase {
         }
     }
 
+    // The error thrown given a username shorter than 3 chars
     @ResponseStatus(value=HttpStatus.UNPROCESSABLE_ENTITY, reason="Name is too short")
     public static class NameTooShort extends RuntimeException {
         public NameTooShort() {
@@ -87,6 +91,7 @@ public class UserRegisterService implements UserRegisterUseCase {
         }
     }
 
+    // The error thrown given a password longer than 40 chars
     @ResponseStatus(value=HttpStatus.UNPROCESSABLE_ENTITY, reason="Password is too long")
     public static class PasswordTooLong extends RuntimeException {
         public PasswordTooLong(UserRegisterCommand command) {
@@ -94,6 +99,7 @@ public class UserRegisterService implements UserRegisterUseCase {
         }
     }
 
+    // The error thrown given a password smaller than 8 chars
     @ResponseStatus(value=HttpStatus.UNPROCESSABLE_ENTITY, reason="Password is too short")
     public static class PasswordTooShort extends RuntimeException {
         public PasswordTooShort() {

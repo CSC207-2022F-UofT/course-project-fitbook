@@ -31,12 +31,16 @@ public class UserLoginService implements UserLoginUseCase {
 
         return new UserLoginResponse(user.getId());
     }
+
+    // The error thrown given an incorrect password
     @ResponseStatus(value=HttpStatus.UNAUTHORIZED, reason="Incorrect Password")
     public static class IncorrectPassword extends RuntimeException {
         public IncorrectPassword() {
             super("Incorrect Password.");
         }
     }
+
+    // The error thrown given a username not in the database
     @ResponseStatus(value=HttpStatus.UNPROCESSABLE_ENTITY, reason="User Not Found")
     public static class UserNotFound extends RuntimeException {
         public UserNotFound() {

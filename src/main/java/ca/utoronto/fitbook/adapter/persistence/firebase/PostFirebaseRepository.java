@@ -9,6 +9,7 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentSnapshot;
 import ca.utoronto.fitbook.entity.Post;
 import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.WriteResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

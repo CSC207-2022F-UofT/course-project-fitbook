@@ -21,4 +21,5 @@ public abstract class ControllerBaseIntegrationTest extends BaseTest {
     protected void setup() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
     }
+
 }
