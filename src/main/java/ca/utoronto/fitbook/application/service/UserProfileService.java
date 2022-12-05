@@ -50,6 +50,7 @@ public class UserProfileService implements UserProfileUseCase
         List<ProfilePostResponse> profileLikedPosts = findProfilePosts(currUser, likedPosts, dateFormatter);
 
         String dateJoined = dateFormatter.format(profileUser.getJoinDate());
+        boolean userFollows = currUser.getFollowingIdList().contains(profileUser.getId());
 
         // Create response to return all relevant user's profile information
         return new UserProfileResponse(
@@ -60,7 +61,8 @@ public class UserProfileService implements UserProfileUseCase
                 dateJoined,
                 profilePosts,
                 profileLikedPosts,
-                profileUser.getTotalLikes());
+                profileUser.getTotalLikes(),
+                userFollows);
     }
 
     /**
