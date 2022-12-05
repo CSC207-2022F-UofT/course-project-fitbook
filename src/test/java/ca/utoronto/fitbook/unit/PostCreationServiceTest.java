@@ -72,7 +72,7 @@ public class PostCreationServiceTest extends BaseTest{
     }
 
     @Test
-    public void findEmptyExerciseListThrowsEmptyExerciseListException() {
+    public void findIncorrectUserIdThrowsUserNotFoundException() {
         //  PostCreationCommand with user that does not exist
         PostCreationCommand noUserPost = new PostCreationCommand(
                 "12345",
@@ -84,7 +84,7 @@ public class PostCreationServiceTest extends BaseTest{
     }
 
     @Test
-    public void findIncorrectUserIdThrowsUserNotFoundException() {
+    public void findEmptyExerciseListThrowsEmptyExerciseListException() {
         //  PostCreationCommand with empty exercise list
         PostCreationCommand emptyListPost = new PostCreationCommand(
                 testUser.getId(),
