@@ -2,17 +2,19 @@ package ca.utoronto.fitbook.adapter.persistence.localmemory;
 
 import ca.utoronto.fitbook.adapter.persistence.GenericRepository;
 import ca.utoronto.fitbook.application.exceptions.EntityNotFoundException;
+import ca.utoronto.fitbook.application.port.in.LoadPaginatedPosts;
 import ca.utoronto.fitbook.application.port.in.LoadPostListPort;
 import ca.utoronto.fitbook.application.port.in.LoadPostPort;
 import ca.utoronto.fitbook.application.port.out.SavePostPort;
 import ca.utoronto.fitbook.entity.Post;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class PostLocalMemoryRepository implements GenericRepository<Post>, LoadPostPort, SavePostPort, LoadPostListPort
+public class PostLocalMemoryRepository implements GenericRepository<Post>,
+        LoadPostPort,
+        SavePostPort,
+        LoadPostListPort,
+        LoadPaginatedPosts
 {
     private static final Map<String, Post> datastore = new HashMap<>();
 
@@ -72,6 +74,35 @@ public class PostLocalMemoryRepository implements GenericRepository<Post>, LoadP
             postList.add(getById(id));
         }
         return postList;
+    }
+
+    /**
+     * Loads a maximum of `limit` number of posts after the paginationKey Id post
+     *
+     * @param paginationKey The post Id to begin the search at
+     * @param limit         The maximum number of posts to return
+     * @return A maximum of `limit` posts in a list
+     */
+    @Override
+    public List<Post> loadPaginatedPosts(String paginationKey, int limit) {
+        List<Post> posts = new ArrayList<>();
+
+        List<Post> allPosts = new ArrayList<>(datastore.values());
+        // Sort all posts by post date (newer first)
+        allPosts.sort(Comparator.comparing(Post::getPostDate).reversed());
+
+        int currentIndex = 0;
+        // Move our index to the requested page if we have a key
+        if (paginationKey != null) {
+            while (!allPosts.get(currentIndex).getId().equals(paginationKey))
+                currentIndex++;
+            // Don't include the paginationKey
+            currentIndex++;
+        }
+        // Grab the number of pages we want
+        for (int i = currentIndex; i < currentIndex + limit && i < allPosts.size(); i++)
+            posts.add(allPosts.get(i));
+        return posts;
     }
 }
 
