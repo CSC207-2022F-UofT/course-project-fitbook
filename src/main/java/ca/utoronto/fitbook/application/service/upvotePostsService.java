@@ -32,6 +32,7 @@ public class upvotePostsService implements UpvotePostsUsecase{
         User postAuthor = loadUserPort.loadUser(likedPost.getAuthorId());
 
         userPostLiker.getLikedPostIdList().add(likedPost.getId());
+        likedPost.setLikes(likedPost.getLikes() + 1);
 
         return new UpvotePostsResponse(
                 userPostLiker.getId(),
