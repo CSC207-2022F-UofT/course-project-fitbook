@@ -7,9 +7,7 @@ import ca.utoronto.fitbook.application.port.in.UserProfileUseCase;
 import ca.utoronto.fitbook.application.port.in.command.UserProfileCommand;
 import ca.utoronto.fitbook.application.port.out.response.ProfilePostResponse;
 import ca.utoronto.fitbook.application.port.out.response.UserProfileResponse;
-import ca.utoronto.fitbook.entity.Exercise;
-import ca.utoronto.fitbook.entity.Post;
-import ca.utoronto.fitbook.entity.User;
+import ca.utoronto.fitbook.entity.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -82,10 +80,12 @@ public class UserProfileService implements UserProfileUseCase
             // Convert post's list of exercise id's to exercise entities
             List<Exercise> postExercises = loadExerciseListPort.loadExerciseList(post.getExerciseIdList());
 
+            List<RepetitiveExercise> repetitiveExercises = filterRepetitiveExercises(postExercises);
+            List<TemporalExercise> temporalExercises = filterTemporalExercises(postExercises);
+
             // Check if current session's user has liked the current post
             boolean userLiked = currUser.getLikedPostIdList().contains(post.getId());
 
-            // TODO: Add custom UserNotFoundException
             User postAuthor = userProfilePort.loadUser(post.getAuthorId());
 
             // Add post response with full post information
@@ -94,11 +94,31 @@ public class UserProfileService implements UserProfileUseCase
                     postAuthor,
                     post.getLikes(),
                     dateCreated,
-                    postExercises,
+                    repetitiveExercises,
+                    temporalExercises,
                     post.getDescription(),
                     userLiked
             ));
         }
         return postResponses;
+    }
+
+    private List<TemporalExercise> filterTemporalExercises(List<Exercise> postExercises) {
+        List<TemporalExercise> temporalExercises = new ArrayList<>();
+        for (Exercise exercise: postExercises){
+            if (exercise.getType().equals(Exercise.ExerciseType.TEMPORAL)){
+                temporalExercises.add((TemporalExercise) exercise);
+            }
+        }
+        return temporalExercises;
+    }
+    private List<RepetitiveExercise> filterRepetitiveExercises(List<Exercise> postExercises) {
+        List<RepetitiveExercise> repetitiveExercises = new ArrayList<>();
+        for (Exercise exercise: postExercises){
+            if (exercise.getType().equals(Exercise.ExerciseType.REPETITIVE)){
+                repetitiveExercises.add((RepetitiveExercise) exercise);
+            }
+        }
+        return repetitiveExercises;
     }
 }
