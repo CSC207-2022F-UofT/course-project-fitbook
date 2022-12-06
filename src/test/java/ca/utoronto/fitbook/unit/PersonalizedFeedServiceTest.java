@@ -78,7 +78,7 @@ public class PersonalizedFeedServiceTest extends BaseTest
         PersonalizedFeedCommand initialCommand = new PersonalizedFeedCommand(firstRandomUser.getId(), null, 60);
         PersonalizedFeedResponse initialResponse = personalizedFeedUseCase.getFeed(initialCommand);
 
-        PersonalizedFeedCommand paginatedCommand = new PersonalizedFeedCommand(randomTestUsers.get(0).getId(),
+        PersonalizedFeedCommand paginatedCommand = new PersonalizedFeedCommand(firstRandomUser.getId(),
                 initialResponse.getNextPaginationKey(), 60);
         PersonalizedFeedResponse paginatedResponse = personalizedFeedUseCase.getFeed(paginatedCommand);
 
