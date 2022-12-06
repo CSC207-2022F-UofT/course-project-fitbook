@@ -4,10 +4,12 @@ import ca.utoronto.fitbook.adapter.persistence.GenericRepository;
 import ca.utoronto.fitbook.application.exceptions.EntityNotFoundException;
 import ca.utoronto.fitbook.application.exceptions.UsernameCollisionException;
 import ca.utoronto.fitbook.application.exceptions.UsernameNotFoundException;
+import ca.utoronto.fitbook.application.port.in.CheckUserExistsPort;
 import ca.utoronto.fitbook.application.port.in.FindUserByNamePort;
 import ca.utoronto.fitbook.application.port.in.LoadUserByNamePort;
 import ca.utoronto.fitbook.application.port.in.LoadUserListPort;
 import ca.utoronto.fitbook.application.port.in.LoadUserPort;
+import ca.utoronto.fitbook.application.exceptions.UserNotFoundException;
 import ca.utoronto.fitbook.application.port.out.SaveUserPort;
 import ca.utoronto.fitbook.entity.User;
 
@@ -21,7 +23,8 @@ public class UserLocalMemoryRepository implements GenericRepository<User>,
         LoadUserByNamePort,
         FindUserByNamePort,
         SaveUserPort,
-        LoadUserListPort
+        LoadUserListPort,
+        CheckUserExistsPort
 {
     private static final Map<String, User> datastore = new HashMap<>();
 
