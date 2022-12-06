@@ -30,6 +30,8 @@ public class FollowService implements FollowUseCase
 
         if (follower.getId().equals(followee.getId()))
             throw new UserSelfFollowingException();
+        if(follower.getFollowingIdList().contains(followee.getId()))
+            throw new UserAlreadyFollowingException();
 
         follower.getFollowingIdList().add(followee.getId());
         followee.getFollowersIdList().add(follower.getId());
@@ -42,6 +44,12 @@ public class FollowService implements FollowUseCase
     public static class UserSelfFollowingException extends RuntimeException {
         public UserSelfFollowingException() {
             super("User tried to follow themself.");
+        }
+    }
+    @ResponseStatus(value= HttpStatus.BAD_REQUEST, reason="User is already following the person.")
+    public static class UserAlreadyFollowingException extends RuntimeException {
+        public UserAlreadyFollowingException() {
+            super("User is already following the person.");
         }
     }
 }
