@@ -1,5 +1,7 @@
 package ca.utoronto.fitbook.application.service;
 
+import ca.utoronto.fitbook.application.exceptions.IncorrectPasswordException;
+import ca.utoronto.fitbook.application.exceptions.UserNotFoundException;
 import ca.utoronto.fitbook.application.port.in.FindUserByNamePort;
 import ca.utoronto.fitbook.application.port.in.LoadUserByNamePort;
 import ca.utoronto.fitbook.application.port.in.UserLoginUseCase;
@@ -23,28 +25,12 @@ public class UserLoginService implements UserLoginUseCase {
     @Override
     public UserLoginResponse loginUser(UserLoginCommand command) {
         if(!findUserByNamePort.findByName(command.getName()))
-            throw new UserNotFound();
+            throw new UserNotFoundException();
 
         User user = loadUserByNamePort.loadUserByName(command.getName());
         if (!user.getPassword().equals(command.getPassword()))
-            throw new IncorrectPassword();
+            throw new IncorrectPasswordException();
 
         return new UserLoginResponse(user.getId());
-    }
-
-    // The error thrown given an incorrect password
-    @ResponseStatus(value=HttpStatus.UNAUTHORIZED, reason="Incorrect Password")
-    public static class IncorrectPassword extends RuntimeException {
-        public IncorrectPassword() {
-            super("Incorrect Password.");
-        }
-    }
-
-    // The error thrown given a username not in the database
-    @ResponseStatus(value=HttpStatus.UNPROCESSABLE_ENTITY, reason="User Not Found")
-    public static class UserNotFound extends RuntimeException {
-        public UserNotFound() {
-            super("User Not Found.");
-        }
     }
 }
