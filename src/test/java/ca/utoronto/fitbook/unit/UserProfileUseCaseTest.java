@@ -222,7 +222,7 @@ public class UserProfileUseCaseTest extends BaseTest {
         Assertions.assertEquals(post3.getAuthorId(), response.getPostList().get(0).getAuthor().getId());
         Assertions.assertNotNull(response.getPostList().get(0).getPostDate());
         Assertions.assertTrue(response.getPostList().get(0).isUserLiked());
-        Assertions.assertEquals(exercise1.getId(), response.getPostList().get(0).getExerciseList().get(0).getId());
+        Assertions.assertEquals(exercise1.getId(), response.getPostList().get(0).getRepetitiveExerciseList().get(0).getId());
 
     }
 
