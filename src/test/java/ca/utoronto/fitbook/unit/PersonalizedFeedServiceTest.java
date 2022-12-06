@@ -131,6 +131,14 @@ public class PersonalizedFeedServiceTest extends BaseTest
     }
 
     @Test
+    public void testCorrectNumberOfPostsForInvalidPaginationKey() {
+        PersonalizedFeedCommand command = new PersonalizedFeedCommand(firstRandomUser.getId(), "invalid", 50);
+        PersonalizedFeedResponse response = personalizedFeedUseCase.getFeed(command);
+
+        Assertions.assertEquals(0, response.getPostList().size());
+    }
+
+    @Test
     public void testInvalidPaginationLimit() {
         PersonalizedFeedCommand command = new PersonalizedFeedCommand(firstRandomUser.getId(), null, -5);
         Assertions.assertThrows(PersonalizedFeedService.InvalidFeedLimitException.class, () -> personalizedFeedUseCase.getFeed(command));

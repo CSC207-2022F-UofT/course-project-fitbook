@@ -94,7 +94,8 @@ public class PostLocalMemoryRepository implements GenericRepository<Post>,
         int currentIndex = 0;
         // Move our index to the requested page if we have a key
         if (paginationKey != null) {
-            while (!allPosts.get(currentIndex).getId().equals(paginationKey))
+            while (currentIndex < allPosts.size()
+                    && !allPosts.get(currentIndex).getId().equals(paginationKey))
                 currentIndex++;
             // Don't include the paginationKey
             currentIndex++;
