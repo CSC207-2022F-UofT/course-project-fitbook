@@ -8,6 +8,7 @@ import ca.utoronto.fitbook.entity.Exercise;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.WriteResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
@@ -65,7 +66,13 @@ public class ExerciseFirebaseRepository implements GenericRepository<Exercise>, 
      */
     @Override
     public void save(Exercise entity) {
-        firestore.collection(COLLECTION_NAME).document(entity.getId()).set(entity);
+        try {
+            ApiFuture<WriteResult> future = firestore.collection(COLLECTION_NAME).document(entity.getId()).set(entity);
+            // Make the save synchronous
+            future.get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -73,7 +80,13 @@ public class ExerciseFirebaseRepository implements GenericRepository<Exercise>, 
      */
     @Override
     public void delete(String id) {
-        firestore.collection(COLLECTION_NAME).document(id).delete();
+        try {
+            ApiFuture<WriteResult> future = firestore.collection(COLLECTION_NAME).document(id).delete();
+            // Make delete synchronous
+            future.get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**

@@ -1,5 +1,6 @@
 package ca.utoronto.fitbook.application.service;
 
+import ca.utoronto.fitbook.application.exceptions.*;
 import ca.utoronto.fitbook.application.port.in.FindUserByNamePort;
 import ca.utoronto.fitbook.application.port.in.UserRegisterUseCase;
 import ca.utoronto.fitbook.application.port.in.command.UserRegisterCommand;
@@ -25,23 +26,23 @@ public class UserRegisterService implements UserRegisterUseCase {
     public UserRegisterResponse createUser(UserRegisterCommand command){
         // Verify the username isn't taken
         if (findUserByNamePort.findByName(command.getName()))
-            throw new UsernameAlreadyExists();
+            throw new UsernameAlreadyExistsException(command.getName());
 
         // Make sure passwords match
         if (!command.getPassword().equals(command.getRepeatedPassword()))
-            throw new PasswordNotMatch();
+            throw new PasswordNotMatchException();
 
         // Check username constraints
         if (command.getName().length() > 40)
-            throw new NameTooLong(command);
+            throw new NameTooLongException(command);
         if (command.getName().length() < 3)
-            throw new NameTooShort();
+            throw new NameTooShortException();
 
         // Check password constraints
         if (command.getPassword().length() < 8)
-            throw new PasswordTooShort();
+            throw new PasswordTooShortException();
         if (command.getPassword().length() > 40)
-            throw new PasswordTooLong(command);
+            throw new PasswordTooLongException(command);
 
         // Create and save the new user
         User user = User.builder()
@@ -59,44 +60,42 @@ public class UserRegisterService implements UserRegisterUseCase {
         return new UserRegisterResponse(user.getId());
     }
 
-    @ResponseStatus(value=HttpStatus.CONFLICT, reason="Username already exists")
-    public static class UsernameAlreadyExists extends RuntimeException {
-        public UsernameAlreadyExists() {
-            super("Username already exists.");
-        }
-    }
-
-    @ResponseStatus(value=HttpStatus.UNAUTHORIZED, reason="Password don't match")
-    public static class PasswordNotMatch extends RuntimeException {
-        public PasswordNotMatch() {
+    // The error thrown given two mismatch passwords
+    @ResponseStatus(value= HttpStatus.BAD_REQUEST, reason="Password don't match")
+    public class PasswordNotMatchException extends RuntimeException {
+        public PasswordNotMatchException() {
             super("Password don't match.");
         }
     }
 
-    @ResponseStatus(value=HttpStatus.UNPROCESSABLE_ENTITY, reason="Name is too long")
-    public static class NameTooLong extends RuntimeException {
-        public NameTooLong(UserRegisterCommand command) {
-            super("Name is too long by " + ((command.getName().length()) - 40) + " characters");
-        }
-    }
-
-    @ResponseStatus(value=HttpStatus.UNPROCESSABLE_ENTITY, reason="Name is too short")
-    public static class NameTooShort extends RuntimeException {
-        public NameTooShort() {
-            super("Name is too short");
-        }
-    }
-
-    @ResponseStatus(value=HttpStatus.UNPROCESSABLE_ENTITY, reason="Password is too long")
-    public static class PasswordTooLong extends RuntimeException {
-        public PasswordTooLong(UserRegisterCommand command) {
+    // The error thrown given a password longer than 40 chars
+    @ResponseStatus(value= HttpStatus.UNPROCESSABLE_ENTITY, reason="Password is too long")
+    public class PasswordTooLongException extends RuntimeException {
+        public PasswordTooLongException(UserRegisterCommand command) {
             super("Password is too long by " + ((command.getName().length()) - 40) + " characters");
         }
     }
 
-    @ResponseStatus(value=HttpStatus.UNPROCESSABLE_ENTITY, reason="Password is too short")
-    public static class PasswordTooShort extends RuntimeException {
-        public PasswordTooShort() {
+    // The error thrown given a username shorter than 3 chars
+    @ResponseStatus(value= HttpStatus.UNPROCESSABLE_ENTITY, reason="Name is too short")
+    public class NameTooShortException extends RuntimeException {
+        public NameTooShortException() {
+            super("Name is too short");
+        }
+    }
+
+    // The error thrown given a longer username than 40 chars
+    @ResponseStatus(value= HttpStatus.UNPROCESSABLE_ENTITY, reason="Name is too long")
+    public class NameTooLongException extends RuntimeException {
+        public NameTooLongException(UserRegisterCommand command) {
+            super(String.format("Name is too long by %s characters", ((command.getName().length()) - 40)));
+        }
+    }
+
+    // The error thrown given a password smaller than 8 chars
+    @ResponseStatus(value= HttpStatus.UNPROCESSABLE_ENTITY, reason="Password is too short")
+    public class PasswordTooShortException extends RuntimeException {
+        public PasswordTooShortException() {
             super("Password is too short");
         }
     }

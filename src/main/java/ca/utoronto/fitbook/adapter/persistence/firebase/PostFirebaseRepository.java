@@ -9,6 +9,7 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentSnapshot;
 import ca.utoronto.fitbook.entity.Post;
 import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.WriteResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -50,7 +51,13 @@ public class PostFirebaseRepository implements GenericRepository<Post>, LoadPost
      */
     @Override
     public void save(Post entity) {
-        firestore.collection(COLLECTION_NAME).document(entity.getId()).set(entity);
+        try {
+            ApiFuture<WriteResult> future = firestore.collection(COLLECTION_NAME).document(entity.getId()).set(entity);
+            // Make the save synchronous
+            future.get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -58,7 +65,13 @@ public class PostFirebaseRepository implements GenericRepository<Post>, LoadPost
      */
     @Override
     public void delete(String id) {
-        firestore.collection(COLLECTION_NAME).document(id).delete();
+        try {
+            ApiFuture<WriteResult> future = firestore.collection(COLLECTION_NAME).document(id).delete();
+            // Make delete synchronous
+            future.get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
