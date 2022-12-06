@@ -2,6 +2,7 @@ package ca.utoronto.fitbook.adapter.persistence.firebase;
 
 import ca.utoronto.fitbook.adapter.persistence.GenericRepository;
 import ca.utoronto.fitbook.application.exceptions.EntityNotFoundException;
+import ca.utoronto.fitbook.application.exceptions.UserNotFoundException;
 import ca.utoronto.fitbook.application.exceptions.UsernameCollisionException;
 import ca.utoronto.fitbook.application.exceptions.UsernameNotFoundException;
 import ca.utoronto.fitbook.application.port.in.CheckUserExistsPort;

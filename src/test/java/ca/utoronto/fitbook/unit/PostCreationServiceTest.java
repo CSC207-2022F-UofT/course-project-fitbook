@@ -3,7 +3,7 @@ package ca.utoronto.fitbook.unit;
 import ca.utoronto.fitbook.BaseTest;
 import ca.utoronto.fitbook.adapter.persistence.localmemory.*;
 import ca.utoronto.fitbook.application.exceptions.*;
-import ca.utoronto.fitbook.application.port.in.UserNotFoundException;
+import ca.utoronto.fitbook.application.exceptions.UserNotFoundException;
 import ca.utoronto.fitbook.application.port.in.command.PostCreationCommand;
 import ca.utoronto.fitbook.application.port.out.response.PostCreationResponse;
 import ca.utoronto.fitbook.application.service.PostCreationService;
