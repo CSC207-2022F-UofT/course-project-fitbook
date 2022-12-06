@@ -95,6 +95,11 @@ public class FollowControllerIntegrationTest extends ControllerBaseIntegrationTe
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+
+        User updatedUser1 = userFirebaseRepository.loadUser(testUser1.getId());
+        User updatedUser2 = userFirebaseRepository.loadUser(testUser2.getId());
+        Assertions.assertTrue(updatedUser1.getFollowingIdList().contains(testUser2.getId()));
+        Assertions.assertTrue(updatedUser2.getFollowersIdList().contains(testUser1.getId()));
     }
     @Test
     public void userFollowThemselvesExpectBadResponse() throws Exception {
@@ -105,7 +110,8 @@ public class FollowControllerIntegrationTest extends ControllerBaseIntegrationTe
 
         this.mockMvc.perform(post("/follow").session(authorizedSession).content(mapper.writeValueAsString(payload))
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(status().isBadRequest());
+                        .andExpect(status().isBadRequest())
+                        .andReturn();
     }
 
     @Test
