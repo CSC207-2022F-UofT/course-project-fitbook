@@ -57,6 +57,7 @@ public class FollowUseCaseTest extends BaseTest {
         userLocalMemoryRepository.delete(testUser1.getId());
         userLocalMemoryRepository.delete(testUser2.getId());
     }
+
     @AfterEach
     public void resetFollowers(){
         testUser1.setFollowersIdList(new ArrayList<>());
@@ -67,15 +68,18 @@ public class FollowUseCaseTest extends BaseTest {
         userLocalMemoryRepository.save(testUser2);
     }
 
-
     @Test
     public void followUserReturnsValidResponse() {
         FollowCommand followCommand = new FollowCommand(testUser1.getId(), testUser2.getId());
-
         FollowResponse followResponse = this.followUseCase.followUser(followCommand);
-
         Assertions.assertEquals(testUser2.getId(), followResponse.getFolloweeId());
+
+        User updatedUser1 = userLocalMemoryRepository.loadUser(testUser1.getId());
+        User updatedUser2 = userLocalMemoryRepository.loadUser(testUser2.getId());
+        Assertions.assertTrue(updatedUser1.getFollowingIdList().contains(testUser2.getId()));
+        Assertions.assertTrue(updatedUser2.getFollowersIdList().contains(testUser1.getId()));
     }
+
     @Test
     public void followUserFollowsThemselvesThrowsUserSelfFollowingException() {
         FollowCommand followCommand = new FollowCommand(testUser1.getId(), testUser1.getId());
