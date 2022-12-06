@@ -14,7 +14,7 @@
         <p> Likes <span th:text="${post.likes}">Post Likes</span></p>
         <p th:text="${post.description}"></p>
     </div>
-    <p th:if="${posts.size() == 0}">Sorry, no posts found for given query</p>
+    <p th:if="${posts.size() == 0}">No more posts left!</p>
     <a th:if="${paginationKey == null}" th:href="@{'/feed'}">Go back to the start of the feed</a>
     <a th:if="${paginationKey != null}" th:href="@{'/feed' + ${'?paginationKey=' + paginationKey}}">Next Page</a>
 </div>
