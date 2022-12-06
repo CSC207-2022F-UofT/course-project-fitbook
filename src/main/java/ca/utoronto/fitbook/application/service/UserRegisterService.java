@@ -26,7 +26,7 @@ public class UserRegisterService implements UserRegisterUseCase {
     public UserRegisterResponse createUser(UserRegisterCommand command){
         // Verify the username isn't taken
         if (findUserByNamePort.findByName(command.getName()))
-            throw new UsernameAlreadyExistsException();
+            throw new UsernameAlreadyExistsException(command.getName());
 
         // Make sure passwords match
         if (!command.getPassword().equals(command.getRepeatedPassword()))
@@ -59,4 +59,45 @@ public class UserRegisterService implements UserRegisterUseCase {
         // Return the user's id
         return new UserRegisterResponse(user.getId());
     }
+
+    // The error thrown given two mismatch passwords
+    @ResponseStatus(value= HttpStatus.BAD_REQUEST, reason="Password don't match")
+    public class PasswordNotMatchException extends RuntimeException {
+        public PasswordNotMatchException() {
+            super("Password don't match.");
+        }
+    }
+
+    // The error thrown given a password longer than 40 chars
+    @ResponseStatus(value= HttpStatus.UNPROCESSABLE_ENTITY, reason="Password is too long")
+    public class PasswordTooLongException extends RuntimeException {
+        public PasswordTooLongException(UserRegisterCommand command) {
+            super("Password is too long by " + ((command.getName().length()) - 40) + " characters");
+        }
+    }
+
+    // The error thrown given a username shorter than 3 chars
+    @ResponseStatus(value= HttpStatus.UNPROCESSABLE_ENTITY, reason="Name is too short")
+    public class NameTooShortException extends RuntimeException {
+        public NameTooShortException() {
+            super("Name is too short");
+        }
+    }
+
+    // The error thrown given a longer username than 40 chars
+    @ResponseStatus(value= HttpStatus.UNPROCESSABLE_ENTITY, reason="Name is too long")
+    public class NameTooLongException extends RuntimeException {
+        public NameTooLongException(UserRegisterCommand command) {
+            super(String.format("Name is too long by %s characters", ((command.getName().length()) - 40)));
+        }
+    }
+
+    // The error thrown given a password smaller than 8 chars
+    @ResponseStatus(value= HttpStatus.UNPROCESSABLE_ENTITY, reason="Password is too short")
+    public class PasswordTooShortException extends RuntimeException {
+        public PasswordTooShortException() {
+            super("Password is too short");
+        }
+    }
+
 }
