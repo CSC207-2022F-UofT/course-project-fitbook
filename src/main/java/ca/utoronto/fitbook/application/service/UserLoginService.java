@@ -1,7 +1,7 @@
 package ca.utoronto.fitbook.application.service;
 
 import ca.utoronto.fitbook.application.exceptions.IncorrectPasswordException;
-import ca.utoronto.fitbook.application.exceptions.UserNotFoundException;
+import ca.utoronto.fitbook.application.exceptions.UsernameNotFoundException;
 import ca.utoronto.fitbook.application.port.in.FindUserByNamePort;
 import ca.utoronto.fitbook.application.port.in.LoadUserByNamePort;
 import ca.utoronto.fitbook.application.port.in.UserLoginUseCase;
@@ -9,9 +9,8 @@ import ca.utoronto.fitbook.application.port.in.command.UserLoginCommand;
 import ca.utoronto.fitbook.application.port.out.response.UserLoginResponse;
 import ca.utoronto.fitbook.entity.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ResponseStatus;
+
 @Service
 @RequiredArgsConstructor
 public class UserLoginService implements UserLoginUseCase {
@@ -25,7 +24,7 @@ public class UserLoginService implements UserLoginUseCase {
     @Override
     public UserLoginResponse loginUser(UserLoginCommand command) {
         if(!findUserByNamePort.findByName(command.getName()))
-            throw new UserNotFoundException();
+            throw new UsernameNotFoundException(command.getName());
 
         User user = loadUserByNamePort.loadUserByName(command.getName());
         if (!user.getPassword().equals(command.getPassword()))

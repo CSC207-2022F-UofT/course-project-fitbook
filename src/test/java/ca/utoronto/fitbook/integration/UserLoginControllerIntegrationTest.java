@@ -31,9 +31,7 @@ public class UserLoginControllerIntegrationTest extends ControllerBaseIntegratio
 
         userFirebaseRepository.save(testUser);
 
-
         session = new MockHttpSession();
-
 
     }
 
@@ -56,10 +54,9 @@ public class UserLoginControllerIntegrationTest extends ControllerBaseIntegratio
                 .andExpect(content().contentType("text/html;charset=UTF-8")).andReturn();
         Assertions.assertEquals(testUser.getId(), session.getAttribute("userId"));
 
-        userFirebaseRepository.loadUser((String) result.getModelAndView().getModel().get("id"));
+        Assertions.assertDoesNotThrow(() -> userFirebaseRepository.loadUser((String) result.getModelAndView().getModel().get("id")));
 
     }
-
     // Making a post request to login with wrong password and expecting it to return client error
     @Test
     public void failToLogUserForWrongPassword() throws Exception {
@@ -72,7 +69,6 @@ public class UserLoginControllerIntegrationTest extends ControllerBaseIntegratio
                 .andExpect(status().is4xxClientError()).andReturn();
 
     }
-
     // Making a post request to login with a username that does not exist and expecting it to return client error
     @Test
     public void failToLogUserForUsernameDoesNotExist() throws Exception {
@@ -85,7 +81,6 @@ public class UserLoginControllerIntegrationTest extends ControllerBaseIntegratio
                 .andExpect(status().is4xxClientError()).andReturn();
 
     }
-
     // Making a get request to login and expecting the login page returned
     @Test
     public void successfullyLoadTheLoginpage() throws Exception {
@@ -93,7 +88,6 @@ public class UserLoginControllerIntegrationTest extends ControllerBaseIntegratio
                 .andExpect(status().isOk()).
                 andExpect(content().contentType("text/html;charset=UTF-8"));
     }
-
 }
 
 

@@ -4,6 +4,7 @@ import ca.utoronto.fitbook.TestUtilities;
 import ca.utoronto.fitbook.adapter.persistence.firebase.UserFirebaseRepository;
 import ca.utoronto.fitbook.entity.User;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,12 +31,8 @@ public class UserRegisterControllerIntegrationTest extends ControllerBaseIntegra
 
         userFirebaseRepository.save(testUser);
 
-
         session = new MockHttpSession();
-
-
     }
-
 
     @AfterAll
     public void cleanUp() {
@@ -54,10 +51,9 @@ public class UserRegisterControllerIntegrationTest extends ControllerBaseIntegra
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("text/html;charset=UTF-8")).andReturn();
 
-        userFirebaseRepository.loadUser((String) result.getModelAndView().getModel().get("id"));
+        Assertions.assertDoesNotThrow(() -> userFirebaseRepository.loadUser((String) result.getModelAndView().getModel().get("id")));
         userFirebaseRepository.delete(userFirebaseRepository.loadUserByName("modaser1").getId());
     }
-
     // Making a post request to register with mismatch passwords and expecting it to return a client error
     @Test
     public void failUserRegisterForPasswordMismatch() throws Exception {
@@ -67,10 +63,9 @@ public class UserRegisterControllerIntegrationTest extends ControllerBaseIntegra
                         .queryParam("password", "modaser12")
                         .queryParam("repeatedPassword", "modaser123")
                         .session(session))
-                .andExpect(status().is4xxClientError())
+                .andExpect(status().isBadRequest())
                 .andReturn();
     }
-
     // Making a post request to register with too short passwords and expecting it to return a client error
     @Test
     public void failUserRegisterForShortPasswords() throws Exception {
@@ -80,10 +75,9 @@ public class UserRegisterControllerIntegrationTest extends ControllerBaseIntegra
                         .queryParam("password", "12")
                         .queryParam("repeatedPassword", "12")
                         .session(session))
-                .andExpect(status().is4xxClientError())
+                .andExpect(status().isUnprocessableEntity())
                 .andReturn();
     }
-
     // Making a post request to register with too long passwords and expecting it to return a client error
     @Test
     public void failUserRegisterForLongPasswords() throws Exception {
@@ -93,10 +87,9 @@ public class UserRegisterControllerIntegrationTest extends ControllerBaseIntegra
                         .queryParam("password", "123412341234123412341234123412341234123412341234")
                         .queryParam("repeatedPassword", "123412341234123412341234123412341234123412341234")
                         .session(session))
-                .andExpect(status().is4xxClientError())
+                .andExpect(status().isUnprocessableEntity())
                 .andReturn();
     }
-
     // Making a post request to register with too long username and expecting it to return a client error
     @Test
     public void failUserRegisterForLongUsername() throws Exception {
@@ -106,10 +99,9 @@ public class UserRegisterControllerIntegrationTest extends ControllerBaseIntegra
                         .queryParam("password", "123123123")
                         .queryParam("repeatedPassword", "123123123")
                         .session(session))
-                .andExpect(status().is4xxClientError())
+                .andExpect(status().isUnprocessableEntity())
                 .andReturn();
     }
-
     // Making a post request to register with too long username and expecting it to return a client error
     @Test
     public void failUserRegisterForShortUsername() throws Exception {
@@ -119,10 +111,9 @@ public class UserRegisterControllerIntegrationTest extends ControllerBaseIntegra
                         .queryParam("password", "123123123")
                         .queryParam("repeatedPassword", "123123123")
                         .session(session))
-                .andExpect(status().is4xxClientError())
+                .andExpect(status().isUnprocessableEntity())
                 .andReturn();
     }
-
     // Making a post request to register with an existing username and expecting it to return a client error
     @Test
     public void failUserRegisterForUsernameAlreadyExists() throws Exception {
@@ -134,11 +125,10 @@ public class UserRegisterControllerIntegrationTest extends ControllerBaseIntegra
                         .queryParam("password", "123123123")
                         .queryParam("repeatedPassword", "123123123")
                         .session(session))
-                .andExpect(status().is4xxClientError())
+                .andExpect(status().isConflict())
                 .andReturn();
         userFirebaseRepository.delete(existUser.getId());
     }
-
     // Making a get request to register and expecting the register page
     @Test
     public void successfullyLoadTheRegisterPage() throws Exception {
@@ -146,6 +136,4 @@ public class UserRegisterControllerIntegrationTest extends ControllerBaseIntegra
                 .andExpect(status().isOk()).
                 andExpect(content().contentType("text/html;charset=UTF-8"));
     }
-
-
 }
