@@ -233,8 +233,8 @@
     const followButton = document.getElementById("follow");
     let followers = [[${profile.getFollowerSize()}]]
 
-    const followUser = async (e, followeeId, followerId) => {
-        const response = await fetch("/follow/", {
+    const followUser = async (event, followeeId) => {
+        fetch("/follow/", {
             method: "POST",
             mode: "cors",
             cache: "no-cache",
@@ -242,18 +242,18 @@
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                followeeId: followeeId,
-                followerId: followerId})
-        })
-
-        followers += 1;
-        followStatus.textContent = "Following"
-        followButton.disabled = true;
-        followerCount.textContent = followers;
+                followeeId: followeeId
+            })
+        }).then(() => {
+            followers += 1;
+            followStatus.textContent = "Following"
+            followButton.disabled = true;
+            followerCount.textContent = followers;
+        }).catch(e => console.error(e))
     }
 
-    const upvotePost = async (e, postId, userId, postLikes) => {
-        const response = await fetch("/upvote/",  {
+    const upvotePost = (event, postId, userId, postLikes) => {
+        fetch("/upvote/",  {
             method: "POST",
             mode: "cors",
             cache: "no-cache",
@@ -261,13 +261,14 @@
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                postId: postId,
-                userId: userId})
-        })
+                postId: postId
+            })
+        }).then(() => {
+            event.nextElementSibling.querySelector("span").textContent = (parseInt(postLikes) + 1).toString();
+            event.textContent = "Liked";
+            event.disabled = true;
+        }).catch(e => console.error(e))
 
-        e.nextElementSibling.querySelector("span").textContent = parseInt(postLikes) + 1;
-        e.textContent = "Liked";
-        e.disabled = true;
     }
 </script>
 </html>
