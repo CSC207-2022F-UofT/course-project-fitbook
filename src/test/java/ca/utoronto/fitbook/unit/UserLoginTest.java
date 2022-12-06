@@ -2,6 +2,8 @@ package ca.utoronto.fitbook.unit;
 
 import ca.utoronto.fitbook.BaseTest;
 import ca.utoronto.fitbook.adapter.persistence.localmemory.UserLocalMemoryRepository;
+import ca.utoronto.fitbook.application.exceptions.IncorrectPasswordException;
+import ca.utoronto.fitbook.application.exceptions.UsernameNotFoundException;
 import ca.utoronto.fitbook.application.port.in.UserLoginUseCase;
 import ca.utoronto.fitbook.application.port.in.command.UserLoginCommand;
 import ca.utoronto.fitbook.application.port.out.response.UserLoginResponse;
@@ -64,13 +66,13 @@ public class UserLoginTest extends BaseTest {
     @Test
     public void testIncorrectPassword() {
         UserLoginCommand wrongJhon = new UserLoginCommand("jhon", "12345678");
-        Assertions.assertThrows(UserLoginService.IncorrectPassword.class, () -> userLoginUseCase.loginUser(wrongJhon));
+        Assertions.assertThrows(IncorrectPasswordException.class, () -> userLoginUseCase.loginUser(wrongJhon));
     }
 
     // Testing when the user does not exist
     @Test
     public void testUserDoesNotExist() {
         UserLoginCommand tom = new UserLoginCommand("tom", "123456789");
-        Assertions.assertThrows(UserLoginService.UserNotFound.class, () -> userLoginUseCase.loginUser(tom));
+        Assertions.assertThrows(UsernameNotFoundException.class, () -> userLoginUseCase.loginUser(tom));
     }
 }
