@@ -16,6 +16,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -28,6 +29,7 @@ public class PersonalizedFeedServiceTest extends BaseTest
 
     private List<Post> randomTestPosts;
     private List<User> randomTestUsers;
+    private User firstRandomUser;
 
     @BeforeAll
     public void init() {
@@ -48,6 +50,11 @@ public class PersonalizedFeedServiceTest extends BaseTest
             postLocalMemoryRepository.save(randomPost);
             randomTestPosts.add(randomPost);
         }
+
+        firstRandomUser = randomTestUsers.get(0);
+
+        randomTestPosts.sort(Comparator.comparing(Post::getPostDate).reversed());
+        firstRandomUser.getLikedPostIdList().add(randomTestPosts.get(5).getId());
     }
 
     @AfterAll
@@ -60,7 +67,7 @@ public class PersonalizedFeedServiceTest extends BaseTest
 
     @Test
     public void testCorrectNumberOfPostsInFeed() {
-        PersonalizedFeedCommand command = new PersonalizedFeedCommand(randomTestUsers.get(0).getId(), null, 50);
+        PersonalizedFeedCommand command = new PersonalizedFeedCommand(firstRandomUser.getId(), null, 50);
         PersonalizedFeedResponse response = personalizedFeedUseCase.getFeed(command);
 
         Assertions.assertEquals(50, response.getPostList().size());
@@ -68,7 +75,7 @@ public class PersonalizedFeedServiceTest extends BaseTest
 
     @Test
     public void testCorrectNumberOfPostsInPaginatedFeed() {
-        PersonalizedFeedCommand initialCommand = new PersonalizedFeedCommand(randomTestUsers.get(0).getId(), null, 60);
+        PersonalizedFeedCommand initialCommand = new PersonalizedFeedCommand(firstRandomUser.getId(), null, 60);
         PersonalizedFeedResponse initialResponse = personalizedFeedUseCase.getFeed(initialCommand);
 
         PersonalizedFeedCommand paginatedCommand = new PersonalizedFeedCommand(randomTestUsers.get(0).getId(),
@@ -80,11 +87,24 @@ public class PersonalizedFeedServiceTest extends BaseTest
     }
 
     @Test
-    public void testNoDuplicatesInPagination() {
-        PersonalizedFeedCommand initialCommand = new PersonalizedFeedCommand(randomTestUsers.get(0).getId(), null, 60);
+    public void testLikedFirstInFeed() {
+        PersonalizedFeedCommand initialCommand = new PersonalizedFeedCommand(firstRandomUser.getId(), null, 60);
         PersonalizedFeedResponse initialResponse = personalizedFeedUseCase.getFeed(initialCommand);
 
-        PersonalizedFeedCommand paginatedCommand = new PersonalizedFeedCommand(randomTestUsers.get(0).getId(),
+        PersonalizedFeedCommand paginatedCommand = new PersonalizedFeedCommand(firstRandomUser.getId(),
+                initialResponse.getNextPaginationKey(), 60);
+        PersonalizedFeedResponse paginatedResponse = personalizedFeedUseCase.getFeed(paginatedCommand);
+
+        Assertions.assertEquals(40, paginatedResponse.getPostList().size());
+        Assertions.assertNull(paginatedResponse.getNextPaginationKey());
+    }
+
+    @Test
+    public void testNoDuplicatesInPagination() {
+        PersonalizedFeedCommand initialCommand = new PersonalizedFeedCommand(firstRandomUser.getId(), null, 60);
+        PersonalizedFeedResponse initialResponse = personalizedFeedUseCase.getFeed(initialCommand);
+
+        PersonalizedFeedCommand paginatedCommand = new PersonalizedFeedCommand(firstRandomUser.getId(),
                 initialResponse.getNextPaginationKey(), 60);
         PersonalizedFeedResponse paginatedResponse = personalizedFeedUseCase.getFeed(paginatedCommand);
 
@@ -94,8 +114,25 @@ public class PersonalizedFeedServiceTest extends BaseTest
     }
 
     @Test
+    public void testPaginationInDescendingDate() {
+        PersonalizedFeedCommand initialCommand = new PersonalizedFeedCommand(firstRandomUser.getId(), null, 60);
+        PersonalizedFeedResponse initialResponse = personalizedFeedUseCase.getFeed(initialCommand);
+
+        PersonalizedFeedCommand paginatedCommand = new PersonalizedFeedCommand(firstRandomUser.getId(),
+                initialResponse.getNextPaginationKey(), 60);
+        PersonalizedFeedResponse paginatedResponse = personalizedFeedUseCase.getFeed(paginatedCommand);
+
+        List<Post> initialPosts = initialResponse.getPostList();
+        Post lastInitialPost = initialPosts.get(initialPosts.size() - 1);
+
+        // Make sure every post in the paginated response is older than the last initial post
+        for (Post post : paginatedResponse.getPostList())
+            Assertions.assertTrue(post.getPostDate().before(lastInitialPost.getPostDate()));
+    }
+
+    @Test
     public void testInvalidPaginationLimit() {
-        PersonalizedFeedCommand command = new PersonalizedFeedCommand(randomTestUsers.get(0).getId(), null, -5);
+        PersonalizedFeedCommand command = new PersonalizedFeedCommand(firstRandomUser.getId(), null, -5);
         Assertions.assertThrows(PersonalizedFeedService.InvalidFeedLimitException.class, () -> personalizedFeedUseCase.getFeed(command));
     }
 
