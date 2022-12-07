@@ -15,6 +15,6 @@ public class UserLogoutController {
         session.invalidate();
 
         // TODO: Show a logout view
-        return "index";
+        return "login";
     }
 }
