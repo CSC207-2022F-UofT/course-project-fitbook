@@ -45,15 +45,15 @@ User is a class that is used to store the information of each individual user of
 
 The User object has the following attributes:
 
-- String id
-- String name
-- String password
-- Date joinDate
-- int totalLikes
-- List<String> followingIdList
-- List<String> followerIdList
-- List<String> postIdList
-- List<String> likedPostIdList
+- ```String id```
+- ```String name```
+- ```String password```
+- ```Date joinDate```
+- ```int totalLikes```
+- ```List<String> followingIdList```
+- ```List<String> followerIdList```
+- ```List<String> postIdList```
+- ```List<String> likedPostIdList```
 
 ### 1.2 Post
 
@@ -61,12 +61,12 @@ Post is a class that is used to store the information of any user's post in the 
 
 The Post object has the following attributes:
 
-- String id
-- String authorId
-- int likes
-- Date postDate
-- List<String> exerciseIdList
-- String description
+- ```String id```
+- ```String authorId```
+- ```int likes```
+- ```Date postDate```
+- ```List<String> exerciseIdList```
+- ```String description```
 
 ### 1.3 Exercise
 
@@ -74,11 +74,11 @@ Exercise is a class that is used to store the information of any user-created ex
 
 The Exercise object has the following attributes:
 
-- String id
-- ExerciseType type   (either TEMPORAL or REPETITIVE)
-- String name
-- List<String> keywords
-- List<String> bodyParts
+- ```String id```
+- ```ExerciseType type```   (either TEMPORAL or REPETITIVE)
+- ```String name```
+- ```List<String> keywords```
+- ```List<String> bodyParts```
 
 ### 1.4 RepeptitiveExercise
  
@@ -86,29 +86,55 @@ RepetitiveExrcise is a child of the Exercise Class with an ExerciseType of REPET
  
 The RepetitiveExrcise object has the following attributes:
  
-- int reps
-- int sets
+- ```int reps```
+- ```int sets```
 
 ### 1.5 TemporalExercise
  
 TemporalExercise is a child of the Exercise Class with an ExerciseType of TEMPORAL.
  
  The TemporalExercise object has the following attributes:
-- int time
+- ```int time```
 
-# 2. Usecases
+# 2. Use Cases
 
-### 2.1 Login/Register
- - TODO
+### 2.1 Register
 
-### 2.2 Personalized Feed
-- TODO
+The Register use case is an interface providing method(s) to create a user.
+* **createUser()**
+  * Takes in the user information and attempts to create a user and return a response object containing the newly created user's id.
 
-### 2.3 Upvote Post
-- TODO
+### 2.2 Login
+The Login use case is an interface providing method(s) to login a user.
+* **loginUser()**
+  * Takes in the user information and attempts to login a user and return a response object containing the newly logged in user's id.
 
-### 2.4 Profile View
-- TODO
+### 2.3 Post Creation
+The PostCreation use case is an interface providing method(s) for a user to create a post.
+* **createPost()**
+  * Takes in the user's id, the exercises of the post, and a description, and attempts to create and save a post and return a response object containing the created post's id.
 
-### 2.5 Follow
-- TODO
+### 2.4 Personalized Feed
+The PersonalizedFeed use case is an interface providing method(s) to get a feed of posts.
+* **getFeed()**
+  * Takes in the user information, limits to posts fetched, and last post fetched, and attempts to get a list of posts and return a response object containing a list of posts, and the last post fetched.
+
+### 2.5 Upvote Post
+The UpvotePost use case is an interface providing method(s) for a user to upvote a post.
+* **upvotePost()**
+  * Takes in the user's id and the post's id to upvote, and attempts to upvote the post and return a response object containing the user's and post's ids.
+
+### 2.6 User Profile
+The UserProfile use case is an interface providing method(s) for a user to find and display the profile of any user.
+* **findProfile()**
+  * Takes in the user's id and the user's id of the profile they wish to view, and attempts to find the profile and return a response object containing the user's profile information.
+
+### 2.7 Follow
+The Follow use case is an interface providing method(s) for a user to follow another user.
+* **followUser()**
+  * Takes in the user's id and the id of the user they wish to follow, and attempts to follow the user and return a response object containing the user's id.
+
+### 2.8 Search
+The Search use case is an interface providing method(s) for a user to search for posts
+* **search()**
+  * Takes in a query string and attempts to fetch posts by their descriptions, and exercises' keywords and body parts, and returns a response object containing a list of relevant posts.
