@@ -37,5 +37,78 @@ By default, the website should be using port 8080. so access it by visiting http
 
 Welcome to Fitbook!
 
-TODO: INSERT IMAGE OF Fitbook HOME PAGE
+# 1. Entities
 
+### 1.1 User
+
+User is a class that is used to store the information of each individual user of the application.
+
+The User object has the following attributes:
+
+- String id
+- String name
+- String password
+- Date joinDate
+- int totalLikes
+- List<String> followingIdList
+- List<String> followerIdList
+- List<String> postIdList
+- List<String> likedPostIdList
+
+### 1.2 Post
+
+Post is a class that is used to store the information of any user's post in the application.
+
+The Post object has the following attributes:
+
+- String id
+- String authorId
+- int likes
+- Date postDate
+- List<String> exerciseIdList
+- String description
+
+### 1.3 Exercise
+
+Exercise is a class that is used to store the information of any user-created exercise in the application.
+
+The Exercise object has the following attributes:
+
+- String id
+- ExerciseType type   (either TEMPORAL or REPETITIVE)
+- String name
+- List<String> keywords
+- List<String> bodyParts
+
+### 1.4 RepeptitiveExercise
+ 
+RepetitiveExrcise is a child of the Exercise Class with an ExerciseType of REPETITIVE.
+ 
+The RepetitiveExrcise object has the following attributes:
+ 
+- int reps
+- int sets
+
+### 1.5 TemporalExercise
+ 
+TemporalExercise is a child of the Exercise Class with an ExerciseType of TEMPORAL.
+ 
+ The TemporalExercise object has the following attributes:
+- int time
+
+# 2. Usecases
+
+### 2.1 Login/Register
+ - TODO
+
+### 2.2 Personalized Feed
+- TODO
+
+### 2.3 Upvote Post
+- TODO
+
+### 2.4 Profile View
+- TODO
+
+### 2.5 Follow
+- TODO
