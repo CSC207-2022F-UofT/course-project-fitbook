@@ -9,7 +9,6 @@ import java.util.ArrayList;
 
 @Value
 public class ViewExerciseInfoResponse {
-
     @NonNull
     ArrayList<TemporalExercise> temporalExercises;
 
