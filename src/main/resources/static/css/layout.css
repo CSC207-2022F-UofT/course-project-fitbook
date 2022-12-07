@@ -128,3 +128,22 @@ body {
     width: 100%;
     padding: 4% 0;
 }
+
+#success-div {
+    padding-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+    text-align: center;
+    font-family: Verdana,monospace;
+}
+
+#dumbbell {
+    width: 70%;
+    height: auto;
+}
+
+#success-text {
+    font-weight: bold;
+    color: darkgreen;
+}
