@@ -1,6 +1,5 @@
 package ca.utoronto.fitbook.adapter.web;
 
-import ca.utoronto.fitbook.adapter.persistence.UnauthorizedUserException;
 import ca.utoronto.fitbook.application.port.in.PostCreationUseCase;
 import ca.utoronto.fitbook.application.port.in.command.PostCreationCommand;
 import ca.utoronto.fitbook.application.port.out.response.PostCreationResponse;
