@@ -5,6 +5,8 @@ import ca.utoronto.fitbook.application.port.in.LoadAllExercisesPort;
 import ca.utoronto.fitbook.application.port.in.ViewExerciseInfoUseCase;
 import ca.utoronto.fitbook.application.port.out.response.ViewExerciseInfoResponse;
 import ca.utoronto.fitbook.entity.Exercise;
+import ca.utoronto.fitbook.entity.RepetitiveExercise;
+import ca.utoronto.fitbook.entity.TemporalExercise;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,8 +20,20 @@ public class ViewExerciseInfoService implements ViewExerciseInfoUseCase {
 
     @Override
     public ViewExerciseInfoResponse viewInfo() {
+        // Create list of all database exercises
         ArrayList<Exercise> exerciseList = loadAllExercisesPort.loadAllExercises();
 
-        return new ViewExerciseInfoResponse(exerciseList);
+        // Create new blank lists for the two types of exercises
+        ArrayList<TemporalExercise> temporalExercises = new ArrayList<>();
+        ArrayList<RepetitiveExercise> repetitiveExercises = new ArrayList<>();
+
+        for (Exercise exer : exerciseList) {
+            if (exer instanceof TemporalExercise){
+                temporalExercises.add((TemporalExercise) exer);
+            } else {
+                repetitiveExercises.add((RepetitiveExercise) exer);
+            }
+        }
+        return new ViewExerciseInfoResponse(temporalExercises, repetitiveExercises);
     }
 }

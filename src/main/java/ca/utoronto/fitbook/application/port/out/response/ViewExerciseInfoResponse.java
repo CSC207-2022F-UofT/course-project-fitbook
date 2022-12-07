@@ -1,6 +1,7 @@
 package ca.utoronto.fitbook.application.port.out.response;
 
-import ca.utoronto.fitbook.entity.Exercise;
+import ca.utoronto.fitbook.entity.RepetitiveExercise;
+import ca.utoronto.fitbook.entity.TemporalExercise;
 import lombok.NonNull;
 import lombok.Value;
 
@@ -10,5 +11,8 @@ import java.util.ArrayList;
 public class ViewExerciseInfoResponse {
 
     @NonNull
-    ArrayList<Exercise> exercises;
+    ArrayList<TemporalExercise> temporalExercises;
+
+    @NonNull
+    ArrayList<RepetitiveExercise> repetitiveExercises;
 }
