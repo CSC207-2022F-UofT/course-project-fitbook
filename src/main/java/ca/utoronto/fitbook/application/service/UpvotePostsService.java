@@ -23,7 +23,7 @@ public class UpvotePostsService implements UpvotePostsUsecase{
 
     /**
      * @param command the likes coming in from a user liking a post and a post being liked
-     * @return null
+     * @return total likes
      */
     @Override
     public UpvotePostsResponse upvotePost(UpvotePostsCommand command) {
@@ -33,6 +33,7 @@ public class UpvotePostsService implements UpvotePostsUsecase{
 
         userPostLiker.getLikedPostIdList().add(likedPost.getId());
         likedPost.setLikes(likedPost.getLikes() + 1);
+        postAuthor.setTotalLikes(postAuthor.getTotalLikes() + 1);
 
         return new UpvotePostsResponse(
                 userPostLiker.getId(),
