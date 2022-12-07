@@ -24,7 +24,7 @@ public class UserRegisterController {
         session.setAttribute("userId", response.getId());
         model.addAttribute("id", response.getId());
 
-        return "home";
+        return "redirect:feed";
     }
 
     @GetMapping(path = "/register")
