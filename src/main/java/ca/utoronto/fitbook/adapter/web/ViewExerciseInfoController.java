@@ -28,6 +28,6 @@ public class ViewExerciseInfoController {
         model.addAttribute("tempExerList", outputData.getTemporalExercises());
         model.addAttribute("repExerList", outputData.getRepetitiveExercises());
 
-        return "InfoPage";
+        return "infoPage";
     }
 }
