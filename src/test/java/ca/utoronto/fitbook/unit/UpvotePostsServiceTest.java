@@ -32,28 +32,9 @@ public class UpvotePostsServiceTest extends BaseTest {
         this.postLocalMemoryRepository = new PostLocalMemoryRepository();
         this.upvotePostsUsecase = new UpvotePostsService(postLocalMemoryRepository, userLocalMemoryRepository);
 
-        testUser1 = User.builder()
-                .followersIdList(new ArrayList<>())
-                .joinDate(new Date())
-                .name("Jan")
-                .totalLikes(1)
-                .password("pw")
-                .postIdList(new ArrayList<>())
-                .followingIdList(new ArrayList<>())
-                .followersIdList(new ArrayList<>())
-                .likedPostIdList(new ArrayList<>())
-                .build();
-        testUser2 = User.builder()
-                .followersIdList(new ArrayList<>())
-                .joinDate(new Date())
-                .name("Feb")
-                .totalLikes(1)
-                .password("pw2")
-                .postIdList(new ArrayList<>())
-                .followingIdList(new ArrayList<>())
-                .followersIdList(new ArrayList<>())
-                .likedPostIdList(new ArrayList<>())
-                .build();
+        testUser1 = TestUtilities.randomUser();
+        testUser2 = TestUtilities.randomUser();
+
         userLocalMemoryRepository.save(testUser1);
         userLocalMemoryRepository.save(testUser2);
     }
