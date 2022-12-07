@@ -1,6 +1,5 @@
 package ca.utoronto.fitbook.adapter.web;
 
-import ca.utoronto.fitbook.adapter.persistence.UnauthorizedUserException;
 import ca.utoronto.fitbook.application.port.in.ViewExerciseInfoUseCase;
 import ca.utoronto.fitbook.application.port.out.response.ViewExerciseInfoResponse;
 import lombok.RequiredArgsConstructor;
