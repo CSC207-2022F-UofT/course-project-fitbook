@@ -25,7 +25,8 @@ public class ViewExerciseInfoController {
 
         // Create output data using service method
         ViewExerciseInfoResponse outputData = viewExerciseInfoUseCase.viewInfo();
-        model.addAttribute("exerList", outputData.getExercises());
+        model.addAttribute("tempExerList", outputData.getTemporalExercises());
+        model.addAttribute("repExerList", outputData.getRepetitiveExercises());
 
         return "InfoPage";
     }
