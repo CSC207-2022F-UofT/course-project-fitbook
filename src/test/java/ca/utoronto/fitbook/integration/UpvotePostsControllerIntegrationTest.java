@@ -3,16 +3,18 @@ package ca.utoronto.fitbook.integration;
 import ca.utoronto.fitbook.TestUtilities;
 import ca.utoronto.fitbook.adapter.persistence.firebase.PostFirebaseRepository;
 import ca.utoronto.fitbook.adapter.persistence.firebase.UserFirebaseRepository;
+import ca.utoronto.fitbook.adapter.web.requestbody.UpvoteRequestBody;
 import ca.utoronto.fitbook.entity.Post;
 import ca.utoronto.fitbook.entity.User;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -52,6 +54,15 @@ public class UpvotePostsControllerIntegrationTest extends ControllerBaseIntegrat
         testPost = postFirebaseRepository.loadPost(testPost.getId());
     }
 
+    private String generateRequestBody(UpvoteRequestBody body) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.writeValueAsString(body);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @AfterAll
     public void cleanUp() {
         userFirebaseRepository.delete(testPostLiker.getId());
@@ -62,13 +73,11 @@ public class UpvotePostsControllerIntegrationTest extends ControllerBaseIntegrat
 
     @Test
     public void testUnauthorizedSessionBlocked() throws Exception {
-        Map<String, String> payload = new HashMap<>();
-        payload.put("postId", testPost.getId());
-        ObjectMapper mapper = new ObjectMapper();
-
+        UpvoteRequestBody body = new UpvoteRequestBody();
+        body.setPostId(testPost.getId());
         MockHttpSession unauthorizedSession = new MockHttpSession();
         this.mockMvc.perform(post("/upvote").session(unauthorizedSession)
-                        .content(mapper.writeValueAsString(payload))
+                        .content(generateRequestBody(body))
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isUnauthorized());
     }
@@ -77,13 +86,11 @@ public class UpvotePostsControllerIntegrationTest extends ControllerBaseIntegrat
     public void testUpvoteIsSuccessful() throws Exception {
         int previousPostLikes = testPost.getLikes();
         int previousAuthorLikes = testPostAuthor.getTotalLikes();
-
-        Map<String, String> payload = new HashMap<>();
-        payload.put("postId", testPost.getId());
-        ObjectMapper mapper = new ObjectMapper();
+        UpvoteRequestBody body = new UpvoteRequestBody();
+        body.setPostId(testPost.getId());
 
         this.mockMvc.perform(post("/upvote").session(authorizedSession)
-                        .content(mapper.writeValueAsString(payload))
+                        .content(generateRequestBody(body))
                         .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk());
         reloadTestEntities();
