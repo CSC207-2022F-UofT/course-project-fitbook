@@ -1,9 +1,8 @@
 package ca.utoronto.fitbook.application.service;
 
-import ca.utoronto.fitbook.application.exceptions.EmptyQueryStringException;
 import ca.utoronto.fitbook.application.port.in.*;
 import ca.utoronto.fitbook.application.port.in.command.SearchCommand;
-import ca.utoronto.fitbook.application.port.out.response.SearchPostResponse;
+import ca.utoronto.fitbook.application.port.out.response.PostResponse;
 import ca.utoronto.fitbook.application.port.out.response.SearchResponse;
 import ca.utoronto.fitbook.entity.*;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +16,9 @@ import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.*;
 import org.apache.lucene.store.ByteBuffersDirectory;
 import org.apache.lucene.store.Directory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.io.IOException;
 import java.util.*;
@@ -61,9 +62,7 @@ public class SearchService implements SearchPostsUseCase {
                 .map(Exercise::getId)
                 .collect(Collectors.toList()));
 
-        HashMap<String, Post> userIdToPost = new HashMap<>();
-        postList.forEach(post -> userIdToPost.put(post.getAuthorId(), post));
-        List<String> postIdList = new ArrayList<>();
+        List<String> postIdList;
         try {
             postIdList = findSimilarity4(queryTerms, postList);
         } catch (IOException | ParseException e) {
@@ -83,7 +82,9 @@ public class SearchService implements SearchPostsUseCase {
         for (int i = 0; i < sortedPostList.size() && i < 10; i++)
             shortenedPostList.add(sortedPostList.get(i));
 
-        return new SearchResponse(findValuesForSearchPostResponseList(shortenedPostList));
+        User currentUser = loadUserPort.loadUser(searchCommand.getUserId());
+
+        return new SearchResponse(PostListToPostResponseMapper.map(currentUser, shortenedPostList, loadExerciseListPort, loadUserListPort));
     }
 
     /**
@@ -141,69 +142,11 @@ public class SearchService implements SearchPostsUseCase {
         }
         return booleanQueryBuilder.build();
     }
-    private List<SearchPostResponse> findValuesForSearchPostResponseList(List<Post> postList) {
 
-        // Initializes map and populates map of ExerciseIds to post
-        HashMap<String, Post> postIdToPostMap = new HashMap<>();
-        postList.forEach(post -> postIdToPostMap.put(post.getId(), post));
-
-        // Initializes and populates map of users to userIds
-        HashMap<String, Post> userIdToPost = new HashMap<>();
-        postList.forEach(post -> userIdToPost.put(post.getAuthorId(), post));
-
-        // Loads Exercises based on their ids
-        List<String> exerciseIdList = postList.stream().flatMap(post -> post.getExerciseIdList().stream()).collect(Collectors.toList());
-        List<Exercise> postExerciseList = loadExerciseListPort.loadExerciseList(exerciseIdList);
-
-        // Retrieves repetitive exercises and converts them to RepetitiveExercise objects
-        List<RepetitiveExercise> repetitiveExerciseList = postExerciseList.stream()
-                .filter(exercise -> Exercise.ExerciseType.REPETITIVE.equals(exercise.getType()))
-                .map(exercise -> (RepetitiveExercise) exercise)
-                .collect(Collectors.toList());
-        // Retrieves temporal exercises and converts them to TemporalExercise objects
-        List<TemporalExercise> temporalExercises = postExerciseList.stream()
-                .filter(exercise -> Exercise.ExerciseType.TEMPORAL.equals(exercise.getType()))
-                .map(exercise -> (TemporalExercise) exercise)
-                .collect(Collectors.toList());
-
-        // Maps postIds to their related exercises
-        HashMap<String, List<RepetitiveExercise>> postIdToRepetitiveExerciseMap = new HashMap<>();
-        for (RepetitiveExercise exercise : repetitiveExerciseList) {
-            String postId = exerciseIdToPostIdMap.get(exercise.getId());
-            if (!postIdToRepetitiveExerciseMap.containsKey(postId)) {
-                postIdToRepetitiveExerciseMap.put(postId, new ArrayList<>(List.of(exercise)));
-            } else {
-                postIdToRepetitiveExerciseMap.get(postId).add(exercise);
-            }
+    @ResponseStatus(value=HttpStatus.BAD_REQUEST, reason = "Query cannot be empty.")
+    public static class EmptyQueryStringException extends RuntimeException {
+        public EmptyQueryStringException() {
+            super("Query cannot be empty.");
         }
-
-        HashMap<String, List<TemporalExercise>> postIdToTemporalExerciseMap = new HashMap<>();
-        for (TemporalExercise exercise : temporalExercises) {
-            String postId = exerciseIdToPostIdMap.get(exercise.getId());
-            if (!postIdToTemporalExerciseMap.containsKey(postId)) {
-                postIdToTemporalExerciseMap.put(postId, new ArrayList<>(List.of(exercise)));
-            } else {
-                postIdToTemporalExerciseMap.get(postId).add(exercise);
-            }
-        }
-
-        List<User> userList = loadUserListPort.loadUserList(postList.stream()
-                .map(Post::getAuthorId)
-                .collect(Collectors.toList()));
-        HashMap<String, User> userIdToUserMap = new HashMap<>();
-
-        userList.forEach(user -> userIdToUserMap.put(user.getId(), user));
-
-        List<SearchPostResponse> searchPostResponseList = new ArrayList<>();
-        for (Post post : postList) {
-            searchPostResponseList.add(new SearchPostResponse(
-                    userIdToUserMap.get(post.getAuthorId()).getName(),
-                    post,
-                    Objects.requireNonNullElseGet(postIdToRepetitiveExerciseMap.get(post.getId()), ArrayList::new),
-                    Objects.requireNonNullElseGet(postIdToTemporalExerciseMap.get(post.getId()), ArrayList::new)
-            ));
-        }
-
-        return searchPostResponseList;
     }
 }
