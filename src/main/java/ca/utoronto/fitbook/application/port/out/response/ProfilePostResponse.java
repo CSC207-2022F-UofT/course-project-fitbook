@@ -1,8 +1,8 @@
 package ca.utoronto.fitbook.application.port.out.response;
 
+import ca.utoronto.fitbook.entity.Post;
 import ca.utoronto.fitbook.entity.RepetitiveExercise;
 import ca.utoronto.fitbook.entity.TemporalExercise;
-import ca.utoronto.fitbook.entity.User;
 import lombok.*;
 
 import java.util.List;
@@ -10,17 +10,12 @@ import java.util.List;
 @Value
 public class ProfilePostResponse {
     @NonNull
-    String postId;
+    Post post;
     @NonNull
-    User author;
-    int likes;
-    @NonNull
-    String postDate;
+    String authorName;
     @NonNull
     List<RepetitiveExercise> repetitiveExerciseList;
     @NonNull
     List<TemporalExercise> temporalExerciseList;
-    @NonNull
-    String description;
     boolean userLiked;
 }
