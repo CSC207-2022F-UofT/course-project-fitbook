@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${profile.getName()}">Profile</title>
+    <title th:text="${profile.profileUser.getName()}">Profile</title>
     <link href="/css/layout.css" rel="stylesheet">
 </head>
 <body>
@@ -18,78 +18,78 @@
     </nav>
     <div class="profile-card">
         <div class="header">
-            <h1 th:text="${profile.getName()}">Username</h1>
-            <button th:attr="onclick=|followUser(this, '${profile.getProfileId()}', '${currUser}')|" th:disabled="${profile.isUserFollows()}" th:style="${profile.getProfileId() == currUser ? 'display:none' : 'display:block'}" class="button" id="follow">
+            <h1 th:text="${profile.profileUser.getName()}">Username</h1>
+            <button th:attr="onclick=|followUser(this, '${profile.profileUser.getId()}', '${currUser}')|" th:disabled="${profile.isUserFollows()}" th:style="${profile.profileUser.getId() == currUser ? 'display:none' : 'display:block'}" class="button" id="follow">
                 <span th:text="${(profile.isUserFollows()) ? 'Following' : 'Follow'}" id="followStatus">FollowingStatus</span>
             </button>
         </div>
         <div class="header">
-            <p>Followers: <span th:text="${profile.getFollowerSize()}" id="followerCount"></span></p>
-            <p>Following: <span th:text="${profile.getFollowingSize()}" id="followingCount"></span></p>
-            <p>Joined <span th:text="${profile.getJoinDate()}"></span></p>
+            <p>Followers: <span th:text="${profile.profileUser.getFollowersIdList().size()}" id="followerCount"></span></p>
+            <p>Following: <span th:text="${profile.profileUser.getFollowingIdList().size()}" id="followingCount"></span></p>
+            <p>Joined <span th:text="${#dates.format(profile.profileUser.getJoinDate(), 'MMMM dd, yyyy')}"></span></p>
         </div>
-        <h4>Total likes: <span th:text="${profile.getTotalLikes()}"></span></h4>
+        <h4>Total likes: <span th:text="${profile.profileUser.getTotalLikes()}"></span></h4>
         <h2>Posts</h2>
         <div class="posts">
-            <div class="post-card" th:each="post : ${profile.getPostList()}">
+            <div class="post-card" th:each="postResponse : ${profile.getPostList()}">
                 <div class="post-header">
                     <div>
                         <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M1 12C1 12 0 12 0 11C0 10 1 7 6 7C11 7 12 10 12 11C12 12 11 12 11 12H1Z" fill="black"/>
                             <path d="M6 6C7.65685 6 9 4.65685 9 3C9 1.34315 7.65685 0 6 0C4.34315 0 3 1.34315 3 3C3 4.65685 4.34315 6 6 6Z" fill="black"/>
                         </svg>
-                        <a th:href="@{/profile/{profileId}(profileId=${post.getAuthor().getId()})}"><h4 th:text="${post.getAuthor().getName()}" style="margin: 0">Author name</h4></a>
+                        <a th:href="@{/profile/{profileId}(profileId=${postResponse.getPost().getAuthorId()})}"><h4 th:text="${postResponse.getAuthorName()}" style="margin: 0">Author name</h4></a>
                     </div>
-                    <small th:text="${post.getPostDate()}">Post Date</small>
+                    <small th:text="${#dates.format(postResponse.getPost().getPostDate(), 'MMMM dd, yyyy')}">Post Date</small>
                 </div>
                 <div class="exercises">
-                    <div class="exercise" th:each="exercise : ${post.getTemporalExerciseList()}">
+                    <div class="exercise" th:each="exercise : ${postResponse.getTemporalExerciseList()}">
                         <p th:text="${exercise.getName()}"></p>
                         <p>Time: <span th:text="${exercise.getTime()}"></span></p>
                         <small class="body-part" th:each="bodyPart : ${exercise.getBodyParts()}" th:text="${bodyPart}"></small>
                     </div>
-                    <div class="exercise" th:each="exercise : ${post.getRepetitiveExerciseList()}">
+                    <div class="exercise" th:each="exercise : ${postResponse.getRepetitiveExerciseList()}">
                         <p th:text="${exercise.getName()}"></p>
                         <p>Repetitions: <span th:text="${exercise.getReps()}"></span> Sets: <span th:text="${exercise.getSets()}"></span></p>
                         <small class="body-part" th:each="bodyPart : ${exercise.getBodyParts()}" th:text="${bodyPart}"></small>
                     </div>
                 </div>
                 <div class="post-body">
-                    <button th:attr="onclick=|upvotePost(this, '${post.getPostId()}', '${currUser}', '${post.getLikes()}')|" th:text="${post.isUserLiked() ? 'Liked' : 'Like'}" th:disabled="${post.isUserLiked()}" class="button"></button>
-                    <p> Likes <span th:text="${post.getLikes()}">Post Likes</span></p>
-                    <p th:text="${post.getDescription()}"></p>
+                    <button th:attr="onclick=|upvotePost(this, '${postResponse.getPost().getId()}', '${currUser}', '${postResponse.getPost().getLikes()}')|" th:text="${postResponse.isUserLiked() ? 'Liked' : 'Like'}" th:disabled="${postResponse.isUserLiked()}" class="button"></button>
+                    <p> Likes <span th:text="${postResponse.getPost().getLikes()}">Post Likes</span></p>
+                    <p th:text="${postResponse.getPost().getDescription()}"></p>
                 </div>
             </div>
         </div>
         <h2>Liked Posts</h2>
         <div class="posts">
-            <div class="post-card" th:each="post : ${profile.getLikedPostList()}">
+            <div class="post-card" th:each="postResponse : ${profile.getLikedPostList()}">
                 <div class="post-header">
                     <div>
                         <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M1 12C1 12 0 12 0 11C0 10 1 7 6 7C11 7 12 10 12 11C12 12 11 12 11 12H1Z" fill="black"/>
                             <path d="M6 6C7.65685 6 9 4.65685 9 3C9 1.34315 7.65685 0 6 0C4.34315 0 3 1.34315 3 3C3 4.65685 4.34315 6 6 6Z" fill="black"/>
                         </svg>
-                        <a th:href="@{/profile/{profileId}(profileId=${post.getAuthor().getId()})}"><h4 th:text="${post.getAuthor().getName()}" style="margin: 0">Author name</h4></a>
+                        <a th:href="@{/profile/{profileId}(profileId=${postResponse.getPost().getAuthorId()})}"><h4 th:text="${postResponse.getAuthorName()}" style="margin: 0">Author name</h4></a>
                     </div>
-                    <small th:text="${post.getPostDate()}">Post Date</small>
+                    <small th:text="${#dates.format(postResponse.getPost().getPostDate(), 'MMMM dd, yyyy')}">Post Date</small>
                 </div>
                 <div class="exercises">
-                    <div class="exercise" th:each="exercise : ${post.getTemporalExerciseList()}">
+                    <div class="exercise" th:each="exercise : ${postResponse.getTemporalExerciseList()}">
                         <p th:text="${exercise.getName()}"></p>
                         <p>Time: <span th:text="${exercise.getTime()}"></span></p>
                         <small class="body-part" th:each="bodyPart : ${exercise.getBodyParts()}" th:text="${bodyPart}"></small>
                     </div>
-                    <div class="exercise" th:each="exercise : ${post.getRepetitiveExerciseList()}">
+                    <div class="exercise" th:each="exercise : ${postResponse.getRepetitiveExerciseList()}">
                         <p th:text="${exercise.getName()}"></p>
                         <p>Repetitions: <span th:text="${exercise.getReps()}"></span> Sets: <span th:text="${exercise.getSets()}"></span></p>
                         <small class="body-part" th:each="bodyPart : ${exercise.getBodyParts()}" th:text="${bodyPart}"></small>
                     </div>
                 </div>
                 <div class="post-body">
-                    <button th:attr="onclick=|upvotePost(this, '${post.getPostId()}', '${currUser}', '${post.getLikes()}')|" th:text="${post.isUserLiked() ? 'Liked' : 'Like'}" th:disabled="${post.isUserLiked()}" class="button"></button>
-                    <p> Likes <span th:text="${post.getLikes()}">Post Likes</span></p>
-                    <p th:text="${post.getDescription()}"></p>
+                    <button th:attr="onclick=|upvotePost(this, '${postResponse.getPost().getId()}', '${currUser}', '${postResponse.getPost().getLikes()}')|" th:text="${postResponse.isUserLiked() ? 'Liked' : 'Like'}" th:disabled="${postResponse.isUserLiked()}" class="button"></button>
+                    <p> Likes <span th:text="${postResponse.getPost().getLikes()}">Post Likes</span></p>
+                    <p th:text="${postResponse.getPost().getDescription()}"></p>
                 </div>
             </div>
         </div>
@@ -99,7 +99,7 @@
     const followerCount = document.getElementById("followerCount");
     const followStatus = document.getElementById("followStatus")
     const followButton = document.getElementById("follow");
-    let followers = [[${profile.getFollowerSize()}]]
+    let followers = [[${profile.profileUser.getFollowersIdList().size()}]]
 
     const followUser = async (event, followeeId) => {
         fetch("/follow/", {
