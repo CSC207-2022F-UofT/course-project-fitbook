@@ -4,6 +4,7 @@ import ca.utoronto.fitbook.adapter.persistence.firebase.ExerciseFirebaseReposito
 import ca.utoronto.fitbook.adapter.persistence.firebase.PostFirebaseRepository;
 import ca.utoronto.fitbook.adapter.persistence.firebase.UserFirebaseRepository;
 import ca.utoronto.fitbook.entity.Exercise;
+import ca.utoronto.fitbook.entity.Post;
 import ca.utoronto.fitbook.entity.TemporalExercise;
 import ca.utoronto.fitbook.entity.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,7 +18,8 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -73,6 +75,7 @@ public class PostCreationControllerIntegrationTest extends ControllerBaseIntegra
     @AfterAll
     public void cleanUp() {
         userFirebaseRepository.delete(testUser.getId());
+        exerciseFirebaseRepository.delete(testExercise.getId());
     }
 
     @Test
@@ -97,7 +100,8 @@ public class PostCreationControllerIntegrationTest extends ControllerBaseIntegra
                 .andExpect(model().attributeExists("id"))
                 .andReturn();
 
-        postFirebaseRepository.loadPost((String) result.getModelAndView().getModel().get("id"));
+        Post newPost = postFirebaseRepository.loadPost((String) result.getModelAndView().getModel().get("id"));
+        postFirebaseRepository.delete(newPost.getId());
     }
 
     @Test
