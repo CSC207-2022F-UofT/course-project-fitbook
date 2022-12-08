@@ -1,4 +1,4 @@
-package ca.utoronto.fitbook.adapter.web;
+package ca.utoronto.fitbook.adapter.web.requestbody;
 
 import lombok.*;
 

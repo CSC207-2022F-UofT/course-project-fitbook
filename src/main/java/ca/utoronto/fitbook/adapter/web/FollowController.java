@@ -1,5 +1,6 @@
 package ca.utoronto.fitbook.adapter.web;
 
+import ca.utoronto.fitbook.adapter.web.requestbody.FollowRequestBody;
 import ca.utoronto.fitbook.application.port.in.FollowUseCase;
 import ca.utoronto.fitbook.application.port.in.command.FollowCommand;
 import ca.utoronto.fitbook.application.port.out.response.FollowResponse;
