@@ -11,8 +11,8 @@ public class UserProfileResponse {
     @NonNull
     User profileUser;
     @NonNull
-    List<ProfilePostResponse> postList;
+    List<PostResponse> postList;
     @NonNull
-    List<ProfilePostResponse> likedPostList;
+    List<PostResponse> likedPostList;
     boolean userFollows;
 }
