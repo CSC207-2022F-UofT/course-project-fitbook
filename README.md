@@ -138,3 +138,50 @@ The Follow use case is an interface providing method(s) for a user to follow ano
 The Search use case is an interface providing method(s) for a user to search for posts
 * **search()**
   * Takes in a query string and attempts to fetch posts by their descriptions, and exercises' keywords and body parts, and returns a response object containing a list of relevant posts.
+
+### Spring documentation for annotations
+* **@Bean** 
+ Bean instantiates a static instance of a class, hence following the singleton pattern. See more at https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#beans-factory-class-static-factory-method.
+
+* **@Component**
+  Component is a generic stereotype for any Spring-managed component that provides exception translation for that stereotype. Spring provides further   stereotype annotations: @Repository, @Service, and @Controller that are more suited towards their layer. See more at https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#beans-factory-scopes
+  
+* **@ResponseStatus**
+ Marks an exception for a class to return reason() and code(), when an exception annotated with @ResponseStatus an http status code is automatically    returned. See more at https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/bind/annotation/ResponseStatus.html.
+  
+* **@PostMapping**
+ Maps a post request to specific handlers for that request. See more at https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/bind/annotation/PostMapping.html.
+ 
+* **@GetMapping** 
+ Maps a get request to specific handlers for that request. See more at https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/bind/annotation/GetMapping.html. 
+ 
+* **@Configuration**
+ Spring Boot lets you externalize your configuration so that you can work with the same application code in different environments. See more at  https://docs.spring.io/spring-boot/docs/2.1.13.RELEASE/reference/html/boot-features-external-config.html#:~:text=Spring%20Boot%20lets%20you%20externalize,line%20arguments%20to%20externalize%20configuration.
+ 
+* **@RequestParam**
+ Annotation for mapping web requests onto methods in request-handling classes with flexible method signatures. See more at https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/bind/annotation/RequestMapping.html.
+ 
+* **@RequestBody**
+ Annotation indicating a method parameter should be bound to the body of the web request. See more at https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/bind/annotation/RequestBody.html.
+ 
+* **@Autowired**
+ Marks a constructor, field, setter method, or config method as to be autowired by Spring's dependency injection facilities. See more at https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/bind/annotation/GetMapping.html.
+
+### Lombok documentation for annotations  
+* **@RequiredArgs**
+ RequiredArgs generates a constructor for each field in a class marked as final. See more at https://projectlombok.org/features/constructor.
+ 
+* **@Builder**
+ Builder.Default generates methods for a class following the builder pattern. See more at https://projectlombok.org/features/Builder.
+ 
+* **@Data** 
+  Data is an annotation that generates getter, setter, toString and toHashCode methods for a class that is annotated with it. See more at https://projectlombok.org/features/Data
+  
+* **@NoArgsConstructor**
+ NoArgsContructor generates a contructor with not parameters. See more at https://projectlombok.org/features/constructor.
+ 
+* **@NonNull**
+ NonNull enforces that a field cannot be of value null. See more at https://projectlombok.org/features/NonNull.
+ 
+* **@Value**
+ Generates an immutable class with all its fields marked final and no setter generated. See more at https://projectlombok.org/features/Value.
