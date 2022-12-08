@@ -1,21 +1,20 @@
 package ca.utoronto.fitbook.unit;
 
 import ca.utoronto.fitbook.BaseTest;
+import ca.utoronto.fitbook.TestUtilities;
 import ca.utoronto.fitbook.adapter.persistence.localmemory.UserLocalMemoryRepository;
 import ca.utoronto.fitbook.application.exceptions.IncorrectPasswordException;
+import ca.utoronto.fitbook.application.exceptions.UsernameCollisionException;
 import ca.utoronto.fitbook.application.exceptions.UsernameNotFoundException;
 import ca.utoronto.fitbook.application.port.in.UserLoginUseCase;
 import ca.utoronto.fitbook.application.port.in.command.UserLoginCommand;
 import ca.utoronto.fitbook.application.port.out.response.UserLoginResponse;
 import ca.utoronto.fitbook.application.service.UserLoginService;
 import ca.utoronto.fitbook.entity.User;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-
-import java.util.ArrayList;
-import java.util.Date;
+import org.junit.jupiter.api.Test;
 
 public class UserLoginTest extends BaseTest {
     // The login use case instance
@@ -32,20 +31,10 @@ public class UserLoginTest extends BaseTest {
         this.userLocalMemoryRepository = new UserLocalMemoryRepository();
 
         // initializing the use case
-        userLoginUseCase = new UserLoginService(userLocalMemoryRepository, userLocalMemoryRepository);
+        userLoginUseCase = new UserLoginService(userLocalMemoryRepository);
         // creating the user and adding the user to the local repository
 
-        testUser = User.builder()
-                .followersIdList(new ArrayList<>())
-                .joinDate(new Date())
-                .name("jhon")
-                .totalLikes(1)
-                .password("123456789")
-                .postIdList(new ArrayList<>())
-                .followingIdList(new ArrayList<>())
-                .followersIdList(new ArrayList<>())
-                .likedPostIdList(new ArrayList<>())
-                .build();
+        testUser = TestUtilities.randomUser();
         userLocalMemoryRepository.save(testUser);
     }
 
@@ -57,22 +46,32 @@ public class UserLoginTest extends BaseTest {
     // Testing when a correct username and password are entered
     @Test
     public void testUserLoggedIn() {
-        UserLoginCommand jhon = new UserLoginCommand("jhon", "123456789");
-        UserLoginResponse response = userLoginUseCase.loginUser(jhon);
+        UserLoginCommand command = new UserLoginCommand(testUser.getName(), testUser.getPassword());
+        UserLoginResponse response = userLoginUseCase.loginUser(command);
         Assertions.assertEquals(response.getId(), testUser.getId());
     }
 
     // Testing when an incorrect password is entered
     @Test
     public void testIncorrectPassword() {
-        UserLoginCommand wrongJhon = new UserLoginCommand("jhon", "12345678");
-        Assertions.assertThrows(IncorrectPasswordException.class, () -> userLoginUseCase.loginUser(wrongJhon));
+        UserLoginCommand command = new UserLoginCommand(testUser.getName(), testUser.getPassword() + "a");
+        Assertions.assertThrows(IncorrectPasswordException.class, () -> userLoginUseCase.loginUser(command));
     }
 
     // Testing when the user does not exist
     @Test
     public void testUserDoesNotExist() {
-        UserLoginCommand tom = new UserLoginCommand("tom", "123456789");
-        Assertions.assertThrows(UsernameNotFoundException.class, () -> userLoginUseCase.loginUser(tom));
+        UserLoginCommand command = new UserLoginCommand(testUser.getName() + "a", "123456789");
+        Assertions.assertThrows(UsernameNotFoundException.class, () -> userLoginUseCase.loginUser(command));
+    }
+
+    @Test
+    public void testUsernameCollision() {
+        User collidingUser = TestUtilities.randomUser();
+        collidingUser.setName(testUser.getName());
+        userLocalMemoryRepository.save(collidingUser);
+        UserLoginCommand command = new UserLoginCommand(testUser.getName(), testUser.getPassword());
+        Assertions.assertThrows(UsernameCollisionException.class, () -> userLoginUseCase.loginUser(command));
+        userLocalMemoryRepository.delete(collidingUser.getId());
     }
 }
