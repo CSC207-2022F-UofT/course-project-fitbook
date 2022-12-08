@@ -1,11 +1,14 @@
 package ca.utoronto.fitbook.unit;
 
 import ca.utoronto.fitbook.BaseTest;
+import ca.utoronto.fitbook.TestUtilities;
 import ca.utoronto.fitbook.adapter.persistence.localmemory.ExerciseLocalMemoryRepository;
 import ca.utoronto.fitbook.adapter.persistence.localmemory.PostLocalMemoryRepository;
 import ca.utoronto.fitbook.adapter.persistence.localmemory.UserLocalMemoryRepository;
 import ca.utoronto.fitbook.application.exceptions.EntityNotFoundException;
+import ca.utoronto.fitbook.application.port.in.UserProfileUseCase;
 import ca.utoronto.fitbook.application.port.in.command.UserProfileCommand;
+import ca.utoronto.fitbook.application.port.out.response.PostResponse;
 import ca.utoronto.fitbook.application.port.out.response.UserProfileResponse;
 import ca.utoronto.fitbook.application.service.UserProfileService;
 import ca.utoronto.fitbook.entity.*;
@@ -15,7 +18,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 
@@ -27,210 +29,185 @@ public class UserProfileUseCaseTest extends BaseTest {
     private UserLocalMemoryRepository userLocalMemoryRepository;
 
     private ExerciseLocalMemoryRepository exerciseLocalMemoryRepository;
-    private UserProfileService userProfileService;
+    private UserProfileUseCase userProfileUseCase;
 
-    private User testUser1;
-    private User testUser2;
-    private User testUser3;
-    private Exercise exercise1;
-    private Exercise exercise2;
-    private Exercise exercise3;
-    private Post post1;
-    private Post post2;
-    private Post post3;
+    private List<Post> randomTestPosts;
+    private List<User> randomTestUsers;
+    private List<Exercise> randomTestExercises;
+    private User firstRandomUser;
+    private User secondRandomUser;
+    private User lastRandomUser;
 
     @BeforeAll
     public void init() {
         this.postLocalMemoryRepository = new PostLocalMemoryRepository();
         this.userLocalMemoryRepository = new UserLocalMemoryRepository();
         this.exerciseLocalMemoryRepository = new ExerciseLocalMemoryRepository();
-        this.userProfileService = new UserProfileService(userLocalMemoryRepository, postLocalMemoryRepository, exerciseLocalMemoryRepository);
+        this.userProfileUseCase = new UserProfileService(userLocalMemoryRepository, userLocalMemoryRepository, postLocalMemoryRepository, exerciseLocalMemoryRepository);
 
-        exercise1 = RepetitiveExercise.builder()
-                .name("Sit-ups")
-                .bodyParts(List.of("rectus abdominis, transverse abdominis, obliques"))
-                .keywords(List.of("sit-ups", "abs", "shredded"))
-                .sets(3)
-                .reps(20)
-                .build();
+        randomTestPosts = new ArrayList<>();
+        randomTestUsers = new ArrayList<>();
+        randomTestExercises = new ArrayList<>();
 
-        exercise2 = RepetitiveExercise.builder()
-                .reps(5)
-                .sets(2)
-                .bodyParts(List.of("bicep"))
-                .keywords(List.of("bicep", "curl"))
-                .name("Bicep Curl")
-                .build();
+        // Create 100 random users and posts
+        for (int i = 0; i < 100; i++) {
+            User randomUser = TestUtilities.randomUser();
+            RepetitiveExercise randomRepExercise1 = TestUtilities.randomRepetitiveExercise();
+            RepetitiveExercise randomRepExercise2 = TestUtilities.randomRepetitiveExercise();
+            TemporalExercise randomTempExercise1 = TestUtilities.randomTemporalExercise();
+            TemporalExercise randomTempExercise2 = TestUtilities.randomTemporalExercise();
+            Post randomPost1 = TestUtilities.randomPost(randomUser.getId());
+            Post randomPost2 = TestUtilities.randomPost(randomUser.getId());
+            Post randomPost3 = TestUtilities.randomPost(randomUser.getId());
+            Post randomPost4 = TestUtilities.randomPost(randomUser.getId());
+            randomPost1.getExerciseIdList().addAll(List.of(randomRepExercise1.getId(),
+                    randomRepExercise2.getId(),
+                    randomTempExercise1.getId(),
+                    randomTempExercise2.getId()
+            ));
+            randomPost2.getExerciseIdList().addAll(List.of(randomRepExercise1.getId(),
+                    randomRepExercise2.getId(),
+                    randomTempExercise1.getId(),
+                    randomTempExercise2.getId()
+            ));
+            randomPost3.getExerciseIdList().addAll(List.of(randomRepExercise1.getId(),
+                    randomRepExercise2.getId(),
+                    randomTempExercise1.getId(),
+                    randomTempExercise2.getId()
+            ));
+            randomPost4.getExerciseIdList().addAll(List.of(randomRepExercise1.getId(),
+                    randomRepExercise2.getId(),
+                    randomTempExercise1.getId(),
+                    randomTempExercise2.getId()
+            ));
+            randomUser.getPostIdList().addAll(List.of(randomPost1.getId(),
+                    randomPost2.getId(),
+                    randomPost3.getId(),
+                    randomPost4.getId()));
+            randomUser.getLikedPostIdList().addAll(List.of(randomPost1.getId(),
+                    randomPost2.getId(),
+                    randomPost3.getId(),
+                    randomPost4.getId()));
 
-        exercise3 = TemporalExercise.builder()
-                .time(60)
-                .bodyParts(List.of("rectus abdominis", "obliques", "biceps", "triceps", "buttocks"))
-                .keywords(List.of("plank", "rectus abdomins", "abs", "buttocks"))
-                .name("Plank")
-                .build();
+            userLocalMemoryRepository.save(randomUser);
+            randomTestUsers.add(randomUser);
+            postLocalMemoryRepository.save(randomPost1);
+            postLocalMemoryRepository.save(randomPost2);
+            postLocalMemoryRepository.save(randomPost3);
+            postLocalMemoryRepository.save(randomPost4);
+            randomTestPosts.addAll(List.of(randomPost1,
+                    randomPost2,
+                    randomPost3,
+                    randomPost4));
+            exerciseLocalMemoryRepository.save(randomRepExercise1);
+            exerciseLocalMemoryRepository.save(randomRepExercise2);
+            exerciseLocalMemoryRepository.save(randomTempExercise1);
+            exerciseLocalMemoryRepository.save(randomTempExercise2);
+            randomTestExercises.addAll(List.of(randomRepExercise1,
+                    randomRepExercise2,
+                    randomTempExercise1,
+                    randomTempExercise2
+            ));
+        }
 
-        exerciseLocalMemoryRepository.save(exercise1);
-        exerciseLocalMemoryRepository.save(exercise2);
-        exerciseLocalMemoryRepository.save(exercise3);
-
-        post1 = Post.builder()
-                .postDate(new Date())
-                .exerciseIdList(List.of(exercise1.getId(), exercise3.getId()))
-                .authorId("2002")
-                .description("Amazing abs workout to get shredded! #sixpack :)")
-                .likes(2)
-                .build();
-
-        post2 = Post.builder()
-                .postDate(new Date())
-                .exerciseIdList(List.of(exercise2.getId()))
-                .authorId("2002")
-                .description("Will make you have serious guns! ;)")
-                .likes(1)
-                .build();
-
-        post3 = Post.builder()
-                .postDate(new Date())
-                .exerciseIdList(List.of(exercise1.getId(), exercise2.getId(), exercise3.getId()))
-                .authorId("2005")
-                .description("My favourite all in one evening workout! :)")
-                .likes(1)
-                .build();
-
-        postLocalMemoryRepository.save(post1);
-        postLocalMemoryRepository.save(post2);
-        postLocalMemoryRepository.save(post3);
-
-        testUser1 = User.builder()
-                .id("1912")
-                .joinDate(new Date())
-                .name("Jan")
-                .totalLikes(0)
-                .password("pw")
-                .postIdList(new ArrayList<>())
-                .followingIdList(List.of("2002", "2005"))
-                .followersIdList(List.of("2005"))
-                .likedPostIdList(List.of(post1.getId()))
-                .build();
-
-        testUser2 = User.builder()
-                .id("2002")
-                .joinDate(new Date())
-                .name("Pedro")
-                .totalLikes(3)
-                .password("us")
-                .postIdList(List.of(post2.getId(), post1.getId()))
-                .followingIdList(new ArrayList<>())
-                .followersIdList(List.of("1912", "2005"))
-                .likedPostIdList(List.of(post3.getId()))
-                .build();
-
-        testUser3 = User.builder()
-                .id("2005")
-                .joinDate(new Date())
-                .name("Jim")
-                .totalLikes(1)
-                .password("pb")
-                .postIdList(List.of(post3.getId()))
-                .followingIdList(List.of("1912", "2002"))
-                .followersIdList(List.of("1912"))
-                .likedPostIdList(List.of(post1.getId(), post2.getId()))
-                .build();
-
-        userLocalMemoryRepository.save(testUser1);
-        userLocalMemoryRepository.save(testUser2);
-        userLocalMemoryRepository.save(testUser3);
+        firstRandomUser = randomTestUsers.get(0);
+        secondRandomUser = randomTestUsers.get(1);
+        lastRandomUser = randomTestUsers.get(randomTestUsers.size() - 1);
     }
 
     @AfterAll
     public void cleanUp() {
-        userLocalMemoryRepository.delete(testUser1.getId());
-        userLocalMemoryRepository.delete(testUser2.getId());
-        userLocalMemoryRepository.delete(testUser3.getId());
-        postLocalMemoryRepository.delete(post1.getId());
-        postLocalMemoryRepository.delete(post2.getId());
-        postLocalMemoryRepository.delete(post3.getId());
-        exerciseLocalMemoryRepository.delete(exercise1.getId());
-        exerciseLocalMemoryRepository.delete(exercise2.getId());
-        exerciseLocalMemoryRepository.delete(exercise3.getId());
+        for (User user : randomTestUsers)
+            userLocalMemoryRepository.delete(user.getId());
+        for (Post post : randomTestPosts)
+            postLocalMemoryRepository.delete(post.getId());
+        for (Exercise exercise : randomTestExercises)
+            exerciseLocalMemoryRepository.delete(exercise.getId());
     }
-
     @Test
-    public void findSelfProfileReturnsUserWithValidAttributes() {
-        UserProfileCommand userProfileCommand = new UserProfileCommand(testUser2.getId(), testUser2.getId());
+    public void findSelfRandomProfileReturnsUserWithValidAttributes() {
+        UserProfileCommand userProfileCommand = new UserProfileCommand(firstRandomUser.getId(), firstRandomUser.getId());
 
-        UserProfileResponse response = this.userProfileService.findProfile(userProfileCommand);
+        UserProfileResponse response = this.userProfileUseCase.findProfile(userProfileCommand);
 
-        Assertions.assertEquals(testUser2.getId(), response.getProfileUser().getId());
-        Assertions.assertEquals("Pedro", response.getProfileUser().getName());
-        Assertions.assertEquals(3, response.getProfileUser().getTotalLikes());
-        Assertions.assertEquals(post2.getId(), response.getPostList().get(0).getPost().getId());
-        Assertions.assertEquals(post2.getLikes(), response.getPostList().get(0).getPost().getLikes());
-        Assertions.assertEquals(post1.getLikes(), response.getPostList().get(1).getPost().getLikes());
+        Assertions.assertEquals(firstRandomUser.getId(), response.getProfileUser().getId());
+        Assertions.assertEquals(firstRandomUser.getName(), response.getProfileUser().getName());
+        Assertions.assertEquals(firstRandomUser.getTotalLikes(), response.getProfileUser().getTotalLikes());
+        Assertions.assertFalse(response.isUserFollows());
+    }
+    @Test
+    public void findSelfRandomProfileReturnsUserPostsWithValidAttributes() {
+        UserProfileCommand userProfileCommand = new UserProfileCommand(firstRandomUser.getId(), firstRandomUser.getId());
+
+        UserProfileResponse response = this.userProfileUseCase.findProfile(userProfileCommand);
+
+        Assertions.assertEquals(firstRandomUser.getPostIdList().size(), response.getProfileUser().getPostIdList().size());
+        Assertions.assertEquals(firstRandomUser.getLikedPostIdList().size(), response.getProfileUser().getLikedPostIdList().size());
         Assertions.assertFalse(response.isUserFollows());
     }
 
     @Test
     public void findExistingProfileReturnsUserWithValidAttributes() {
-        UserProfileCommand userProfileCommand = new UserProfileCommand(testUser1.getId(), testUser2.getId());
+        UserProfileCommand userProfileCommand = new UserProfileCommand(secondRandomUser.getId(), firstRandomUser.getId());
 
-        UserProfileResponse response = this.userProfileService.findProfile(userProfileCommand);
+        UserProfileResponse response = this.userProfileUseCase.findProfile(userProfileCommand);
 
-        Assertions.assertEquals(testUser1.getId(), response.getProfileUser().getId());
-        Assertions.assertEquals(testUser1.getName(), response.getProfileUser().getName());
-        Assertions.assertEquals(testUser1.getTotalLikes(), response.getProfileUser().getTotalLikes());
-        Assertions.assertEquals(testUser1.getPostIdList().size(), response.getPostList().size());
-        Assertions.assertEquals(testUser1.getFollowersIdList().size(), response.getProfileUser().getFollowersIdList().size());
+        Assertions.assertEquals(secondRandomUser.getId(), response.getProfileUser().getId());
+        Assertions.assertEquals(secondRandomUser.getName(), response.getProfileUser().getName());
+        Assertions.assertEquals(secondRandomUser.getTotalLikes(), response.getProfileUser().getTotalLikes());
+        Assertions.assertEquals(secondRandomUser.getPostIdList().size(), response.getPostList().size());
+        Assertions.assertEquals(secondRandomUser.getFollowersIdList().size(), response.getProfileUser().getFollowersIdList().size());
         Assertions.assertFalse(response.isUserFollows());
     }
 
     @Test
-    public void findExistingProfileReturnsUserMultiplePostsCorrectOrderAndInfo() {
-        UserProfileCommand userProfileCommand = new UserProfileCommand(testUser2.getId(), testUser3.getId());
+    public void testProfilePostsInDescendingDate() {
+        UserProfileCommand userProfileCommand = new UserProfileCommand(lastRandomUser.getId(), firstRandomUser.getId());
 
-        UserProfileResponse response = this.userProfileService.findProfile(userProfileCommand);
+        UserProfileResponse response = this.userProfileUseCase.findProfile(userProfileCommand);
 
-        Assertions.assertEquals(testUser2.getId(), response.getProfileUser().getId());
-        Assertions.assertEquals(testUser2.getName(), response.getProfileUser().getName());
-        Assertions.assertEquals(testUser2.getTotalLikes(), response.getProfileUser().getTotalLikes());
-        Assertions.assertEquals(testUser2.getPostIdList().size(), response.getPostList().size());
-        Assertions.assertEquals(testUser2.getFollowersIdList().size(), response.getProfileUser().getFollowersIdList().size());
-        Assertions.assertTrue(response.isUserFollows());
-        Assertions.assertEquals(post2.getId(), response.getPostList().get(0).getPost().getId());
-        Assertions.assertEquals(post2.getLikes(), response.getPostList().get(0).getPost().getLikes());
-        Assertions.assertEquals(post2.getDescription(), response.getPostList().get(0).getPost().getDescription());
-        Assertions.assertEquals(post1.getId(), response.getPostList().get(1).getPost().getId());
-        Assertions.assertEquals(post1.getLikes(), response.getPostList().get(1).getPost().getLikes());
-        Assertions.assertEquals(post1.getDescription(), response.getPostList().get(1).getPost().getDescription());
+        List<PostResponse> profilePosts = response.getPostList();
+
+        // Make sure every liked post in the profile response is older than the last initial post
+        for (int i = 1; i < profilePosts.size(); i ++)
+            Assertions.assertTrue(profilePosts.get(i - 1).getPost().getPostDate()
+                    .after(profilePosts.get(i).getPost().getPostDate()));
     }
 
+    @Test
+    public void testProfileLikedPostsInDescendingDate() {
+        UserProfileCommand userProfileCommand = new UserProfileCommand(lastRandomUser.getId(), secondRandomUser.getId());
+
+        UserProfileResponse response = this.userProfileUseCase.findProfile(userProfileCommand);
+
+        List<PostResponse> profileLikedPosts = response.getLikedPostList();
+
+        // Make sure every liked post in the profile response is older than the last initial post
+        for (int i = 1; i < profileLikedPosts.size(); i ++)
+            Assertions.assertTrue(profileLikedPosts.get(i - 1).getPost().getPostDate()
+                    .after(profileLikedPosts.get(i).getPost().getPostDate()));
+    }
     @Test
     public void findExistingProfileReturnsPostCorrectInfo() {
-        UserProfileCommand userProfileCommand = new UserProfileCommand(testUser3.getId(), testUser2.getId());
+        UserProfileCommand userProfileCommand = new UserProfileCommand(firstRandomUser.getId(), lastRandomUser.getId());
 
-        UserProfileResponse response = this.userProfileService.findProfile(userProfileCommand);
+        UserProfileResponse response = this.userProfileUseCase.findProfile(userProfileCommand);
 
-        Assertions.assertEquals(testUser3.getId(), response.getProfileUser().getId());
-        Assertions.assertEquals(testUser3.getName(), response.getProfileUser().getName());
-        Assertions.assertEquals(testUser3.getTotalLikes(), response.getProfileUser().getTotalLikes());
-        Assertions.assertEquals(testUser3.getPostIdList().size(), response.getPostList().size());
-        Assertions.assertEquals(testUser3.getFollowersIdList().size(), response.getProfileUser().getFollowersIdList().size());
-        Assertions.assertFalse(response.isUserFollows());
-        Assertions.assertEquals(post3.getId(), response.getPostList().get(0).getPost().getId());
-        Assertions.assertEquals(post3.getLikes(), response.getPostList().get(0).getPost().getLikes());
-        Assertions.assertEquals(post3.getDescription(), response.getPostList().get(0).getPost().getDescription());
-        Assertions.assertEquals(post3.getAuthorId(), response.getPostList().get(0).getPost().getAuthorId());
+        Assertions.assertEquals(firstRandomUser.getPostIdList().size(), response.getPostList().size());
+        Assertions.assertEquals(firstRandomUser.getLikedPostIdList().size(), response.getProfileUser().getLikedPostIdList().size());
+        Assertions.assertNotNull(response.getPostList().get(0).getPost().getDescription());
+        Assertions.assertNotNull(response.getPostList().get(0).getPost().getAuthorId());
         Assertions.assertNotNull(response.getPostList().get(0).getPost().getPostDate());
-        Assertions.assertTrue(response.getPostList().get(0).isUserLiked());
-        Assertions.assertEquals(exercise1.getId(), response.getPostList().get(0).getRepetitiveExerciseList().get(0).getId());
-
+        Assertions.assertFalse(response.getPostList().get(0).isUserLiked());
+        Assertions.assertEquals(2, response.getPostList().get(0).getRepetitiveExerciseList().size());
+        Assertions.assertEquals(2, response.getLikedPostList().get(0).getTemporalExerciseList().size());
     }
 
     @Test
     public void findNoneExistentUserProfileThrowsEntityNotFoundException() {
         String id = "-1";
         UserProfileCommand userProfileCommand = new UserProfileCommand(id, id);
-        Assertions.assertThrows(EntityNotFoundException.class, () -> this.userProfileService.findProfile(userProfileCommand));
+        Assertions.assertThrows(EntityNotFoundException.class, () -> this.userProfileUseCase.findProfile(userProfileCommand));
     }
 
 }
