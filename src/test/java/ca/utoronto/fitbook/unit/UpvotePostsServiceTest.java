@@ -1,70 +1,88 @@
 package ca.utoronto.fitbook.unit;
 
 import ca.utoronto.fitbook.BaseTest;
-import ca.utoronto.fitbook.adapter.persistence.firebase.UserFirebaseRepository;
+import ca.utoronto.fitbook.TestUtilities;
 import ca.utoronto.fitbook.adapter.persistence.localmemory.PostLocalMemoryRepository;
 import ca.utoronto.fitbook.adapter.persistence.localmemory.UserLocalMemoryRepository;
 import ca.utoronto.fitbook.application.port.in.UpvotePostsUsecase;
 import ca.utoronto.fitbook.application.port.in.command.UpvotePostsCommand;
 import ca.utoronto.fitbook.application.service.UpvotePostsService;
+import ca.utoronto.fitbook.entity.Post;
 import ca.utoronto.fitbook.entity.User;
 import org.junit.jupiter.api.*;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import java.util.*;
-
-public class UpvotePostsServiceTest extends BaseTest {
-
-    @Autowired
+public class UpvotePostsServiceTest extends BaseTest
+{
     private UserLocalMemoryRepository userLocalMemoryRepository;
     private PostLocalMemoryRepository postLocalMemoryRepository;
     private UpvotePostsUsecase upvotePostsUsecase;
-    private User testUser1;
-    private User testUser2;
+    private User testPostLiker;
+    private User testPostAuthor;
+    private Post testPost;
 
     @BeforeAll
     public void init() {
         this.userLocalMemoryRepository = new UserLocalMemoryRepository();
         this.postLocalMemoryRepository = new PostLocalMemoryRepository();
-        this.upvotePostsUsecase = new UpvotePostsService(postLocalMemoryRepository, userLocalMemoryRepository);
-
-        testUser1 = TestUtilities.randomUser();
-        testUser2 = TestUtilities.randomUser();
-
-        userLocalMemoryRepository.save(testUser1);
-        userLocalMemoryRepository.save(testUser2);
+        this.upvotePostsUsecase = new UpvotePostsService(
+                postLocalMemoryRepository,
+                userLocalMemoryRepository,
+                postLocalMemoryRepository,
+                userLocalMemoryRepository
+        );
     }
 
     @AfterAll
     public void cleanUp() {
-        userLocalMemoryRepository.delete(testUser1.getId());
-        userLocalMemoryRepository.delete(testUser2.getId());
+        userLocalMemoryRepository.delete(testPostLiker.getId());
+        userLocalMemoryRepository.delete(testPostAuthor.getId());
+        postLocalMemoryRepository.delete(testPost.getId());
     }
-    @AfterEach
-    public void resetLikes(){
-        testUser1.setLikedPostIdList(new ArrayList<>());
-        testUser2.setPostIdList(new ArrayList<>());
-        userLocalMemoryRepository.save(testUser1);
-        userLocalMemoryRepository.save(testUser2);
+
+    @BeforeEach
+    public void initializeTest() {
+        testPostLiker = TestUtilities.randomUser();
+        testPostAuthor = TestUtilities.randomUser();
+
+        testPost = TestUtilities.randomPost(testPostAuthor.getId());
+
+        userLocalMemoryRepository.save(testPostLiker);
+        userLocalMemoryRepository.save(testPostAuthor);
+        postLocalMemoryRepository.save(testPost);
+    }
+
+    private void reloadTestEntities() {
+        testPostLiker = userLocalMemoryRepository.loadUser(testPostLiker.getId());
+        testPostAuthor = userLocalMemoryRepository.loadUser(testPostAuthor.getId());
+        testPost = postLocalMemoryRepository.loadPost(testPost.getId());
     }
 
     @Test
-    //checks if post has already been liked
-    public void likePostThrowsUserAlreadyLikedException() {
-        testUser1.setLikedPostIdList(List.of(UUID.randomUUID().toString()));
-        testUser2.setPostIdList(List.of(UUID.randomUUID().toString()));
-        userLocalMemoryRepository.save(testUser1);
-        userLocalMemoryRepository.save(testUser2);
+    public void testUpvoteSuccessful() {
+        UpvotePostsCommand upvoteCommand = new UpvotePostsCommand(
+                testPost.getId(),
+                testPostLiker.getId());
 
-        UpvotePostsCommand upvotePostsCommand = new UpvotePostsCommand(
-                testUser2.getPostIdList().get(0),
-                testUser1.getLikedPostIdList().get(0));
+        int previousPostLikes = testPost.getLikes();
+        int previousAuthorLikes = testPostAuthor.getTotalLikes();
+        upvotePostsUsecase.upvotePost(upvoteCommand);
+        reloadTestEntities();
+
+        Assertions.assertTrue(testPostLiker.getLikedPostIdList().contains(testPost.getId()));
+        Assertions.assertEquals(previousPostLikes + 1, testPost.getLikes());
+        Assertions.assertEquals(previousAuthorLikes + 1, testPostAuthor.getTotalLikes());
+    }
+
+    @Test
+    public void testUpvotePostThrowsUserAlreadyLikedException() {
+        UpvotePostsCommand upvoteCommand = new UpvotePostsCommand(
+                testPost.getId(),
+                testPostLiker.getId());
+
+        upvotePostsUsecase.upvotePost(upvoteCommand);
+
         Assertions.assertThrows(UpvotePostsService.UserAlreadyLikedException.class,
-                ()->this.upvotePostsUsecase.upvotePost(upvotePostsCommand));
+                () -> this.upvotePostsUsecase.upvotePost(upvoteCommand));
     }
 
 }
