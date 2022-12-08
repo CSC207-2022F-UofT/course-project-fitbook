@@ -2,6 +2,8 @@ package ca.utoronto.fitbook.adapter.persistence.localmemory;
 
 import ca.utoronto.fitbook.adapter.persistence.GenericRepository;
 import ca.utoronto.fitbook.application.exceptions.EntityNotFoundException;
+import ca.utoronto.fitbook.application.port.in.LoadExerciseByBodyPartsPort;
+import ca.utoronto.fitbook.application.port.in.LoadExerciseListByKeywordsPort;
 import ca.utoronto.fitbook.application.port.in.LoadExerciseListPort;
 import ca.utoronto.fitbook.entity.Exercise;
 
@@ -10,7 +12,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ExerciseLocalMemoryRepository implements GenericRepository<Exercise>, LoadExerciseListPort
+public class ExerciseLocalMemoryRepository
+        implements GenericRepository<Exercise>,
+        LoadExerciseListPort,
+        LoadExerciseByBodyPartsPort,
+        LoadExerciseListByKeywordsPort
 {
     private static final Map<String, Exercise> datastore = new HashMap<>();
 
@@ -56,8 +62,8 @@ public class ExerciseLocalMemoryRepository implements GenericRepository<Exercise
     }
 
     /**
-     * @param bodyParts
-     * @return
+     * @param bodyParts list of body parts to fetch exercises
+     * @return list of exercises related to body parts
      */
     @Override
     public List<Exercise> loadExerciseByBodyParts(List<String> bodyParts) {
@@ -74,8 +80,8 @@ public class ExerciseLocalMemoryRepository implements GenericRepository<Exercise
     }
 
     /**
-     * @param keywords
-     * @return
+     * @param keywords list of keywords to fetch exercises
+     * @return list of exercises objects based on keywords
      */
     @Override
     public List<Exercise> loadExerciseListByKeywords(List<String> keywords) {

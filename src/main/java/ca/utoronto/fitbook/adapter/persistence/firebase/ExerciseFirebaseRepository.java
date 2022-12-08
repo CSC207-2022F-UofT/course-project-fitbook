@@ -3,6 +3,8 @@ package ca.utoronto.fitbook.adapter.persistence.firebase;
 import ca.utoronto.fitbook.adapter.persistence.ExerciseTypeToClassMap;
 import ca.utoronto.fitbook.adapter.persistence.GenericRepository;
 import ca.utoronto.fitbook.application.exceptions.EntityNotFoundException;
+import ca.utoronto.fitbook.application.port.in.LoadExerciseByBodyPartsPort;
+import ca.utoronto.fitbook.application.port.in.LoadExerciseListByKeywordsPort;
 import ca.utoronto.fitbook.application.port.in.LoadExerciseListPort;
 import ca.utoronto.fitbook.entity.Exercise;
 import com.google.api.core.ApiFuture;
@@ -26,7 +28,9 @@ import java.util.concurrent.ExecutionException;
 public class ExerciseFirebaseRepository
         extends GenericFirebaseRepository
         implements GenericRepository<Exercise>,
-        LoadExerciseListPort
+        LoadExerciseListPort,
+        LoadExerciseByBodyPartsPort,
+        LoadExerciseListByKeywordsPort
 {
 
     private static final String COLLECTION_NAME = "exercises";
@@ -94,31 +98,6 @@ public class ExerciseFirebaseRepository
             exerciseList.add(documentToExercise(document));
         }
         return exerciseList;
-    }
-
-    /**
-     * @param exerciseIds The exercise ids to be fetched
-     * @return A list of exercises
-     */
-    @Override
-    public List<Exercise> loadExerciseList(List<String> exerciseIds) {
-        try {
-            List<ApiFuture<DocumentSnapshot>> futures = new ArrayList<>();
-
-            for (String exerciseId : exerciseIds) {
-                ApiFuture<DocumentSnapshot> future = firestore.collection(COLLECTION_NAME).document(exerciseId).get();
-                futures.add(future);
-            }
-
-            List<DocumentSnapshot> documents = ApiFutures.allAsList(futures).get();
-            List<Exercise> exerciseList = new ArrayList<>();
-            for (DocumentSnapshot document : documents) {
-                exerciseList.add(getExerciseHelper(document));
-            }
-            return exerciseList;
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     /**
