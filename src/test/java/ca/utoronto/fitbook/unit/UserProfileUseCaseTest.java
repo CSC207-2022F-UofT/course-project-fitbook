@@ -49,8 +49,8 @@ public class UserProfileUseCaseTest extends BaseTest {
         randomTestUsers = new ArrayList<>();
         randomTestExercises = new ArrayList<>();
 
-        // Create 100 random users and posts
-        for (int i = 0; i < 100; i++) {
+        // Create 3 random users and posts
+        for (int i = 0; i < 3; i++) {
             User randomUser = TestUtilities.randomUser();
             RepetitiveExercise randomRepExercise1 = TestUtilities.randomRepetitiveExercise();
             RepetitiveExercise randomRepExercise2 = TestUtilities.randomRepetitiveExercise();
