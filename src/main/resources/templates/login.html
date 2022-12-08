@@ -7,12 +7,14 @@
         margin: 5px 0;
         box-sizing: border-box;
     }
+
     input[type = password] {
         width: 100%;
         padding: 10px 15px;
         margin: 5px 0;
         box-sizing: border-box;
     }
+
     .btn {
         width: 100%;
         padding: 30px 30px;
@@ -20,10 +22,15 @@
         box-sizing: border-box;
     }
 
+    .btn-primary {
+        padding: 25px 25px;
+    }
+
     .container {
         padding-top: 100px;
         align-content: center;
     }
+
     .header {
         padding: 60px;
         text-align: left;
@@ -45,7 +52,7 @@
 <body>
 <div class="container mt-5">
 
-    <form  method="post" action="/login">
+    <form method="post" action="/login">
 
 
         <div class="row">
@@ -65,14 +72,10 @@
             </div>
         </div>
     </form>
-    <form action="register.html">
-        <div class="row">
-            <div class="col-md-3 offset-md-4">
-                <label style="padding-top: 20px;color: gray;display: block;text-align: center;">Don't have an account?</label>
-                <button action="signup.html" class="btn btn-primary" type="submit">Sign Up</button>
-            </div>
-        </div>
-    </form>
+    <div class="col-md-3 offset-md-4">
+        <label style="padding-top: 20px;color: gray;display: block;text-align: center;">Don't have an account?</label>
+        <a href="/register" class="btn btn-primary ">Sign Up</a>
+    </div>
 
 </div>
 
