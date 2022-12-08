@@ -1,39 +1,187 @@
-# Project Template
+# Fitbook
 
-This is a template repository for CSC 207 projects. 
-This repository contains starter code for a gradle project.
-It also contains workflow documents that give instructions on how to manage your Github repository and how to use Github Projects for efficient collaboration.
+Fitbook is a web application for users to share and see each other's exercise routines! The goal of this project is to provide users the opportunity to share exercise routines that they have found success with, and to take inspiration from others!
 
-## Checklist For Your Project
-- [ ] Verify the correct settings for your project repository
-- [ ] Set up Github Projects
-- [ ] Create the implementation plan using issues and Github Projects
-- [ ] Create deveopment branches for your features
-- [ ] Use pull requests to merge finished features into main branch
-- [ ] Conduct code reviews
+Throughout the development, our team has faced many obstacles trying to get all of the features working for Fitbook to combine into a smooth experience for users to share and be guided by the experiences of others. Fitbook provides you with multiple features to allow you to interact with and take inspiration from the many users of Fitbook.
 
-**If your team has trouble with any of these steps, please ask on Piazza. For example, with how GitHub Classroom works, your team *may* not have permissions to do some of the first few steps, in which case we'll post alternative instructions as needed.**
+Fitbook allows you to:
 
-## Workflow Documents
+ - Create an account and login/register!
+ - View a personalized feed of user's post when you enter the app!
+ - Make your own posts to share with other users!
+ - Like/upvote the posts of users' that you've found useful or enjoyed!
+ - Keep track of your posts and those you've liked!
+ - Search for posts of interest based on the exercises' keywords!
+ - Follow users' who interest you, and build a following!
+ - View your own and other users' profiles!
 
-* Github Workflow: Please refer to the workflow that was introduced in the first lab. You should follow this when working on your code. The following document provides additional details too.
+# Getting Started
+Fitbook requires Java 11, which can be installed [here](oracle.com/java/technologies/downloads/#java11).
 
-* [Project Planning and Development Guide](project_plan_dev.md): This document helps you to understand how to create and maintain a project plan for your class project. **This document helps you to complete the Implementation Plan Milestone.**
+Fitbook is a Spring application that runs on the **web**, where you can login/register, view and upvote posts, follow users, search for posts, create posts, and more!
 
-## Gradle Project
-Import this project into your Intellij editor. It should automatically recognise this as a gradle repository.
-The starter code was built using SDK version 11.0.1. Ensure that you are using this version for this project. (You can, of course, change the SDK version as per your requirement if your team has all agreed to use a different version)
+To run the Spring application, first clone this GitHub repository to wherever you desire on your computer!
 
-You have been provided with two starter files for demonstration: HelloWorld and HelloWorldTest.
+```shell
+cd ~/PROJECT_REPOSITORY_LOCATION
+git clone https://github.com/CSC207-2022F-UofT/course-project-fitbook.git
+```
 
-You will find HelloWorld in `src/main/java/tutorial` directory. Right click on the HelloWorld file and click on `Run HelloWorld.main()`.
-This should run the program and print on your console.
+Next, open the project in IntelliJ, which can be installed [here](https://www.jetbrains.com/idea/download/#section=mac)!
 
-You will find HelloWorldTest in `src/test/java/tutorial` directory. Right click on the HelloWorldTest file and click on `Run HelloWorldTest`.
-All tests should pass. Your team can remove this sample of how testing works once you start adding your project code to the repo.
+After doing so, open the file, course-project-fitbook/src/main/java/ca/utoronto/fitbook/FitbookApplication.java. and run `FitbookApplication.main()`!
 
-Moving forward, we expect you to maintain this project structure. You *should* use Gradle as the build environment, but it is fine if your team prefers to use something else -- just remove the gradle files and push your preferred project setup. Assuming you stick with Gradle, your source code should go into `src/main/java` (you can keep creating more subdirectories as per your project requirement). Every source class can auto-generate a test file for you. For example, open HelloWorld.java file and click on the `HelloWorld` variable as shown in the image below. You should see an option `Generate` and on clicking this your should see an option `Test`. Clicking on this will generate a JUnit test file for `HelloWorld` class. This was used to generate the `HelloWorldTest`.
+Wait a few seconds while the application builds and starts up!
 
-![image](https://user-images.githubusercontent.com/5333020/196066655-d3c97bf4-fdbd-46b0-b6ae-aeb8dbcf351d.png)
+By default, the website should be using port 8080. so access it by visiting http://localhost:8080 in your web browser of choice!
 
-You can create another simple class and try generating a test for this class.
+Welcome to Fitbook!
+
+# 1. Entities
+
+### 1.1 User
+
+User is a class that is used to store the information of each individual user of the application.
+
+The User object has the following attributes:
+
+- ```String id```
+- ```String name```
+- ```String password```
+- ```Date joinDate```
+- ```int totalLikes```
+- ```List<String> followingIdList```
+- ```List<String> followerIdList```
+- ```List<String> postIdList```
+- ```List<String> likedPostIdList```
+
+### 1.2 Post
+
+Post is a class that is used to store the information of any user's post in the application.
+
+The Post object has the following attributes:
+
+- ```String id```
+- ```String authorId```
+- ```int likes```
+- ```Date postDate```
+- ```List<String> exerciseIdList```
+- ```String description```
+
+### 1.3 Exercise
+
+Exercise is a class that is used to store the information of any user-created exercise in the application.
+
+The Exercise object has the following attributes:
+
+- ```String id```
+- ```ExerciseType type```   (either TEMPORAL or REPETITIVE)
+- ```String name```
+- ```List<String> keywords```
+- ```List<String> bodyParts```
+
+### 1.4 RepeptitiveExercise
+ 
+RepetitiveExrcise is a child of the Exercise Class with an ExerciseType of REPETITIVE.
+ 
+The RepetitiveExrcise object has the following attributes:
+ 
+- ```int reps```
+- ```int sets```
+
+### 1.5 TemporalExercise
+ 
+TemporalExercise is a child of the Exercise Class with an ExerciseType of TEMPORAL.
+ 
+ The TemporalExercise object has the following attributes:
+- ```int time```
+
+# 2. Use Cases
+
+### 2.1 Register
+
+The Register use case is an interface providing method(s) to create a user.
+* **createUser()**
+  * Takes in the user information and attempts to create a user and return a response object containing the newly created user's id.
+
+### 2.2 Login
+The Login use case is an interface providing method(s) to login a user.
+* **loginUser()**
+  * Takes in the user information and attempts to login a user and return a response object containing the newly logged in user's id.
+
+### 2.3 Post Creation
+The PostCreation use case is an interface providing method(s) for a user to create a post.
+* **createPost()**
+  * Takes in the user's id, the exercises of the post, and a description, and attempts to create and save a post and return a response object containing the created post's id.
+
+### 2.4 Personalized Feed
+The PersonalizedFeed use case is an interface providing method(s) to get a feed of posts.
+* **getFeed()**
+  * Takes in the user information, limits to posts fetched, and last post fetched, and attempts to get a list of posts and return a response object containing a list of posts, and the last post fetched.
+
+### 2.5 Upvote Post
+The UpvotePost use case is an interface providing method(s) for a user to upvote a post.
+* **upvotePost()**
+  * Takes in the user's id and the post's id to upvote, and attempts to upvote the post and return a response object containing the user's and post's ids.
+
+### 2.6 User Profile
+The UserProfile use case is an interface providing method(s) for a user to find and display the profile of any user.
+* **findProfile()**
+  * Takes in the user's id and the user's id of the profile they wish to view, and attempts to find the profile and return a response object containing the user's profile information.
+
+### 2.7 Follow
+The Follow use case is an interface providing method(s) for a user to follow another user.
+* **followUser()**
+  * Takes in the user's id and the id of the user they wish to follow, and attempts to follow the user and return a response object containing the user's id.
+
+### 2.8 Search
+The Search use case is an interface providing method(s) for a user to search for posts
+* **search()**
+  * Takes in a query string and attempts to fetch posts by their descriptions, and exercises' keywords and body parts, and returns a response object containing a list of relevant posts.
+
+### Spring documentation for annotations
+* **@Bean** 
+ Bean instantiates a static instance of a class, hence following the singleton pattern. See more at https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#beans-factory-class-static-factory-method.
+
+* **@Component**
+  Component is a generic stereotype for any Spring-managed component that provides exception translation for that stereotype. Spring provides further   stereotype annotations: @Repository, @Service, and @Controller that are more suited towards their layer. See more at https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#beans-factory-scopes
+  
+* **@ResponseStatus**
+ Marks an exception for a class to return reason() and code(), when an exception annotated with @ResponseStatus an http status code is automatically    returned. See more at https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/bind/annotation/ResponseStatus.html.
+  
+* **@PostMapping**
+ Maps a post request to specific handlers for that request. See more at https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/bind/annotation/PostMapping.html.
+ 
+* **@GetMapping** 
+ Maps a get request to specific handlers for that request. See more at https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/bind/annotation/GetMapping.html. 
+ 
+* **@Configuration**
+ Spring Boot lets you externalize your configuration so that you can work with the same application code in different environments. See more at  https://docs.spring.io/spring-boot/docs/2.1.13.RELEASE/reference/html/boot-features-external-config.html#:~:text=Spring%20Boot%20lets%20you%20externalize,line%20arguments%20to%20externalize%20configuration.
+ 
+* **@RequestParam**
+ Annotation for mapping web requests onto methods in request-handling classes with flexible method signatures. See more at https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/bind/annotation/RequestMapping.html.
+ 
+* **@RequestBody**
+ Annotation indicating a method parameter should be bound to the body of the web request. See more at https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/bind/annotation/RequestBody.html.
+ 
+* **@Autowired**
+ Marks a constructor, field, setter method, or config method as to be autowired by Spring's dependency injection facilities. See more at https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/bind/annotation/GetMapping.html.
+
+### Lombok documentation for annotations  
+* **@RequiredArgs**
+ RequiredArgs generates a constructor for each field in a class marked as final. See more at https://projectlombok.org/features/constructor.
+ 
+* **@Builder**
+ Builder.Default generates methods for a class following the builder pattern. See more at https://projectlombok.org/features/Builder.
+ 
+* **@Data** 
+  Data is an annotation that generates getter, setter, toString and toHashCode methods for a class that is annotated with it. See more at https://projectlombok.org/features/Data
+  
+* **@NoArgsConstructor**
+ NoArgsContructor generates a contructor with not parameters. See more at https://projectlombok.org/features/constructor.
+ 
+* **@NonNull**
+ NonNull enforces that a field cannot be of value null. See more at https://projectlombok.org/features/NonNull.
+ 
+* **@Value**
+ Generates an immutable class with all its fields marked final and no setter generated. See more at https://projectlombok.org/features/Value.
