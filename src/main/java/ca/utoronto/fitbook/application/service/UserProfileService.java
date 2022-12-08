@@ -11,8 +11,6 @@ import ca.utoronto.fitbook.entity.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,25 +39,17 @@ public class UserProfileService implements UserProfileUseCase
         List<Post> posts = loadPostListPort.loadPostList(profileUser.getPostIdList());
         List<Post> likedPosts = loadPostListPort.loadPostList(profileUser.getLikedPostIdList());
 
-        DateFormat dateFormatter = new SimpleDateFormat("MMMM dd, yyyy");
-
         // Convert list of profile posts to post responses with full information
-        List<ProfilePostResponse> profilePosts = findProfilePosts(currUser, posts, dateFormatter);
-        List<ProfilePostResponse> profileLikedPosts = findProfilePosts(currUser, likedPosts, dateFormatter);
+        List<ProfilePostResponse> profilePosts = findProfilePosts(currUser, posts);
+        List<ProfilePostResponse> profileLikedPosts = findProfilePosts(currUser, likedPosts);
 
-        String dateJoined = dateFormatter.format(profileUser.getJoinDate());
         boolean userFollows = currUser.getFollowingIdList().contains(profileUser.getId());
 
         // Create response to return all relevant user's profile information
         return new UserProfileResponse(
-                profileUser.getId(),
-                profileUser.getName(),
-                profileUser.getFollowingIdList().size(),
-                profileUser.getFollowersIdList().size(),
-                dateJoined,
+                profileUser,
                 profilePosts,
                 profileLikedPosts,
-                profileUser.getTotalLikes(),
                 userFollows);
     }
 
@@ -68,14 +58,11 @@ public class UserProfileService implements UserProfileUseCase
      * Invokes loadExerciseList and loadUser functions to convert id's to full entities
      * @param currUser current session's user entity
      * @param posts list of requested user's posts
-     * @param dateFormatter date formatting object
      * @return list of user's posts with full information.
      */
-    private List<ProfilePostResponse> findProfilePosts(User currUser, List<Post> posts, DateFormat dateFormatter) {
+    private List<ProfilePostResponse> findProfilePosts(User currUser, List<Post> posts) {
         List<ProfilePostResponse> postResponses = new ArrayList<>();
         for (Post post : posts) {
-            String dateCreated = dateFormatter.format(post.getPostDate());
-
             // TODO: Add custom ExerciseNotFoundException
             // Convert post's list of exercise id's to exercise entities
             List<Exercise> postExercises = loadExerciseListPort.loadExerciseList(post.getExerciseIdList());
@@ -90,13 +77,10 @@ public class UserProfileService implements UserProfileUseCase
 
             // Add post response with full post information
             postResponses.add(new ProfilePostResponse(
-                    post.getId(),
-                    postAuthor,
-                    post.getLikes(),
-                    dateCreated,
+                    post,
+                    postAuthor.getName(),
                     repetitiveExercises,
                     temporalExercises,
-                    post.getDescription(),
                     userLiked
             ));
         }
