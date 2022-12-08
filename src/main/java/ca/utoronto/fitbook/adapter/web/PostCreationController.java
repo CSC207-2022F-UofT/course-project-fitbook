@@ -4,6 +4,7 @@ import ca.utoronto.fitbook.application.port.in.PostCreationUseCase;
 import ca.utoronto.fitbook.application.port.in.command.PostCreationCommand;
 import ca.utoronto.fitbook.application.port.out.response.PostCreationResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;

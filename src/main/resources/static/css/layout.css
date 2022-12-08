@@ -34,7 +34,7 @@ form {
     height: 60%;
 }
 
-input {
+input, textarea {
     border: 2px solid #ffb34a;
     height: 100%;
 }

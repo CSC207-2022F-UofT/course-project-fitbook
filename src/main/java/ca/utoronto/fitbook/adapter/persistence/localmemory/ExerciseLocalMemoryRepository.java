@@ -88,15 +88,19 @@ public class ExerciseLocalMemoryRepository
     @Override
     public List<Exercise> loadExerciseListByKeywords(List<String> keywords) {
         List<Exercise> exerciseList = new ArrayList<>();
-        for(Exercise exercise : datastore.values()) {
-            for(String exerciseId : keywords) {
-                if(exercise.getKeywords().contains(exerciseId)) {
+        for (Exercise exercise : datastore.values()) {
+            for (String exerciseId : keywords) {
+                if (exercise.getKeywords().contains(exerciseId)) {
                     exerciseList.add(exercise);
                     break;
                 }
             }
         }
         return exerciseList;
+    }
+
+    public List<Exercise> loadAllExercises() {
+        return new ArrayList<>(datastore.values());
     }
 }
 

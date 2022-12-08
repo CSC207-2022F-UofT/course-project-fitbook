@@ -2,9 +2,102 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title></title>
+    <title>Create a Post</title>
+    <link href="/css/layout.css" rel="stylesheet">
 </head>
 <body>
-temp info retrieval page
+<nav>
+    <h1>
+        <a href="/">FitBook</a>
+    </h1>
+    <form action="/search" method="get">
+        <label>
+            <input name="queryString" placeholder="Search.." type="text">
+        </label>
+        <button class="button" type="submit">Submit</button>
+    </form>
+    <a href="/post">Create Post</a>
+</nav>
+<div id="choose0">
+    <div class="exercise-input">
+        <label for="tempExer">Choose a temporal exercise:</label>
+        <select id="tempExer" name="tempExer"></select>
+        <button id="addTemp" class="button">Add temporal exercise</button>
+    </div>
+
+    <div class="exercise-input">
+        <label for="repExer">Choose a repetitive exercise:</label>
+        <select id="repExer" name="repExer"></select>
+        <button id="addRep" class="button">Add repetitive exercise</button>
+    </div>
+
+    <div id="addedExercises">
+
+    </div>
+
+    <label for="description">Description:</label>
+    <textarea id="description" name="description" rows="4" cols="50"></textarea>
+    <button onclick="submit()">Submit Post</button>
+</div>
 </body>
+<script th:inline="javascript">
+    const repSelector = document.getElementById("repExer");
+    const tempSelector = document.getElementById("tempExer");
+    const descriptionArea = document.getElementById("description");
+    const tempExercises = [[${tempExerciseList}]];
+    const repExercises = [[${repExerciseList}]];
+    const exerciseIdList = [];
+    const addedExercisesArea = document.getElementById("addedExercises");
+
+    const addRepButton = document.getElementById("addRep");
+    const addTempButton = document.getElementById("addTemp");
+
+    addRepButton.onclick = () => {
+        const para = document.createElement("p");
+        para.readOnly = true;
+        para.type = "text";
+        para.innerText = repSelector.selectedOptions[0].textContent;
+        addedExercisesArea.appendChild(para);
+        exerciseIdList.push(repSelector.selectedOptions[0].value);
+    }
+
+    addTempButton.onclick = () => {
+        const para = document.createElement("p");
+        para.readOnly = true;
+        para.type = "text";
+        para.innerText = tempSelector.selectedOptions[0].textContent;
+        addedExercisesArea.appendChild(para);
+        exerciseIdList.push(tempSelector.selectedOptions[0].value);
+    }
+
+    for (const exercise of tempExercises) {
+        let option = document.createElement("option");
+        option.textContent = exercise.bodyParts[0] + ': ' + exercise.name;
+        option.value = exercise.id;
+        tempSelector.appendChild(option);
+    }
+
+    for (const exercise of repExercises) {
+        let option = document.createElement("option");
+        option.textContent = exercise.bodyParts[0] + ': ' + exercise.name;
+        option.value = exercise.id;
+        repSelector.appendChild(option);
+    }
+
+    const submit = async () => {
+        const data = {
+            exerciseIdList,
+            'description': descriptionArea.value
+        }
+        const response = await fetch('/post', {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        console.log(response.json());
+    }
+</script>
 </html>

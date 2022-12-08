@@ -17,11 +17,10 @@ public class ViewExerciseInfoController {
 
     @GetMapping(path = "/post")
     String viewInfo(Model model, HttpSession session){
-
         // Get session userId, throw error if null
-        String userId = (String) session.getAttribute("userId");
-        if (userId == null)
-            throw new UnauthorizedUserException();
+//        String userId = (String) session.getAttribute("userId");
+//        if (userId == null)
+//            throw new UnauthorizedUserException();
 
         // Create output data using service method
         ViewExerciseInfoResponse outputData = viewExerciseInfoUseCase.viewInfo();
