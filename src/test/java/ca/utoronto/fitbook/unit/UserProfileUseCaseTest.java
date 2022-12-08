@@ -5,7 +5,7 @@ import ca.utoronto.fitbook.TestUtilities;
 import ca.utoronto.fitbook.adapter.persistence.localmemory.ExerciseLocalMemoryRepository;
 import ca.utoronto.fitbook.adapter.persistence.localmemory.PostLocalMemoryRepository;
 import ca.utoronto.fitbook.adapter.persistence.localmemory.UserLocalMemoryRepository;
-import ca.utoronto.fitbook.application.exceptions.EntityNotFoundException;
+import ca.utoronto.fitbook.application.exceptions.UserNotFoundException;
 import ca.utoronto.fitbook.application.port.in.UserProfileUseCase;
 import ca.utoronto.fitbook.application.port.in.command.UserProfileCommand;
 import ca.utoronto.fitbook.application.port.out.response.PostResponse;
@@ -207,7 +207,7 @@ public class UserProfileUseCaseTest extends BaseTest {
     public void findNoneExistentUserProfileThrowsEntityNotFoundException() {
         String id = "-1";
         UserProfileCommand userProfileCommand = new UserProfileCommand(id, id);
-        Assertions.assertThrows(EntityNotFoundException.class, () -> this.userProfileUseCase.findProfile(userProfileCommand));
+        Assertions.assertThrows(UserNotFoundException.class, () -> this.userProfileUseCase.findProfile(userProfileCommand));
     }
 
 }
