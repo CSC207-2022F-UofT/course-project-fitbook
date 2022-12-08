@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Post Success Page</title>
+        <link href="/css/layout.css" rel="stylesheet">
+    </head>
+    <body>
+        <nav>
+            <h1><a href="/feed">FitBook</a></h1>
+            <form method="get" action="/search">
+                <label>
+                    <input type="text" name="queryString" placeholder="Search..">
+                </label>
+                <button type="submit" class="button">Submit</button>
+            </form>
+            <a href="/post">Create Post</a>
+        </nav>
+        <div id="success-div">
+            <img id="dumbbell" src="/images/dumbbell.png" alt="image of a dumbbell">
+            <p id="success-text">Success!</p>
+            <p style="margin-bottom: 30px;">Post created successfully</p>
+            <a class="button" href="/feed">Return</a>
+        </div>
+    </body>
+</html>

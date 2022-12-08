@@ -4,9 +4,9 @@ import lombok.NonNull;
 import lombok.Value;
 
 @Value
-public class UserProfileCommand {
+public class UpvotePostsCommand {
     @NonNull
-    String profileId;
+    String postId;
     @NonNull
     String userId;
 }

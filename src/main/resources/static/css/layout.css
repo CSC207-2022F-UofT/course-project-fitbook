@@ -1,19 +1,64 @@
-body {
-    margin: 0;
-    min-height: 100vh;
-    width: 100vw;
+nav {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 3rem;
     background-color: #fff8eb;
+    color: orange;
+    border-bottom: 3px solid #ffb34a;
+    position: sticky;
+    top: 0;
+}
+nav a {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 10px;
+    text-decoration: none;
+    color: orange;
+    transition: background-color 0.5s ease, color 0.5s ease;
+}
+nav h1 {
+    height: 100%;
+    margin: 0;
+}
+nav div {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    margin: 0;
 }
 
+form {
+    height: 60%;
+}
+
+input {
+    border: 2px solid #ffb34a;
+    height: 100%;
+}
+
+nav a:hover {
+    background-color: #ffb34a;
+    color: #fff8eb;
+}
+body {
+    box-sizing: content-box;
+    margin: 0;
+    min-height: 100vh;
+    width: 100%;
+    background-color: #fff8eb;
+
+}
 .profile-card {
-    font-family: "Helvetica Neue", serif;
+    font-family: "Helvetica Neue",serif;
     margin: 0 auto;
     width: 50%;
     height: 60%;
     display: flex;
     flex-direction: column;
 }
-
 .header {
     width: 100%;
     display: flex;
@@ -21,28 +66,84 @@ body {
     justify-content: space-between;
 }
 
+.post-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.post-header div {
+    display: flex;
+    align-items: center;
+}
 .button {
+    width: fit-content;
     padding: 10px;
     color: white;
     background-color: #ffb34a;
     border-radius: 8%;
+    border: none;
+    cursor: pointer;
     text-decoration: none;
 }
 
-.home {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-}
-
 .post-card {
-    width: 70%;
+    width: 80%;
     box-shadow: 0 .1rem 1rem rgba(0, 0, 0, 0.1);
+    border: 4px solid #ffb34a;
     border-radius: 1em;
-    margin: 0 auto;
+    margin: 0 auto 1em;
     display: flex;
     flex-direction: column;
-    background: #ffb34a;
-    background: linear-gradient(to right, #ffb34a, #ffb10b);
-    padding: 5%;
+    background: #fff8eb;
+    padding: 4%;
+}
+
+.post-card a {
+    text-decoration: none;
+    color: black;
+}
+
+.body-part {
+    border: 2px solid orange;
+    margin: 0 2px;
+    background: white;
+    color: orange;
+    padding: 4px;
+    border-radius: 20%;
+}
+
+.exercises {
+    width: 100%;
+    border-bottom: 2px solid #ffb34a;
+}
+
+.exercise {
+    width: 100%;
+    padding: 4% 0 ;
+}
+
+.post-body {
+    width: 100%;
+    padding: 4% 0;
+}
+
+#success-div {
+    padding-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+    text-align: center;
+    font-family: Verdana,monospace;
+}
+
+#dumbbell {
+    width: 70%;
+    height: auto;
+}
+
+#success-text {
+    font-weight: bold;
+    color: darkgreen;
 }

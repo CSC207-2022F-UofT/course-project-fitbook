@@ -4,5 +4,5 @@ import ca.utoronto.fitbook.application.port.in.command.UserProfileCommand;
 import ca.utoronto.fitbook.application.port.out.response.UserProfileResponse;
 
 public interface UserProfileUseCase {
-    UserProfileResponse createProfile(UserProfileCommand userProfileCommand);
+    UserProfileResponse findProfile(UserProfileCommand userProfileCommand);
 }

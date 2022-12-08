@@ -4,9 +4,12 @@ import ca.utoronto.fitbook.adapter.persistence.GenericRepository;
 import ca.utoronto.fitbook.application.exceptions.EntityNotFoundException;
 import ca.utoronto.fitbook.application.exceptions.UsernameCollisionException;
 import ca.utoronto.fitbook.application.exceptions.UsernameNotFoundException;
+import ca.utoronto.fitbook.application.port.in.CheckUserExistsPort;
 import ca.utoronto.fitbook.application.port.in.FindUserByNamePort;
 import ca.utoronto.fitbook.application.port.in.LoadUserByNamePort;
+import ca.utoronto.fitbook.application.port.in.LoadUserListPort;
 import ca.utoronto.fitbook.application.port.in.LoadUserPort;
+import ca.utoronto.fitbook.application.exceptions.UserNotFoundException;
 import ca.utoronto.fitbook.application.port.out.SaveUserPort;
 import ca.utoronto.fitbook.entity.User;
 
@@ -19,7 +22,9 @@ public class UserLocalMemoryRepository implements GenericRepository<User>,
         LoadUserPort,
         LoadUserByNamePort,
         FindUserByNamePort,
-        SaveUserPort
+        SaveUserPort,
+        LoadUserListPort,
+        CheckUserExistsPort
 {
     private static final Map<String, User> datastore = new HashMap<>();
 
@@ -55,8 +60,12 @@ public class UserLocalMemoryRepository implements GenericRepository<User>,
      * @return the user with the given Id
      */
     @Override
-    public User loadUser(String id) throws EntityNotFoundException {
-        return getById(id);
+    public User loadUser(String id) {
+        try {
+            return getById(id);
+        } catch (EntityNotFoundException e) {
+            throw new UserNotFoundException(id);
+        }
     }
 
     /**
@@ -102,5 +111,33 @@ public class UserLocalMemoryRepository implements GenericRepository<User>,
     @Override
     public void saveUser(User user) {
         save(user);
+    }
+
+    /**
+     * @param userId Id of the user to find
+     * @return Whether the user exists
+     */
+    @Override
+    public boolean checkUserExists(String userId) {
+        try {
+            loadUser(userId);
+            return true;
+        } catch (EntityNotFoundException e) {
+            return false;
+        }
+    }
+
+    /**
+     * @param userIds The user ids to be fetched
+     * @return A list of users
+     * @throws EntityNotFoundException If a single user is not found
+     */
+    @Override
+    public List<User> loadUserList(List<String> userIds) throws EntityNotFoundException {
+        List<User> userList = new ArrayList<>();
+        for (String id : userIds) {
+            userList.add(getById(id));
+        }
+        return userList;
     }
 }

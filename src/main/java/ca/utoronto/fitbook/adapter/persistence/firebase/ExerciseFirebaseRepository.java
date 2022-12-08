@@ -21,18 +21,22 @@ import java.util.concurrent.ExecutionException;
 
 @Repository
 @RequiredArgsConstructor
-public class ExerciseFirebaseRepository implements GenericRepository<Exercise>, LoadExerciseListPort
+public class ExerciseFirebaseRepository
+        extends GenericFirebaseRepository
+        implements GenericRepository<Exercise>, LoadExerciseListPort
 {
 
+    private static final String COLLECTION_NAME = "exercises";
     private final Firestore firestore;
 
-    private static final String COLLECTION_NAME = "exercises";
+    @Override
+    protected Firestore getFirestore() {
+        return firestore;
+    }
 
-    @ResponseStatus(value=HttpStatus.INTERNAL_SERVER_ERROR, reason="Invalid exercise type")
-    private static class InvalidExerciseTypeException extends RuntimeException {
-        public InvalidExerciseTypeException(String type) {
-            super(String.format("Exercise type (%s) is invalid.", type));
-        }
+    @Override
+    protected String getCollectionName() {
+        return COLLECTION_NAME;
     }
 
     /**
@@ -41,24 +45,7 @@ public class ExerciseFirebaseRepository implements GenericRepository<Exercise>, 
      */
     @Override
     public Exercise getById(String id) throws EntityNotFoundException {
-
-        ApiFuture<DocumentSnapshot> future = firestore.collection(COLLECTION_NAME).document(id).get();
-        try {
-            DocumentSnapshot document = future.get();
-            if (document.exists()) {
-                String type = document.getString("type");
-                for (Exercise.ExerciseType exerciseType : Exercise.ExerciseType.values()) {
-                    if (Objects.equals(type, exerciseType.toString())) {
-                        String exerciseClassName = ExerciseTypeToClassMap.get(exerciseType);
-                        return (Exercise) document.toObject(Class.forName(exerciseClassName));
-                    }
-                }
-                throw new InvalidExerciseTypeException(type);
-            }
-            throw new EntityNotFoundException(id);
-        } catch (InterruptedException | ExecutionException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        return documentToExercise(getDocumentById(id));
     }
 
     /**
@@ -97,9 +84,35 @@ public class ExerciseFirebaseRepository implements GenericRepository<Exercise>, 
     @Override
     public List<Exercise> loadExerciseList(List<String> exerciseIds) throws EntityNotFoundException {
         List<Exercise> exerciseList = new ArrayList<>();
-        for (String id : exerciseIds) {
-            exerciseList.add(getById(id));
+        List<DocumentSnapshot> exerciseDocumentList = getDocumentList(exerciseIds);
+        for (DocumentSnapshot document : exerciseDocumentList) {
+            if (!document.exists())
+                throw new EntityNotFoundException(document.getId());
+            exerciseList.add(documentToExercise(document));
         }
         return exerciseList;
+    }
+
+    private Exercise documentToExercise(DocumentSnapshot document) {
+        try {
+            String type = document.getString("type");
+            for (Exercise.ExerciseType exerciseType : Exercise.ExerciseType.values()) {
+                if (Objects.equals(type, exerciseType.toString())) {
+                    String exerciseClassName = ExerciseTypeToClassMap.get(exerciseType);
+                    return (Exercise) document.toObject(Class.forName(exerciseClassName));
+                }
+            }
+            throw new InvalidExerciseTypeException(type);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR, reason = "Invalid exercise type")
+    private static class InvalidExerciseTypeException extends RuntimeException
+    {
+        public InvalidExerciseTypeException(String type) {
+            super(String.format("Exercise type (%s) is invalid.", type));
+        }
     }
 }

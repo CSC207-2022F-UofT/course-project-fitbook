@@ -1,22 +1,14 @@
 package ca.utoronto.fitbook.application.service;
 
-import ca.utoronto.fitbook.application.port.in.LoadExerciseListPort;
-import ca.utoronto.fitbook.application.port.in.LoadPostListPort;
-import ca.utoronto.fitbook.application.port.in.LoadUserPort;
-import ca.utoronto.fitbook.application.port.in.UserProfileUseCase;
+import ca.utoronto.fitbook.application.port.in.*;
 import ca.utoronto.fitbook.application.port.in.command.UserProfileCommand;
+import ca.utoronto.fitbook.application.port.out.response.PostResponse;
 import ca.utoronto.fitbook.application.port.out.response.UserProfileResponse;
-import ca.utoronto.fitbook.entity.Exercise;
-import ca.utoronto.fitbook.entity.Post;
-import ca.utoronto.fitbook.entity.User;
+import ca.utoronto.fitbook.entity.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Service
@@ -24,38 +16,41 @@ import java.util.Map;
 public class UserProfileService implements UserProfileUseCase
 {
     private final LoadUserPort userProfilePort;
+    private final LoadUserListPort loadUserListPort;
     private final LoadPostListPort loadPostListPort;
     private final LoadExerciseListPort loadExerciseListPort;
 
     /**
      * @param command the user's input
-     * @return a profile response with user information
+     * @return a profile response containing user information
      */
     @Override
-    public UserProfileResponse createProfile(UserProfileCommand command) {
-        User user = userProfilePort.loadUser(command.getUserId());
-        List<Post> userPosts = loadPostListPort.loadPostList(user.getPostIdList());
-        List<Post> likedPosts = loadPostListPort.loadPostList(user.getLikedPostIdList());
-        Map<String, Exercise> userExercises = new HashMap<>();
+    public UserProfileResponse findProfile(UserProfileCommand command) {
+        // Check that the request user and current user exist
+        User profileUser = userProfilePort.loadUser(command.getProfileId());
+        User currUser = userProfilePort.loadUser(command.getUserId());
 
-        for (Post post : userPosts) {
-            List<Exercise> postExercises = loadExerciseListPort.loadExerciseList(post.getExerciseIdList());
-            for (Exercise exercise: postExercises) {
-                userExercises.put(exercise.getId(), exercise);
-            }
-        }
+        // Check that the requested user's posts and liked posts exist.
+        List<Post> posts = loadPostListPort.loadPostList(profileUser.getPostIdList());
+        List<Post> likedPosts = loadPostListPort.loadPostList(profileUser.getLikedPostIdList());
 
-        DateFormat dateFormatter = new SimpleDateFormat("MMMM dd, yyyy");
-        String cleanDate = dateFormatter.format(user.getJoinDate());
+        // Sort lists of posts in reverse chronological order
+        posts.sort(Comparator.comparing(Post::getPostDate).reversed());
+        likedPosts.sort(Comparator.comparing(Post::getPostDate).reversed());
 
-        return new UserProfileResponse(user.getId(),
-                                        user.getName(),
-                                        user.getFollowingIdList().size(),
-                                        user.getFollowersIdList().size(),
-                                        cleanDate,
-                                        userPosts,
-                                        likedPosts,
-                                        userExercises,
-                                        user.getTotalLikes());
+        // Convert list of profile posts to post responses with full information
+        List<PostResponse> profilePosts = PostListToPostResponseMapper.map(currUser, posts,
+                loadExerciseListPort, loadUserListPort);
+        List<PostResponse> profileLikedPosts = PostListToPostResponseMapper.map(currUser, likedPosts,
+                loadExerciseListPort, loadUserListPort);
+
+        boolean userFollows = currUser.getFollowingIdList().contains(profileUser.getId());
+
+        // Create response to return all relevant user's profile information
+        return new UserProfileResponse(
+                profileUser,
+                profilePosts,
+                profileLikedPosts,
+                userFollows);
     }
 }

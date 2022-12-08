@@ -1,28 +1,18 @@
 package ca.utoronto.fitbook.application.port.out.response;
 
-import ca.utoronto.fitbook.entity.Exercise;
-import ca.utoronto.fitbook.entity.Post;
+import ca.utoronto.fitbook.entity.User;
 import lombok.NonNull;
 import lombok.Value;
 
 import java.util.List;
-import java.util.Map;
 
 @Value
 public class UserProfileResponse {
     @NonNull
-    String id;
+    User profileUser;
     @NonNull
-    String name;
-    int followingSize;
-    int followerSize;
+    List<PostResponse> postList;
     @NonNull
-    String joinDate;
-    @NonNull
-    List<Post> postList;
-    @NonNull
-    List<Post> likedPostList;
-    @NonNull
-    Map<String, Exercise> userExercises;
-    int totalLikes;
+    List<PostResponse> likedPostList;
+    boolean userFollows;
 }
