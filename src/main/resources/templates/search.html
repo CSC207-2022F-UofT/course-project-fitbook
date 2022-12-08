@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Search</title>
@@ -41,7 +43,7 @@
                 </div>
             </div>
             <div class="post-body">
-<!--                <button th:attr="onclick=|upvotePost(this, '${postResponse.post.id}', '${currUser}', '${postResponse.post.getLikes()}')|" th:text="${postResponse.post.isUserLiked() ? 'Liked' : 'Like'}" th:disabled="${postResponse.post.isUserLiked()}" class="button"></button>-->
+                <button th:attr="onclick=|upvotePost(this, '${postResponse.post.id}', '${currUser}', '${postResponse.post.getLikes()}')|" th:text="${postResponse.isUserLiked() ? 'Liked' : 'Like'}" th:disabled="${postResponse.isUserLiked()}" class="button"></button>
                 <p> Likes <span th:text="${postResponse.post.getLikes()}">Post Likes</span></p>
                 <p th:text="${postResponse.post.getDescription()}"></p>
             </div>
@@ -50,29 +52,6 @@
 </div>
 </body>
 <script th:inline="javascript">
-    const followerCount = document.getElementById("followerCount");
-    const followStatus = document.getElementById("followStatus")
-    const followButton = document.getElementById("follow");
-
-    const followUser = async (event, followeeId) => {
-        fetch("/follow/", {
-            method: "POST",
-            mode: "cors",
-            cache: "no-cache",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                followeeId: followeeId
-            })
-        }).then(() => {
-            followers += 1;
-            followStatus.textContent = "Following"
-            followButton.disabled = true;
-            followerCount.textContent = followers;
-        }).catch(e => console.error(e))
-    }
-
     const upvotePost = (event, postId, userId, postLikes) => {
         fetch("/upvote/",  {
             method: "POST",
