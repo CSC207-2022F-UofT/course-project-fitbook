@@ -7,5 +7,5 @@ import java.util.List;
 @Value
 public class SearchResponse {
     @NonNull
-    List<SearchPostResponse> postList;
+    List<PostResponse> postList;
 }
