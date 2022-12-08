@@ -1,6 +1,8 @@
 package ca.utoronto.fitbook;
 
 import ca.utoronto.fitbook.entity.Post;
+import ca.utoronto.fitbook.entity.RepetitiveExercise;
+import ca.utoronto.fitbook.entity.TemporalExercise;
 import ca.utoronto.fitbook.entity.User;
 
 import java.nio.charset.StandardCharsets;
@@ -8,6 +10,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class TestUtilities
@@ -55,6 +58,25 @@ public class TestUtilities
                 .likes(randomInteger(0, 100))
                 .exerciseIdList(new ArrayList<>())
                 .description(randomString(50))
+                .build();
+    }
+
+    public static TemporalExercise randomTemporalExercise() {
+        return TemporalExercise.builder()
+                .time(randomInteger(20, 60))
+                .name(randomString(10))
+                .bodyParts(List.of(randomString(10), randomString(9)))
+                .keywords(List.of(randomString(10), randomString(9)))
+                .build();
+    }
+
+    public static RepetitiveExercise randomRepetitiveExercise() {
+        return RepetitiveExercise.builder()
+                .reps(randomInteger(10,30))
+                .sets(randomInteger(3, 7))
+                .name(randomString(10))
+                .bodyParts(List.of(randomString(10), randomString(9)))
+                .keywords(List.of(randomString(10), randomString(9)))
                 .build();
     }
 }
