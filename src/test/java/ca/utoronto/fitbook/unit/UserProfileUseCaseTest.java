@@ -161,12 +161,12 @@ public class UserProfileUseCaseTest extends BaseTest {
 
         UserProfileResponse response = this.userProfileService.findProfile(userProfileCommand);
 
-        Assertions.assertEquals(testUser2.getId(), response.getProfileId());
-        Assertions.assertEquals("Pedro", response.getName());
-        Assertions.assertEquals(3, response.getTotalLikes());
-        Assertions.assertEquals(post2.getId(), response.getPostList().get(0).getPostId());
-        Assertions.assertEquals(post2.getLikes(), response.getPostList().get(0).getLikes());
-        Assertions.assertEquals(post1.getLikes(), response.getPostList().get(1).getLikes());
+        Assertions.assertEquals(testUser2.getId(), response.getProfileUser().getId());
+        Assertions.assertEquals("Pedro", response.getProfileUser().getName());
+        Assertions.assertEquals(3, response.getProfileUser().getTotalLikes());
+        Assertions.assertEquals(post2.getId(), response.getPostList().get(0).getPost().getId());
+        Assertions.assertEquals(post2.getLikes(), response.getPostList().get(0).getPost().getLikes());
+        Assertions.assertEquals(post1.getLikes(), response.getPostList().get(1).getPost().getLikes());
         Assertions.assertFalse(response.isUserFollows());
     }
 
@@ -176,11 +176,11 @@ public class UserProfileUseCaseTest extends BaseTest {
 
         UserProfileResponse response = this.userProfileService.findProfile(userProfileCommand);
 
-        Assertions.assertEquals(testUser1.getId(), response.getProfileId());
-        Assertions.assertEquals("Jan", response.getName());
-        Assertions.assertEquals(0, response.getTotalLikes());
-        Assertions.assertEquals(0, response.getPostList().size());
-        Assertions.assertEquals(1, response.getFollowerSize());
+        Assertions.assertEquals(testUser1.getId(), response.getProfileUser().getId());
+        Assertions.assertEquals(testUser1.getName(), response.getProfileUser().getName());
+        Assertions.assertEquals(testUser1.getTotalLikes(), response.getProfileUser().getTotalLikes());
+        Assertions.assertEquals(testUser1.getPostIdList().size(), response.getPostList().size());
+        Assertions.assertEquals(testUser1.getFollowersIdList().size(), response.getProfileUser().getFollowersIdList().size());
         Assertions.assertFalse(response.isUserFollows());
     }
 
@@ -190,18 +190,18 @@ public class UserProfileUseCaseTest extends BaseTest {
 
         UserProfileResponse response = this.userProfileService.findProfile(userProfileCommand);
 
-        Assertions.assertEquals(testUser2.getId(), response.getProfileId());
-        Assertions.assertEquals("Pedro", response.getName());
-        Assertions.assertEquals(3, response.getTotalLikes());
-        Assertions.assertEquals(2, response.getPostList().size());
-        Assertions.assertEquals(2, response.getFollowerSize());
+        Assertions.assertEquals(testUser2.getId(), response.getProfileUser().getId());
+        Assertions.assertEquals(testUser2.getName(), response.getProfileUser().getName());
+        Assertions.assertEquals(testUser2.getTotalLikes(), response.getProfileUser().getTotalLikes());
+        Assertions.assertEquals(testUser2.getPostIdList().size(), response.getPostList().size());
+        Assertions.assertEquals(testUser2.getFollowersIdList().size(), response.getProfileUser().getFollowersIdList().size());
         Assertions.assertTrue(response.isUserFollows());
-        Assertions.assertEquals(post2.getId(), response.getPostList().get(0).getPostId());
-        Assertions.assertEquals(post2.getLikes(), response.getPostList().get(0).getLikes());
-        Assertions.assertEquals(post2.getDescription(), response.getPostList().get(0).getDescription());
-        Assertions.assertEquals(post1.getId(), response.getPostList().get(1).getPostId());
-        Assertions.assertEquals(post1.getLikes(), response.getPostList().get(1).getLikes());
-        Assertions.assertEquals(post1.getDescription(), response.getPostList().get(1).getDescription());
+        Assertions.assertEquals(post2.getId(), response.getPostList().get(0).getPost().getId());
+        Assertions.assertEquals(post2.getLikes(), response.getPostList().get(0).getPost().getLikes());
+        Assertions.assertEquals(post2.getDescription(), response.getPostList().get(0).getPost().getDescription());
+        Assertions.assertEquals(post1.getId(), response.getPostList().get(1).getPost().getId());
+        Assertions.assertEquals(post1.getLikes(), response.getPostList().get(1).getPost().getLikes());
+        Assertions.assertEquals(post1.getDescription(), response.getPostList().get(1).getPost().getDescription());
     }
 
     @Test
@@ -210,17 +210,17 @@ public class UserProfileUseCaseTest extends BaseTest {
 
         UserProfileResponse response = this.userProfileService.findProfile(userProfileCommand);
 
-        Assertions.assertEquals(testUser3.getId(), response.getProfileId());
-        Assertions.assertEquals("Jim", response.getName());
-        Assertions.assertEquals(1, response.getTotalLikes());
-        Assertions.assertEquals(1, response.getPostList().size());
-        Assertions.assertEquals(1, response.getFollowerSize());
+        Assertions.assertEquals(testUser3.getId(), response.getProfileUser().getId());
+        Assertions.assertEquals(testUser3.getName(), response.getProfileUser().getName());
+        Assertions.assertEquals(testUser3.getTotalLikes(), response.getProfileUser().getTotalLikes());
+        Assertions.assertEquals(testUser3.getPostIdList().size(), response.getPostList().size());
+        Assertions.assertEquals(testUser3.getFollowersIdList().size(), response.getProfileUser().getFollowersIdList().size());
         Assertions.assertFalse(response.isUserFollows());
-        Assertions.assertEquals(post3.getId(), response.getPostList().get(0).getPostId());
-        Assertions.assertEquals(post3.getLikes(), response.getPostList().get(0).getLikes());
-        Assertions.assertEquals(post3.getDescription(), response.getPostList().get(0).getDescription());
-        Assertions.assertEquals(post3.getAuthorId(), response.getPostList().get(0).getAuthor().getId());
-        Assertions.assertNotNull(response.getPostList().get(0).getPostDate());
+        Assertions.assertEquals(post3.getId(), response.getPostList().get(0).getPost().getId());
+        Assertions.assertEquals(post3.getLikes(), response.getPostList().get(0).getPost().getLikes());
+        Assertions.assertEquals(post3.getDescription(), response.getPostList().get(0).getPost().getDescription());
+        Assertions.assertEquals(post3.getAuthorId(), response.getPostList().get(0).getPost().getAuthorId());
+        Assertions.assertNotNull(response.getPostList().get(0).getPost().getPostDate());
         Assertions.assertTrue(response.getPostList().get(0).isUserLiked());
         Assertions.assertEquals(exercise1.getId(), response.getPostList().get(0).getRepetitiveExerciseList().get(0).getId());
 
