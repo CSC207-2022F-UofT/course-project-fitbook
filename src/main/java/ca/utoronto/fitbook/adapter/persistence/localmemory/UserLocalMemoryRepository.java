@@ -2,14 +2,17 @@ package ca.utoronto.fitbook.adapter.persistence.localmemory;
 
 import ca.utoronto.fitbook.adapter.persistence.GenericRepository;
 import ca.utoronto.fitbook.application.exceptions.EntityNotFoundException;
+import ca.utoronto.fitbook.application.port.in.LoadUserListPort;
 import ca.utoronto.fitbook.application.port.in.LoadUserPort;
 import ca.utoronto.fitbook.application.port.out.SaveUserPort;
 import ca.utoronto.fitbook.entity.User;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class UserLocalMemoryRepository implements GenericRepository<User>, LoadUserPort, SaveUserPort
+public class UserLocalMemoryRepository implements GenericRepository<User>, LoadUserPort, SaveUserPort, LoadUserListPort
 {
     private static final Map<String, User> datastore = new HashMap<>();
 
@@ -55,5 +58,19 @@ public class UserLocalMemoryRepository implements GenericRepository<User>, LoadU
     @Override
     public void saveUser(User user) {
         save(user);
+    }
+
+    /**
+     * @param userIds The user ids to be fetched
+     * @return A list of users
+     * @throws EntityNotFoundException If a single user is not found
+     */
+    @Override
+    public List<User> loadUserList(List<String> userIds) throws EntityNotFoundException {
+        List<User> userList = new ArrayList<>();
+        for (String id : userIds) {
+            userList.add(getById(id));
+        }
+        return userList;
     }
 }
