@@ -54,5 +54,41 @@ public class ExerciseLocalMemoryRepository implements GenericRepository<Exercise
         }
         return exerciseList;
     }
+
+    /**
+     * @param bodyParts
+     * @return
+     */
+    @Override
+    public List<Exercise> loadExerciseByBodyParts(List<String> bodyParts) {
+        List<Exercise> exerciseList = new ArrayList<>();
+        for(Exercise exercise : datastore.values()) {
+            for(String exerciseId : bodyParts) {
+                if(exercise.getBodyParts().contains(exerciseId)) {
+                    exerciseList.add(exercise);
+                    break;
+                }
+            }
+        }
+        return exerciseList;
+    }
+
+    /**
+     * @param keywords
+     * @return
+     */
+    @Override
+    public List<Exercise> loadExerciseListByKeywords(List<String> keywords) {
+        List<Exercise> exerciseList = new ArrayList<>();
+        for(Exercise exercise : datastore.values()) {
+            for(String exerciseId : keywords) {
+                if(exercise.getKeywords().contains(exerciseId)) {
+                    exerciseList.add(exercise);
+                    break;
+                }
+            }
+        }
+        return exerciseList;
+    }
 }
 

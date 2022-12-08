@@ -3,6 +3,7 @@ package ca.utoronto.fitbook.adapter.persistence.localmemory;
 import ca.utoronto.fitbook.adapter.persistence.GenericRepository;
 import ca.utoronto.fitbook.application.exceptions.EntityNotFoundException;
 import ca.utoronto.fitbook.application.port.in.LoadPaginatedPosts;
+import ca.utoronto.fitbook.application.port.in.LoadPostListByExerciseListPort;
 import ca.utoronto.fitbook.application.port.in.LoadPostListPort;
 import ca.utoronto.fitbook.application.port.in.LoadPostPort;
 import ca.utoronto.fitbook.application.port.out.SavePostPort;
@@ -14,7 +15,8 @@ public class PostLocalMemoryRepository implements GenericRepository<Post>,
         LoadPostPort,
         SavePostPort,
         LoadPostListPort,
-        LoadPaginatedPosts
+        LoadPaginatedPosts,
+        LoadPostListByExerciseListPort
 {
     private static final Map<String, Post> datastore = new HashMap<>();
 
@@ -104,6 +106,24 @@ public class PostLocalMemoryRepository implements GenericRepository<Post>,
         for (int i = currentIndex; i < currentIndex + limit && i < allPosts.size(); i++)
             posts.add(allPosts.get(i));
         return posts;
+    }
+
+    /**
+     * @param exerciseIdList list of exerciseIds to be fetched from database
+     * @return list of post objects
+     */
+    @Override
+    public List<Post> loadPostListByExerciseList(List<String> exerciseIdList) {
+        List<Post> postList = new ArrayList<>();
+        for(Post post : datastore.values()) {
+            for(String exerciseId : exerciseIdList) {
+                if(post.getExerciseIdList().contains(exerciseId)) {
+                    postList.add(post);
+                    break;
+                }
+            }
+        }
+        return postList;
     }
 }
 
