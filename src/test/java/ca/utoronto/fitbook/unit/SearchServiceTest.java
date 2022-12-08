@@ -4,7 +4,6 @@ import ca.utoronto.fitbook.BaseTest;
 import ca.utoronto.fitbook.adapter.persistence.localmemory.ExerciseLocalMemoryRepository;
 import ca.utoronto.fitbook.adapter.persistence.localmemory.PostLocalMemoryRepository;
 import ca.utoronto.fitbook.adapter.persistence.localmemory.UserLocalMemoryRepository;
-import ca.utoronto.fitbook.application.exceptions.EmptyQueryStringException;
 import ca.utoronto.fitbook.application.port.in.SearchPostsUseCase;
 import ca.utoronto.fitbook.application.port.in.command.SearchCommand;
 import ca.utoronto.fitbook.application.port.out.response.SearchResponse;
@@ -127,55 +126,55 @@ public class SearchServiceTest extends BaseTest {
 
     @Test
     public void searchPostsReturnsInCorrectOrderAndSize() {
-        SearchCommand searchCommand = new SearchCommand("Best glute workout");
+        SearchCommand searchCommand = new SearchCommand("Best glute workout", testUser.getId());
         SearchResponse response = this.searchPostsUseCase.search(searchCommand);
         Assertions.assertEquals(2, response.getPostList().size());
-        Assertions.assertEquals(post1.getId(), response.getPostList().get(0).getId());
-        Assertions.assertEquals(this.testUser.getName(), response.getPostAuthorNames().get(post1.getAuthorId()));
-        Assertions.assertTrue(response..containsKey(exercise1.getId()));
+        Assertions.assertEquals(post1.getId(), response.getPostList().get(0).getPost().getId());
+        Assertions.assertEquals(this.testUser.getName(), response.getPostList().get(0).getAuthorName());
+        Assertions.assertTrue(response.getPostList().get(0).getPost().getExerciseIdList().contains(exercise1.getId()));
     }
 
     @Test
     public void searchPostsWithBadQueryReturnsEmptyList() {
-        SearchCommand searchCommand = new SearchCommand("Abrakadabtra");
+        SearchCommand searchCommand = new SearchCommand("Abrakadabtra", testUser.getId());
         SearchResponse response = this.searchPostsUseCase.search(searchCommand);
         Assertions.assertEquals(0, response.getPostList().size());
     }
 
     @Test
     public void searchPostsEmptyQueryThrowsEmptyQueryException() {
-        SearchCommand searchCommand = new SearchCommand("");
-        Assertions.assertThrows(EmptyQueryStringException.class, () -> this.searchPostsUseCase.search(searchCommand));
+        SearchCommand searchCommand = new SearchCommand("", testUser.getId());
+        Assertions.assertThrows(SearchService.EmptyQueryStringException.class, () -> this.searchPostsUseCase.search(searchCommand));
     }
 
     @Test
     public void searchPostCorrectPostAttributesReturned() {
-        SearchCommand searchCommand = new SearchCommand("Best bicep workout");
+        SearchCommand searchCommand = new SearchCommand("Best bicep workout", testUser.getId());
         SearchResponse response = this.searchPostsUseCase.search(searchCommand);
 
         Assertions.assertEquals(1, response.getPostList().size());
-        Assertions.assertEquals(post3.getId(), response.getPostList().get(0).getId());
-        Assertions.assertEquals(post3.getAuthorId(), response.getPostList().get(0).getAuthorId());
-        Assertions.assertEquals(post3.getPostDate(), response.getPostList().get(0).getPostDate());
-        Assertions.assertEquals(post3.getDescription(), response.getPostList().get(0).getDescription());
-        Assertions.assertEquals(post3.getExerciseIdList().size(), response.getPostList().get(0).getExerciseIdList().size());
+        Assertions.assertEquals(post3.getId(), response.getPostList().get(0).getPost().getId());
+        Assertions.assertEquals(post3.getAuthorId(), response.getPostList().get(0).getPost().getAuthorId());
+        Assertions.assertEquals(post3.getPostDate(), response.getPostList().get(0).getPost().getPostDate());
+        Assertions.assertEquals(post3.getDescription(), response.getPostList().get(0).getPost().getDescription());
+        Assertions.assertEquals(post3.getExerciseIdList().size(), response.getPostList().get(0).getPost().getExerciseIdList().size());
     }
 
     @Test
     public void searchPostCorrectPostAttributesForMultiplePostsReturned() {
-        SearchCommand searchCommand = new SearchCommand("Best squat workout");
+        SearchCommand searchCommand = new SearchCommand("Best squat workout", testUser.getId());
         SearchResponse response = this.searchPostsUseCase.search(searchCommand);
 
         Assertions.assertEquals(2, response.getPostList().size());
-        Assertions.assertEquals(post1.getId(), response.getPostList().get(0).getId());
-        Assertions.assertEquals(post1.getAuthorId(), response.getPostList().get(0).getAuthorId());
-        Assertions.assertEquals(post1.getPostDate(), response.getPostList().get(0).getPostDate());
-        Assertions.assertEquals(post1.getDescription(), response.getPostList().get(0).getDescription());
-        Assertions.assertEquals(post1.getExerciseIdList().size(), response.getPostList().get(0).getExerciseIdList().size());
-        Assertions.assertEquals(post2.getId(), response.getPostList().get(1).getId());
-        Assertions.assertEquals(post2.getAuthorId(), response.getPostList().get(1).getAuthorId());
-        Assertions.assertEquals(post2.getPostDate(), response.getPostList().get(1).getPostDate());
-        Assertions.assertEquals(post2.getDescription(), response.getPostList().get(1).getDescription());
-        Assertions.assertEquals(post2.getExerciseIdList().size(), response.getPostList().get(1).getExerciseIdList().size());
+        Assertions.assertEquals(post1.getId(), response.getPostList().get(0).getPost().getId());
+        Assertions.assertEquals(post1.getAuthorId(), response.getPostList().get(0).getPost().getAuthorId());
+        Assertions.assertEquals(post1.getPostDate(), response.getPostList().get(0).getPost().getPostDate());
+        Assertions.assertEquals(post1.getDescription(), response.getPostList().get(0).getPost().getDescription());
+        Assertions.assertEquals(post1.getExerciseIdList().size(), response.getPostList().get(0).getPost().getExerciseIdList().size());
+        Assertions.assertEquals(post2.getId(), response.getPostList().get(1).getPost().getId());
+        Assertions.assertEquals(post2.getAuthorId(), response.getPostList().get(1).getPost().getAuthorId());
+        Assertions.assertEquals(post2.getPostDate(), response.getPostList().get(1).getPost().getPostDate());
+        Assertions.assertEquals(post2.getDescription(), response.getPostList().get(1).getPost().getDescription());
+        Assertions.assertEquals(post2.getExerciseIdList().size(), response.getPostList().get(1).getPost().getExerciseIdList().size());
     }
 }
