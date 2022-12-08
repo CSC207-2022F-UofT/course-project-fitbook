@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +23,7 @@ public class ViewExerciseInfoService implements ViewExerciseInfoUseCase {
     @Override
     public ViewExerciseInfoResponse viewInfo() {
         // Create list of all database exercises
-        ArrayList<Exercise> exerciseList = loadAllExercisesPort.loadAllExercises();
+        List<Exercise> exerciseList = loadAllExercisesPort.loadAllExercises();
 
         // Create new blank lists for the two types of exercises
         ArrayList<TemporalExercise> temporalExercises = new ArrayList<>();

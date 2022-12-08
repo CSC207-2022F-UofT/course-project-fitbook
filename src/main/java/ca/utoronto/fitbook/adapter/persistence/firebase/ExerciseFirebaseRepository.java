@@ -161,16 +161,21 @@ public class ExerciseFirebaseRepository
      * @return A list of all exercises in the database
      */
     @Override
-    public ArrayList<Exercise> loadAllExercises() {
-        Iterable<DocumentReference> future = firestore.collection(COLLECTION_NAME).listDocuments();
-        ArrayList<Exercise> exercises = new ArrayList<>();
-        for (DocumentReference reference : future) {
-            ApiFuture<DocumentSnapshot> snapshot = reference.get();
-            try {
-                exercises.add(documentToExercise(snapshot.get()));
-            } catch (InterruptedException | ExecutionException e){
-                throw new RuntimeException(e);
+    public List<Exercise> loadAllExercises() {
+        try {
+            Iterable<DocumentReference> futureDocuments = firestore.collection(COLLECTION_NAME).listDocuments();
+            List<ApiFuture<DocumentSnapshot>> futuresList = new ArrayList<>();
+            for (DocumentReference documentReference : futureDocuments) {
+                futuresList.add(documentReference.get());
             }
+
+            List<Exercise> exerciseList = new ArrayList<>();
+            for (DocumentSnapshot document : ApiFutures.allAsList(futuresList).get())
+                exerciseList.add(documentToExercise(document));
+
+            return exerciseList;
+        } catch (InterruptedException | ExecutionException e){
+            throw new RuntimeException(e);
         }
         return exercises;
     }
