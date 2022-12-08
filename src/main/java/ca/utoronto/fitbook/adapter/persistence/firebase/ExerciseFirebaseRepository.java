@@ -4,7 +4,6 @@ import ca.utoronto.fitbook.adapter.persistence.ExerciseTypeToClassMap;
 import ca.utoronto.fitbook.adapter.persistence.GenericRepository;
 import ca.utoronto.fitbook.application.exceptions.EntityNotFoundException;
 import ca.utoronto.fitbook.application.port.in.LoadAllExercisesPort;
-import ca.utoronto.fitbook.application.port.in.LoadAllExercisesPort;
 import ca.utoronto.fitbook.application.port.in.LoadExerciseByBodyPartsPort;
 import ca.utoronto.fitbook.application.port.in.LoadExerciseListByKeywordsPort;
 import ca.utoronto.fitbook.application.port.in.LoadExerciseListPort;
@@ -177,7 +176,6 @@ public class ExerciseFirebaseRepository
         } catch (InterruptedException | ExecutionException e){
             throw new RuntimeException(e);
         }
-        return exercises;
     }
 
     /**
