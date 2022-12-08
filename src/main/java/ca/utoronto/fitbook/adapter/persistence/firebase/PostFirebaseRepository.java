@@ -3,11 +3,13 @@ package ca.utoronto.fitbook.adapter.persistence.firebase;
 import ca.utoronto.fitbook.adapter.persistence.GenericRepository;
 import ca.utoronto.fitbook.application.exceptions.EntityNotFoundException;
 import ca.utoronto.fitbook.application.port.in.LoadPaginatedPosts;
+import ca.utoronto.fitbook.application.port.in.LoadPostListByExerciseListPort;
 import ca.utoronto.fitbook.application.port.in.LoadPostListPort;
 import ca.utoronto.fitbook.application.port.in.LoadPostPort;
 import ca.utoronto.fitbook.application.port.out.SavePostPort;
 import ca.utoronto.fitbook.entity.Post;
 import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutures;
 import com.google.cloud.firestore.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -24,7 +26,8 @@ public class PostFirebaseRepository
         LoadPostPort,
         SavePostPort,
         LoadPostListPort,
-        LoadPaginatedPosts
+        LoadPaginatedPosts,
+        LoadPostListByExerciseListPort
 {
 
     private static final String COLLECTION_NAME = "posts";
@@ -145,6 +148,35 @@ public class PostFirebaseRepository
 
             return posts;
         } catch (ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * @param exerciseIdList a list of exercise ids
+     * @return a list of posts
+     */
+    @Override
+    public List<Post> loadPostListByExerciseList(List<String> exerciseIdList) {
+        try {
+            List<ApiFuture<QuerySnapshot>> futures = new ArrayList<>();
+
+            for (String exerciseId : exerciseIdList) {
+                ApiFuture<QuerySnapshot> future = firestore.collection(COLLECTION_NAME)
+                        .whereArrayContains("exerciseIdList", exerciseId).get();
+                futures.add(future);
+            }
+
+            // Wait for all the queries to finish
+            List<QuerySnapshot> snapshotList = ApiFutures.allAsList(futures).get();
+
+            List<Post> postList = new ArrayList<>();
+            for (QuerySnapshot snapshot : snapshotList) {
+                for (QueryDocumentSnapshot document : snapshot.getDocuments())
+                    postList.add(document.toObject(Post.class));
+            }
+            return postList;
+        } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
     }

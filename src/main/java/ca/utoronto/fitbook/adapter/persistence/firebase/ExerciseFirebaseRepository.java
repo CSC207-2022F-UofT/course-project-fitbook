@@ -3,11 +3,15 @@ package ca.utoronto.fitbook.adapter.persistence.firebase;
 import ca.utoronto.fitbook.adapter.persistence.ExerciseTypeToClassMap;
 import ca.utoronto.fitbook.adapter.persistence.GenericRepository;
 import ca.utoronto.fitbook.application.exceptions.EntityNotFoundException;
+import ca.utoronto.fitbook.application.port.in.LoadExerciseByBodyPartsPort;
+import ca.utoronto.fitbook.application.port.in.LoadExerciseListByKeywordsPort;
 import ca.utoronto.fitbook.application.port.in.LoadExerciseListPort;
 import ca.utoronto.fitbook.entity.Exercise;
 import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutures;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.WriteResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,7 +27,10 @@ import java.util.concurrent.ExecutionException;
 @RequiredArgsConstructor
 public class ExerciseFirebaseRepository
         extends GenericFirebaseRepository
-        implements GenericRepository<Exercise>, LoadExerciseListPort
+        implements GenericRepository<Exercise>,
+        LoadExerciseListPort,
+        LoadExerciseByBodyPartsPort,
+        LoadExerciseListByKeywordsPort
 {
 
     private static final String COLLECTION_NAME = "exercises";
@@ -93,6 +100,68 @@ public class ExerciseFirebaseRepository
         return exerciseList;
     }
 
+    /**
+     * @param keywords list of keywords
+     * @return list of exercises
+     */
+    @Override
+    public List<Exercise> loadExerciseListByKeywords(List<String> keywords) {
+
+        try {
+            List<QueryDocumentSnapshot> querySnapshot = firestore.collection(COLLECTION_NAME)
+                    .whereArrayContainsAny("keywords", keywords)
+                    .get()
+                    .get()
+                    .getDocuments();
+            List<Exercise> exerciseList = new ArrayList<>();
+            for (QueryDocumentSnapshot document : querySnapshot) {
+                String type = document.getString("type");
+                for (Exercise.ExerciseType exerciseType : Exercise.ExerciseType.values()) {
+                    if (Objects.equals(type, exerciseType.toString())) {
+                        String exerciseClassName = ExerciseTypeToClassMap.get(exerciseType);
+                        exerciseList.add((Exercise) document.toObject(Class.forName(exerciseClassName)));
+                    }
+                }
+            }
+            return exerciseList;
+        } catch (ClassNotFoundException | InterruptedException | ExecutionException e) {
+            throw new RuntimeException();
+        }
+    }
+
+    /**
+     * @param bodyParts list of body parts
+     * @return list of exercises
+     */
+    @Override
+    public List<Exercise> loadExerciseByBodyParts(List<String> bodyParts) {
+        try {
+            List<QueryDocumentSnapshot> querySnapshot = firestore.collection(COLLECTION_NAME)
+                    .whereArrayContainsAny("bodyParts", bodyParts)
+                    .get()
+                    .get()
+                    .getDocuments();
+            List<Exercise> exerciseList = new ArrayList<>();
+            for (QueryDocumentSnapshot document : querySnapshot) {
+                String type = document.getString("type");
+                for (Exercise.ExerciseType exerciseType : Exercise.ExerciseType.values()) {
+                    if (Objects.equals(type, exerciseType.toString())) {
+                        String exerciseClassName = ExerciseTypeToClassMap.get(exerciseType);
+                        exerciseList.add((Exercise) document.toObject(Class.forName(exerciseClassName)));
+                    }
+                }
+            }
+            return exerciseList;
+        } catch (ClassNotFoundException | InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Helper function to retrieve exercise object from document snapshot
+     * @param document in database pointing to specific exercise
+     * @return exercise located within document
+     */
     private Exercise documentToExercise(DocumentSnapshot document) {
         try {
             String type = document.getString("type");

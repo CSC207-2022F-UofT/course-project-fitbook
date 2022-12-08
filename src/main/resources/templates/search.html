@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search</title>
+    <link href="/css/layout.css" rel="stylesheet">
+</head>
+<body>
+<nav>
+    <h1><a href="/feed">FitBook</a></h1>
+    <form method="get" action="/search">
+        <label>
+            <input type="text" name="queryString" placeholder="Search..">
+        </label>
+        <button type="submit" class="button">Submit</button>
+    </form>
+    <a href="/post">Create Post</a>
+</nav>
+<div class="profile-card">
+    <h2>Posts</h2>
+    <div class="posts">
+        <div class="post-card" th:each="postResponse : ${postResponseList}">
+            <div class="post-header">
+                <div>
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1 12C1 12 0 12 0 11C0 10 1 7 6 7C11 7 12 10 12 11C12 12 11 12 11 12H1Z" fill="black"/>
+                        <path d="M6 6C7.65685 6 9 4.65685 9 3C9 1.34315 7.65685 0 6 0C4.34315 0 3 1.34315 3 3C3 4.65685 4.34315 6 6 6Z" fill="black"/>
+                    </svg>
+                    <a th:href="@{/profile/{profileId}(profileId=${postResponse.post.getAuthorId()})}"><h4 th:text="${postResponse.getAuthorName()}" style="margin: 0">Author name</h4></a>
+                </div>
+                <small th:text="${postResponse.post.postDate}">Post Date</small>
+            </div>
+            <div class="exercises">
+                <div class="exercise" th:each="exercise : ${postResponse.temporalExerciseList}">
+                    <p th:text="${exercise.name}"></p>
+                    <p>Time: <span th:text="${exercise.time}"></span></p>
+                    <small class="body-part" th:each="bodyPart : ${exercise.getBodyParts()}" th:text="${bodyPart}"></small>
+                </div>
+                <div class="exercise" th:each="exercise : ${postResponse.getRepetitiveExerciseList()}">
+                    <p th:text="${exercise.name}"></p>
+                    <p>Repetitions: <span th:text="${exercise.getReps()}"></span> Sets: <span th:text="${exercise.getSets()}"></span></p>
+                    <small class="body-part" th:each="bodyPart : ${exercise.getBodyParts()}" th:text="${bodyPart}"></small>
+                </div>
+            </div>
+            <div class="post-body">
+                <button th:attr="onclick=|upvotePost(this, '${postResponse.post.id}', '${currUser}', '${postResponse.post.getLikes()}')|" th:text="${postResponse.isUserLiked() ? 'Liked' : 'Like'}" th:disabled="${postResponse.isUserLiked()}" class="button"></button>
+                <p> Likes <span th:text="${postResponse.post.getLikes()}">Post Likes</span></p>
+                <p th:text="${postResponse.post.getDescription()}"></p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script th:inline="javascript">
+    const upvotePost = (event, postId, userId, postLikes) => {
+        fetch("/upvote/",  {
+            method: "POST",
+            mode: "cors",
+            cache: "no-cache",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                postId: postId
+            })
+        }).then(() => {
+            event.nextElementSibling.querySelector("span").textContent = (parseInt(postLikes) + 1).toString();
+            event.textContent = "Liked";
+            event.disabled = true;
+        }).catch(e => console.error(e))
+    }
+</script>
+</html>
