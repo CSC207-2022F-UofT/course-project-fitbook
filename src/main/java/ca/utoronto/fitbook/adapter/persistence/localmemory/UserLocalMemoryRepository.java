@@ -122,7 +122,7 @@ public class UserLocalMemoryRepository implements GenericRepository<User>,
         try {
             loadUser(userId);
             return true;
-        } catch (EntityNotFoundException e) {
+        } catch (UserNotFoundException e) {
             return false;
         }
     }
