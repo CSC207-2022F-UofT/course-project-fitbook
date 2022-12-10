@@ -15,6 +15,8 @@ Fitbook allows you to:
  - Follow users' who interest you, and build a following!
  - View your own and other users' profiles!
 
+**NOTE: When searching, the query must contain a body part (case sensitive) in order to see body parts, refer to the bubbled body parts in existing posts.**
+
 # Getting Started
 Fitbook requires Java 11, which can be installed [here](oracle.com/java/technologies/downloads/#java11).
 
